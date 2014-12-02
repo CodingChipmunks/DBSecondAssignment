@@ -1,0 +1,11 @@
+# everything
+*
+
+# except
+!*/
+!*.java
+!.gitignore
+!*.txt
+!.classpath
+!.project
+!README.md
