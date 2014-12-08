@@ -1,8 +1,19 @@
 package model;
 
 public class Artist {
+private String name;
 
-	// TODO use ECLIPSE Getter and setter methods!!!
-	// (ECLIPSE CONTEXT MENU) Source > Generate Constructor using fields
-	// (ECLIPSE CONTEXT MENU) Source > Generate Getters and setters
+public String getName() {
+	return name;
+}
+
+public void setName(String name) {
+	this.name = name;
+}
+
+public Artist(String name) {
+	super();
+	this.name = name;
+} 
+
 }

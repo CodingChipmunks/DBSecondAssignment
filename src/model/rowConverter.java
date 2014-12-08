@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 /*
  * Helper class for row conversion
  */
-public class rowConverter {
+public class RowConverter {
 	
 	public Album convertRowToAlbum(ResultSet albumRow) {
 		// TODO Auto-generated method stub
