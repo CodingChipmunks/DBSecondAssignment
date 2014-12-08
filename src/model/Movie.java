@@ -1,10 +1,28 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Movie {
  private String genre;
  private String director;
  private String year;
  private String title;
+ private ArrayList<Review> review;
+ private ArrayList<Rating> rating;
+ 
+ public ArrayList<Review> getReview() {
+	return review;
+}
+public void setReview(ArrayList<Review> review) {
+	this.review = review;
+}
+public ArrayList<Rating> getRating() {
+	return rating;
+}
+public void setRating(ArrayList<Rating> rating) {
+	this.rating = rating;
+}
+ 
 public String getGenre() {
 	return genre;
 }
