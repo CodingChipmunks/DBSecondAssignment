@@ -1,0 +1,6 @@
+QUESTIONS:
+
+HOW SHOULD GENRE AND RATING BE REPRESENTED? OBJECTS OR FIELDS???????
+
+Should there be a CollectionOfAlbums & CollectionOfMovies that keeps track of the objects?
+	Seems easier to just feed the lists (that would have been in these classes) directly to the view. Otherwise the point of db dissapears!

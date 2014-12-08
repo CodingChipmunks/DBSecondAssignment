@@ -1,3 +1,5 @@
+import model.*;
+import view.*;
 
 public class Start {
 
@@ -5,8 +7,10 @@ public class Start {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		// deez pulls
+		// instantiate model
+		// feed model to view when instantiating it
+		Model m = new Model();
 	}
 
 }
