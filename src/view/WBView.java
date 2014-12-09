@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import controller.Controller;
 
 import model.Model;
+import model.QueryExecuter;
+import model.QueryInterpreter;
 
 /**
  * WindowBuilder class, compatible with git? Better than Start?
@@ -17,49 +19,26 @@ public class WBView extends JFrame {
 
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Model model = new Model();
-					WBView frame = new WBView(model);
-					matchHostTheme(frame);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	// declare all GUI components here
 
 	/**
 	 * Create the frame.
 	 */
-	public WBView(Model model) {
+	public WBView(Model m) {
+		Controller controller = new Controller(m, this);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+
+		// create components in methods
 		
-		Controller controller = new Controller(model, this);
 	}
 	
-	/**
-	 * Matches application theme to system theme
-	 * regardless of system
-	 * @param c a component to change theme on
-	 */
-	private static void matchHostTheme(Component c) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(Exception e) {}
-		SwingUtilities.updateComponentTreeUI(c);
+	public void updateView() {
+//		contentPane.updateUI();
 	}
-
 }

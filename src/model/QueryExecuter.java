@@ -22,8 +22,29 @@ public class QueryExecuter implements QueryInterpreter {
 	
 	public QueryExecuter(String db, String uname, String pwd) throws SQLException {
 		
+		try {
+			// 1. get a connection
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db, uname, pwd);
+			
+			
+			// 2. Create a statement
+			Statement s = connection.createStatement();
+			
+			// 3. Execute SQL Query
+			ResultSet r = s.executeQuery("select * from Employee");
+			
+			// 4. Process the result set
+			while(r.next()){
+				System.out.println(r.getString("name"));
+			}
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		// connect to db 
-		connection = DriverManager.getConnection(db, uname, pwd);
+//		connection = DriverManager.getConnection(db, uname, pwd);
 	}
 
 

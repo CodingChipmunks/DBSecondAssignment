@@ -9,7 +9,7 @@ import model.*;
 import view.*;
 
 /**
- * Handles listeners, could be moved to View
+ * Handles listeners
  * 
  * @author softish
  *
@@ -19,6 +19,7 @@ public class Controller implements ActionListener {
 	private WBView wbview;
 	private View view;
 	private Model model;
+	private QueryInterpreter dbInterpreter;
 	
 	public Controller(Model m, View v) {
 		this.model = m;
@@ -29,25 +30,12 @@ public class Controller implements ActionListener {
 		this.model = m;
 		this.wbview = wbv;
 	}
-	
-	
-	//TODO make own classes for different types of listeners
-	// inner or in separate files? 
-//	private class SearchListener implements ActionListener {
-//
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//		}
-//	}
-	
-	
 
 
-	// Softish votes for this:
-	// or one actionPerformed method that checks source of e with if (e.getActionCommand() == searchField)
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+
 		
 		
 		
