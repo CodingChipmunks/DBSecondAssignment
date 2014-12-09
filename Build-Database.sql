@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS User(
 	PRIMARY KEY (Name)
 );
 
--- Create Rating, Username is unique so that every user may only create one review.  
+-- Create Rating, Username is unique so that every user may only create one rating.  
 CREATE TABLE IF NOT EXISTS Rating(
 		Media_Id INTEGER, 
 		Username VARCHAR(24) UNIQUE, 

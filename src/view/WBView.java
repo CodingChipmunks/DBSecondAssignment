@@ -18,7 +18,10 @@ import model.QueryInterpreter;
 public class WBView extends JFrame {
 
 	private JPanel contentPane;
-
+	private JTable table;
+	private JTextField textField;
+	private String[] searchOptions = {"Album", "Movie", "E-Book"};
+	
 	// declare all GUI components here
 
 	/**
@@ -33,12 +36,46 @@ public class WBView extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+		table = new JTable();
+		contentPane.add(table, BorderLayout.CENTER);
+		
+		JPanel btnPanel = new JPanel();
+		contentPane.add(btnPanel, BorderLayout.SOUTH);
+		
+		JButton rateBtn = new JButton("Rate Selected");
+		btnPanel.add(rateBtn);
+		
+		JButton reviewBtn = new JButton("Review Selected");
+		btnPanel.add(reviewBtn);
+		
+		JButton addBtn = new JButton("Add Media");
+		btnPanel.add(addBtn);
+		
+		JPanel searchPanel = new JPanel();
+		contentPane.add(searchPanel, BorderLayout.NORTH);
+		searchPanel.setLayout(new BorderLayout(0, 0));
+		
+		textField = new JTextField();
+		searchPanel.add(textField, BorderLayout.NORTH);
+		textField.setColumns(10);
+		
+		JButton searchBtn = new JButton("Search");
+		searchPanel.add(searchBtn, BorderLayout.EAST);
+		
+		JComboBox comboBox = new JComboBox(searchOptions);
+		comboBox.setActionCommand("comboBox");
+		comboBox.setPrototypeDisplayValue("as long as this");
+		comboBox.setSelectedIndex(0);
+		comboBox.addActionListener(controller);
+		searchPanel.add(comboBox, BorderLayout.WEST);
+		
 
 		// create components in methods
 		
 	}
 	
 	public void updateView() {
-//		contentPane.updateUI();
+		contentPane.updateUI();
 	}
 }
