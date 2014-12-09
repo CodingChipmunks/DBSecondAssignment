@@ -33,17 +33,20 @@ CREATE TABLE IF NOT EXISTS Mediatype(
 	PRIMARY KEY (Id)
 );
 
+-- Base types.
 INSERT INTO Mediatype (Name) VALUES ("Album");
-INSERT INTO Mediatype (Name) VALUES ("E-Book");
 INSERT INTO Mediatype (Name) VALUES ("Movie");
+INSERT INTO Mediatype (Name) VALUES ("E-Book");
+INSERT INTO Genre (Name) VALUES ("Undefined"); -- Genre defaults to undefined.
 
 -- Create Movie/Album
 CREATE TABLE IF NOT EXISTS Media(
 		Id INTEGER AUTO_INCREMENT, 
         Mediatype_Id INTEGER, 
-        Genre INTEGER, 
+        Genre INTEGER DEFAULT 1, 
         Title VARCHAR(24) NOT NULL, 
-        Year INTEGER, Duration INTEGER, 
+        Year INTEGER, 
+        Duration INTEGER, 
 	PRIMARY KEY (Id), 
 	FOREIGN KEY (Mediatype_Id) REFERENCES Mediatype(Id),
     FOREIGN KEY (Genre) REFERENCES Genre(Id) ON DELETE CASCADE ON UPDATE CASCADE
