@@ -22,32 +22,34 @@ public class QueryExecuter implements QueryInterpreter {
 	private Statement statement;
 	private ResultSet resultSet;
 	
-	public QueryExecuter(String db, String uname, String pwd) throws SQLException {
-		
-		// Connect to DB
+	public static void main(String args[])
+	{
 		try {
-			// 1. get a connection
+			QueryExecuter lols = new QueryExecuter("mediacollection", "root", "");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public QueryExecuter(String db, String uname, String pwd) throws SQLException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db, uname, pwd);
 			
+			Statement s = connection.createStatement();
+			ResultSet r = s.executeQuery("select * from Creator");
 			
-//			// 2. Create a statement
-//			Statement s = connection.createStatement();
-//			
-//			// 3. Execute SQL Query
-//			ResultSet r = s.executeQuery("select * from Employee");
-//			
-//			// 4. Process the result set
-//			while(r.next()){
-//				System.out.println(r.getString("name"));
-//			}
+			while(r.next()){
+				System.out.println(r.getString("Name"));
+			}
 			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		// connect to db 
-//		connection = DriverManager.getConnection(db, uname, pwd);
+		disconnect();
 	}
 
 
