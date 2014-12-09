@@ -62,14 +62,17 @@ public class Controller implements ActionListener {
 		
 		if (e.getActionCommand().equals("rateBtn")) {
 			System.out.println("Rating dialog...");
+			wbview.invokeRateMediaDialog();
 		}
 		
 		if (e.getActionCommand().equals("reviewBtn")) {
 			System.out.println("Review dialog...");
+			wbview.invokeReviewMediaDialog();
 		}
 		
 		if (e.getActionCommand().equals("addBtn")) {
 			System.out.println("Adding dialog...");
+			wbview.invokeAddMediaDialog();
 		}
 
 		// end with //view.updateView();

@@ -22,6 +22,11 @@ public class WBView extends JFrame {
 	private JTextField textField;
 	private JComboBox comboBox;
 	private JPanel searchPanel;
+	
+//	private AddMediaDialog add;
+//	private RateMediaDialog rate;
+//	private ReviewMediaDialog review;
+	
 	private String[] searchOptions = { "Album", "Movie", "E-Book" };
 
 	// declare all GUI components here
@@ -81,7 +86,7 @@ public class WBView extends JFrame {
 		searchPanel.add(comboBox, BorderLayout.WEST);
 
 		// create components in methods
-
+		createDialogs();
 	}
 
 	// PArt of the dangerous solution
@@ -103,16 +108,26 @@ public class WBView extends JFrame {
 		
 	}
 	
+	public void createDialogs() {
+//		add = new AddMediaDialog();
+//		add.setVisible(false);
+//		rate = new RateMediaDialog();
+//		rate.setVisible(false);
+//		review = new ReviewMediaDialog();
+//		review.setVisible(false);
+	}
+	
+	// show?
 	public void invokeReviewMediaDialog() {
-
+//		review.setVisible(true);
 	}
 
 	public void invokeRateMediaDialog() {
-
+//		rate.setVisible(true);
 	}
 
 	public void invokeAddMediaDialog() {
-
+//		add.setVisible(true);
 	}
 
 	public String getSearchFieldText() {
