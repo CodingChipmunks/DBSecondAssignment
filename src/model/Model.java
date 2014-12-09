@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import controller.*;
@@ -16,6 +17,10 @@ public class Model {
 	private ArrayList<Movie> movie;
 
 	// TODO: add QueryExecuter
+	public Model() throws SQLException {
+		//QueryExecuter queryExecuter = new QueryExecuter("", "", "");	// dbInterpreter, dba(dataBaseAcess)
+		
+	}
 	
 	public void clear() {
 		album.clear();

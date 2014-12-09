@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface QueryInterpreter {
@@ -9,7 +10,7 @@ public interface QueryInterpreter {
 	
 	public void disconnect();
 	
-	public List<Album> getAllAlbums();
+	public List<Album> getAllAlbums() throws SQLException;
 	
 	public List<Album> searchByAlbumTitle(String title);
 	

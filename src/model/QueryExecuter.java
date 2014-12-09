@@ -19,24 +19,27 @@ import java.util.List;
 public class QueryExecuter implements QueryInterpreter {
 	
 	private Connection connection;
+	private Statement statement;
+	private ResultSet resultSet;
 	
 	public QueryExecuter(String db, String uname, String pwd) throws SQLException {
 		
+		// Connect to DB
 		try {
 			// 1. get a connection
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db, uname, pwd);
 			
 			
-			// 2. Create a statement
-			Statement s = connection.createStatement();
-			
-			// 3. Execute SQL Query
-			ResultSet r = s.executeQuery("select * from Employee");
-			
-			// 4. Process the result set
-			while(r.next()){
-				System.out.println(r.getString("name"));
-			}
+//			// 2. Create a statement
+//			Statement s = connection.createStatement();
+//			
+//			// 3. Execute SQL Query
+//			ResultSet r = s.executeQuery("select * from Employee");
+//			
+//			// 4. Process the result set
+//			while(r.next()){
+//				System.out.println(r.getString("name"));
+//			}
 			
 		}
 		catch(Exception e) {
@@ -55,18 +58,24 @@ public class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public List<Album> getAllAlbums() {
+	public List<Album> getAllAlbums() throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
 		
 		// make statement and result set
+		Statement s;
+		ResultSet r;
+
 		
 		// TODO define sql query
 		try {
 			// use statement and result set to fetch info
-			
+			s = connection.createStatement();
+			r = s.executeQuery("select * from Album");
 			// loop through result set
-			
-			// convert row to Album and add to list: preferably with helper class
+			while(r.next()){
+				// convert row to Album and add to list: preferably with helper class
+			}
+				
 			
 			//return list
 			
