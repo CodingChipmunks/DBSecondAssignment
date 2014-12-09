@@ -15,5 +15,5 @@ public class Rating {
 	public void setScore(float score) {
 		Score = score;
 	}
-	
+
 }
