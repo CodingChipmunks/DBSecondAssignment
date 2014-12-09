@@ -9,7 +9,7 @@ INSERT INTO Creator (Name) VALUES ("Cristopher Nolan");
 INSERT INTO Genre (Name) VALUES ("Action");
 INSERT INTO Genre (Name) VALUES ("Adventure");
 INSERT INTO Genre (Name) VALUES ("Singer/Songwriter");
-INSERT INTO Genre (Name) VALUES ("Education");
+INSERT INTO Genre (Name) VALUES ("Education"); 
 
 -- Authentication for uploading new content and submitting reviews, this is only visible to the
 -- server or the admin creating a new account.
