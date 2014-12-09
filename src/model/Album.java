@@ -3,11 +3,18 @@ package model;
 import java.util.ArrayList;
 
 public class Album {
+	private int id;
 	private String name;
 	private String year;
+	private ArrayList<Artist> artist;
 	private ArrayList<Review> review;
 	private ArrayList<Rating> rating;
 
+	public int getId()
+	{
+		return id;
+	}
+	
 	public ArrayList<Review> getReview() {
 		return review;
 	}
@@ -40,10 +47,31 @@ public class Album {
 		this.year = year;
 	}
 
-	public Album(String name, String year) {
+	public Album(String name, String year, int id) {
 		super();
 		this.name = name;
 		this.year = year;
+		this.id = id;
+	}
+	
+	public float meanRating()
+	{
+		float mean = 0.0f;
+		
+		for (int i = 0; i < rating.size(); i++)
+			mean += rating.get(i).getScore();
+		
+		return (mean / rating.size());
+	}
+	
+	public boolean hasArtist(String name)
+	{
+		boolean result = false;
+		
+		for (int i = 0; i < artist.size(); i++)
+			if (name.equals(artist.get(i).getName()))
+				result = true;
+		return result;
 	}
 
 }
