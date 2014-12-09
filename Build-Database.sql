@@ -17,11 +17,15 @@ CREATE TABLE IF NOT EXISTS Account(
 	PRIMARY KEY (Name)
 );
 
-CREATE TABLE IF NOT EXISTS User(
+CREATE TABLE IF NOT EXISTS User( 
 		Id INTEGER AUTO_INCREMENT PRIMARY KEY,
 		Account_Name VARCHAR(24),
 	FOREIGN KEY(Account_Name) REFERENCES Account(Name) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- Account used when values are added to the database from "admin" (in Build-TestData)
+INSERT INTO Account(Name, Pass) VALUES ('Admin', 'zuAZpOpvPasB4JD7ka7GW8DCXGiAN4');
+INSERT INTO User(Account_Name) VALUES ('Admin');
 
 -- Create Director/Artist
 CREATE TABLE IF NOT EXISTS Creator(
@@ -60,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Media(
         Title VARCHAR(24) NOT NULL, 
         Year INTEGER, 
         Duration INTEGER, 
-        User_Id INTEGER,
+        User_Id INTEGER DEFAULT 1,
 	PRIMARY KEY (Id), 
 	FOREIGN KEY (Mediatype_Id) REFERENCES Mediatype(Id),
     FOREIGN KEY (User_Id) REFERENCES User(Id) ON DELETE SET NULL ON UPDATE CASCADE,
