@@ -58,7 +58,7 @@ public class RowConverter {
 			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
 
 		Album album = new Album(albumRow.getString("name"),
-				albumRow.getString("year"), albumRow.getInt("id"));
+				albumRow.getString("year"), albumRow.getString("user"), albumRow.getInt("id"));
 
 		album.setReview(convertRowToReview(reviewRow));
 		album.setRating(convertRowToRating(ratingRow));
@@ -71,7 +71,7 @@ public class RowConverter {
 			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
 
 		Movie movie = new Movie(movieRow.getString("title"),
-				movieRow.getString("genre"), movieRow.getString("year"),
+				movieRow.getString("genre"), movieRow.getString("year"), movieRow.getString("user"),
 				movieRow.getInt("id"));
 
 		movie.setRating(convertRowToRating(ratingRow));

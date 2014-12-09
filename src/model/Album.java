@@ -6,10 +6,19 @@ public class Album {
 	private int id;
 	private String name;
 	private String year;
+	private String user;
 	private ArrayList<Artist> artist;
 	private ArrayList<Review> review;
 	private ArrayList<Rating> rating;
 
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+	
 	public int getId()
 	{
 		return id;
@@ -53,10 +62,11 @@ public class Album {
 		this.year = year;
 	}
 
-	public Album(String name, String year, int id) {
+	public Album(String name, String year, String user, int id) {
 		super();
 		this.name = name;
 		this.year = year;
+		this.user = user;
 		this.id = id;
 	}
 	

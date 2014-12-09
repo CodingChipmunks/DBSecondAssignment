@@ -7,12 +7,21 @@ public class Movie {
 	private String genre;
 	private String year;
 	private String title;
+	private String user;
 	private ArrayList<Director> director;
 	private ArrayList<Review> review;
 	private ArrayList<Rating> rating;
 
 	public int getId() {
 		return id;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	@SuppressWarnings("unchecked") 
@@ -40,10 +49,11 @@ public class Movie {
 		this.genre = genre;
 	}
 
-	public Movie(String title, String genre, String year, int id) {
+	public Movie(String title, String genre, String year, String user, int id) {
 		super();
 		this.genre = genre;
 		this.year = year;
+		this.user = user;
 		this.title = title;
 	}
 
