@@ -1,19 +1,25 @@
 package model;
 
 public class Rating {
-	private float Score;
+	private float score;
+	private String user;
 
 	public float getScore() {
-		return Score;
+		return score;
 	}
 
-	public Rating(float score) {
+	public Rating(String user, float score) {
 		super();
-		Score = score;
+		this.score = score;
 	}
 
 	public void setScore(float score) {
-		Score = score;
+		this.score = score;
+	}
+	
+	public String getUser()
+	{
+		return this.user;
 	}
 
 }

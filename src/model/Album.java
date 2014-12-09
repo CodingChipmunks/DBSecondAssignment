@@ -15,14 +15,20 @@ public class Album {
 		return id;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public ArrayList<Review> getReview() {
-		return review;
+		return (ArrayList<Review>) review.clone();
 	}
 
 	public void setReview(ArrayList<Review> review) {
 		this.review = review;
 	}
 
+	public void setArtist(ArrayList<Artist> artist)
+	{
+		this.artist = artist;
+	}
+	
 	public ArrayList<Rating> getRating() {
 		return rating;
 	}
