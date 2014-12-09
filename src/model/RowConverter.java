@@ -1,20 +1,77 @@
 package model;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /*
  * Helper class for row conversion
  */
 public class RowConverter {
-	
-	public Album convertRowToAlbum(ResultSet albumRow) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Review> convertRowToReview(ResultSet reviewRow)
+			throws SQLException {
+		ArrayList<Review> review = new ArrayList<Review>();
+
+		while (reviewRow.next()) {
+			review.add(new Review(reviewRow.getString("text"), reviewRow
+					.getString("user")));
+		}
+
+		return review;
 	}
 
-	public Artist convertRowToArtist(ResultSet artistRow) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Rating> convertRowToRating(ResultSet ratingRow)
+			throws SQLException {
+		ArrayList<Rating> rating = new ArrayList<Rating>();
+
+		while (ratingRow.next()) {
+			rating.add(new Rating(ratingRow.getString("user"), ratingRow
+					.getInt("rating")));
+		}
+
+		return rating;
 	}
 
+	public ArrayList<Director> convertRowToDirector(ResultSet directorRow)
+			throws SQLException {
+		ArrayList<Director> director = new ArrayList<Director>();
+
+		while (directorRow.next()) {
+			director.add(new Director(directorRow.getString("name")));
+		}
+
+		return director;
+	}
+
+	public Album convertRowToAlbum(ResultSet albumRow, ResultSet artistRow,
+			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
+		ArrayList<Artist> artist = new ArrayList<Artist>();
+
+		Album album = new Album(albumRow.getString("name"),
+				albumRow.getString("year"), albumRow.getInt("id"));
+
+		while (artistRow.next()) {
+			artist.add(new Artist(artistRow.getString("name")));
+		}
+
+		album.setReview(convertRowToReview(reviewRow));
+		album.setRating(convertRowToRating(ratingRow));
+		album.setArtist(artist);
+		return album;
+	}
+
+	// String title, String genre, String director, String year, int id
+	public Movie convertRowToMovie(ResultSet movieRow, ResultSet directorRow,
+			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
+		ArrayList<Director> Director = new ArrayList<Director>();
+
+		Movie movie = new Movie(movieRow.getString("title"),
+				movieRow.getString("genre"), movieRow.getString("year"),
+				movieRow.getInt("id"));
+
+		movie.setRating(convertRowToRating(ratingRow));
+		movie.setReview(convertRowToReview(reviewRow));
+		movie.setDirector(convertRowToDirector(directorRow));
+		return movie;
+	}
 }

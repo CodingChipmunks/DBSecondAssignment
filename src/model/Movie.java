@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class Movie {
 	private int id;
 	private String genre;
-	private String director;
 	private String year;
 	private String title;
+	private ArrayList<Director> director;
 	private ArrayList<Review> review;
 	private ArrayList<Rating> rating;
 
@@ -15,8 +15,9 @@ public class Movie {
 		return id;
 	}
 
+	@SuppressWarnings("unchecked") 
 	public ArrayList<Review> getReview() {
-		return review;
+		return (ArrayList<Review>) review.clone();
 	}
 
 	public void setReview(ArrayList<Review> review) {
@@ -39,19 +40,18 @@ public class Movie {
 		this.genre = genre;
 	}
 
-	public Movie(String genre, String director, String year, String title, int id) {
+	public Movie(String title, String genre, String year, int id) {
 		super();
 		this.genre = genre;
-		this.director = director;
 		this.year = year;
 		this.title = title;
 	}
 
-	public String getDirector() {
+	public ArrayList<Director> getDirector() {
 		return director;
 	}
 
-	public void setDirector(String director) {
+	public void setDirector(ArrayList<Director> director) {
 		this.director = director;
 	}
 
