@@ -13,14 +13,9 @@ INSERT INTO Genre (Name) VALUES ("Education");
 
 -- Authentication for uploading new content and submitting reviews, this is only visible to the
 -- server or the admin creating a new account.
-INSERT INTO Account (Name, Pass) VALUES ("Foo", "Foo");
-INSERT INTO Account (Name, Pass) VALUES ("Bar", "Bar");
-INSERT INTO Account (Name, Pass) VALUES ("FooBar", "FooBar");
-
--- These should be created when the account is created, accessible read from all.
-INSERT INTO User (Account_Name) VALUES ("Foo");
-INSERT INTO User (Account_Name) VALUES ("Bar");
-INSERT INTO User (Account_Name) VALUES ("FooBar");
+INSERT INTO Account (Name, User, Pass) VALUES ("Foo", "Foo", "Foo");
+INSERT INTO Account (Name, User, Pass) VALUES ("Bar", "Bar", "Bar");
+INSERT INTO Account (Name, User, Pass) VALUES ("FooBar", "FooBar", "FooBar");
 
 -- Album = 1, Video = 2, E-Book = 3, Adding media.
 INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (1, 3, "Imagine", 1971, 43);
@@ -39,5 +34,5 @@ INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,2); -- Rammstein = Rosen
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
 
 -- Review added by [1] = Foo:Foo, Second parameter.
-INSERT INTO Review (Media_Id, User_Id, Title, Text) VALUES (1, 1, "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
+INSERT INTO Review (Media_Id, Account_Id, Title, Text) VALUES (1, 1, "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
 

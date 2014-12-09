@@ -13,20 +13,14 @@ USE MediaCollection;
 
 -- Create User, Contains password and username for use in the post-review/post-rating procedures.
 CREATE TABLE IF NOT EXISTS Account(
-		Name VARCHAR(24) NOT NULL, 
-        Pass VARCHAR(24), 
-	PRIMARY KEY (Name)
-);
-
-CREATE TABLE IF NOT EXISTS User( 
 		Id INTEGER AUTO_INCREMENT PRIMARY KEY,
-		Account_Name VARCHAR(24),
-	FOREIGN KEY(Account_Name) REFERENCES Account(Name) ON DELETE CASCADE ON UPDATE CASCADE
+		Name VARCHAR(24) NOT NULL, 			-- Allowed read, not required in logins, displayed in reviews etc.
+        User VARCHAR(32) NOT NULL UNIQUE,	-- Disallow read of this column.
+        Pass VARCHAR(32) NOT NULL 			-- Disallow read of this column. Password stored in cleartext. :'(
 );
 
 -- Account used when values are added to the database from "admin" (in Build-TestData)
-INSERT INTO Account(Name, Pass) VALUES ('Admin', 'zuAZpOpvPasB4JD7ka7GW8DCXGiAN4');
-INSERT INTO User(Account_Name) VALUES ('Admin');
+INSERT INTO Account(Name, User, Pass) VALUES ('Admin', 'Admin-MediaCollection', 'zuAZpOpvPasB4JD7ka7GW8DCXGiAN4');
 
 -- Create Director/Artist
 CREATE TABLE IF NOT EXISTS Creator(
@@ -65,10 +59,10 @@ CREATE TABLE IF NOT EXISTS Media(
         Title VARCHAR(24) NOT NULL, 
         Year INTEGER, 
         Duration INTEGER, 
-        User_Id INTEGER DEFAULT 1,
+        Account_Id INTEGER DEFAULT 1,
 	PRIMARY KEY (Id), 
 	FOREIGN KEY (Mediatype_Id) REFERENCES Mediatype(Id),
-    FOREIGN KEY (User_Id) REFERENCES User(Id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (Account_Id) REFERENCES Account(Id) ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY (Genre_Id) REFERENCES Genre(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
     
@@ -87,19 +81,19 @@ CREATE TABLE IF NOT EXISTS Contributor(
 -- Create Rating, Username is unique so that every user may only create one rating.  
 CREATE TABLE IF NOT EXISTS Rating(
 		Media_Id INTEGER, 
-		User_Id INTEGER UNIQUE, 
+		Account_Id INTEGER UNIQUE, 
 		Rating INTEGER, 
-	FOREIGN KEY (User_Id) REFERENCES User(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Account_Id) REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Create Review, Username is unique so that every user may only create one review.
 CREATE TABLE IF NOT EXISTS Review(
 		Media_Id INTEGER, 
-        User_Id INTEGER UNIQUE, 
+        Account_Id INTEGER UNIQUE, 
         Title VARCHAR(24) NOT NULL, 
 		Text VARCHAR(500) NOT NULL, 
-	FOREIGN KEY (User_Id) REFERENCES User(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (Account_Id) REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -107,8 +101,18 @@ CREATE TABLE IF NOT EXISTS Review(
 -- Login credentials when reading from the database. Login information will be sent when required by the 
 -- Database, when creating a review or rating. 
 CREATE USER 'clientapp'@'localhost' IDENTIFIED BY 'qwerty'; -- the password is on github and in the application.
-REVOKE ALL ON MediaCollection.* FROM 'clientapp'@'%';	  -- Remove any default.
-GRANT SELECT ON MediaCollection.* TO 'clientapp'@'%';	  -- Grant read on all tables.
-REVOKE ALL ON MediaCollection.User FROM 'clientapp'@'%';  -- Removes select from User table, where passwords are stored.
--- The admin logs on with write access, enabling the creation of accounts in User table, or to add
+
+-- Grant select on all columns in the following tables
+GRANT SELECT ON mediacollection.Mediatype TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Media TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Contributor TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Creator TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Genre TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Rating TO 'clientapp'@'localhost';	
+GRANT SELECT ON mediacollection.Review TO 'clientapp'@'localhost';	
+
+-- Do not allow access to Account passwords. Accountname is exposed, add nick-name?
+GRANT SELECT (Name, Id) ON mediacollection.Account TO 'clientapp'@'localhost'; 
+
+-- The admin logs on with write access, enabling the creation of accounts in User table.
 -- Media.

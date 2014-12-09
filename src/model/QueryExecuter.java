@@ -17,6 +17,11 @@ import java.util.List;
  *
  */
 public class QueryExecuter implements QueryInterpreter {
+	private final static String database = "mediacollection";
+	private final static String user = "clientapp";
+	private final static String pass= "qwerty";
+	private final static String driver = "com.mysql.jdbc.Driver";
+	private final static String host = "jdbc:mysql://localhost:3306/";
 	
 	private Connection connection;
 	private Statement statement;
@@ -25,20 +30,20 @@ public class QueryExecuter implements QueryInterpreter {
 	public static void main(String args[])
 	{
 		try { 
-			QueryExecuter lols = new QueryExecuter("mediacollection", "clientapp", "qwerty");
+			QueryExecuter lols = new QueryExecuter();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public QueryExecuter(String db, String uname, String pwd) throws SQLException {
+	public QueryExecuter() throws SQLException {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db, uname, pwd);
+			Class.forName(driver);
+			connection = DriverManager.getConnection(host + database, user, pass);
 			
 			Statement s = connection.createStatement();
-			ResultSet r = s.executeQuery("select * from Creator");
+			ResultSet r = s.executeQuery("select Name from Account");
 			
 			while(r.next()){
 				System.out.println(r.getString("Name"));
