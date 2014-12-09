@@ -24,8 +24,8 @@ public class QueryExecuter implements QueryInterpreter {
 	
 	public static void main(String args[])
 	{
-		try {
-			QueryExecuter lols = new QueryExecuter("mediacollection", "root", "");
+		try { 
+			QueryExecuter lols = new QueryExecuter("mediacollection", "clientapp", "qwerty");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
