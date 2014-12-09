@@ -1,27 +1,37 @@
--- Server Side
+-- Admin
+
+-- Create DB
+CREATE DATABASE IF NOT EXISTS MediaCollection;
+CREATE SCHEMA IF NOT EXISTS MediaCollection;
+USE MediaCollection;
 
 -- Create use 
-CREATE USER 'clientapp'@'%'
-IDENTIFIED BY 'qwerty';
+CREATE USER 'clientapp'@'%' IDENTIFIED BY 'qwerty';
 GRANT SELECT ON MediaCollection.* TO 'clientapp'@'%';
 
 -- Generate tables
 
--- Generate test data
+-- Create Director
+CREATE TABLE IF NOT EXISTS Director(Id INTEGER AUTO_INCREMENT, Name VARCHAR(24) NOT NULL, PRIMARY KEY (Id));
+
+-- Create Artist
+CREATE TABLE IF NOT EXISTS Artist(Id INTEGER AUTO_INCREMENT, Name VARCHAR(24) NOT NULL, PRIMARY KEY (Id));
+
+-- Create Album
+CREATE TABLE IF NOT EXISTS Album(Id INTEGER AUTO_INCREMENT, Title VARCHAR(24) NOT NULL, Artist_Id INTEGER, Year INTEGER, PRIMARY KEY (Id), FOREIGN KEY(Artist_Id) REFERENCES Artist(Id));
+
+-- Create Movie
+CREATE TABLE IF NOT EXISTS Movie(Id INTEGER AUTO_INCREMENT, Title VARCHAR(24) NOT NULL, Director_Id INTEGER, Year INTEGER, Duration TIME, PRIMARY KEY (Id), FOREIGN KEY(Director_Id) REFERENCES Director(Id));
 
 
+-- Create User
+CREATE TABLE IF NOT EXISTS User(Id INTEGER AUTO_INCREMENT, Name VARCHAR(24) NOT NULL, PRIMARY KEY (Id));
 
--- Purge tables
+-- Create Genre
+CREATE TABLE IF NOT EXISTS Genre(Id INTEGER AUTO_INCREMENT, Name VARCHAR(24) NOT NULL, PRIMARY KEY (Id));
 
+-- Create Rating
+CREATE TABLE IF NOT EXISTS Rating(Album_Id INTEGER, User_Id INTEGER, Rating INTEGER, FOREIGN KEY(Album_Id) REFERENCES Album(Id), FOREIGN KEY(User_Id) REFERENCES User(Id));
 
-
--- Client side
-
--- Get all artists
-SELECT * FROM Artist;
-
--- Get all albums
-SELECT * FROM Album;
-
-
-
+-- Create Review 
+CREATE TABLE IF NOT EXISTS Review(Title VARCHAR(24) NOT NULL, Text VARCHAR(500) NOT NULL, User int, FOREIGN KEY(User) REFERENCES User(Id));

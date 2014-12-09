@@ -43,27 +43,32 @@ public class RowConverter {
 		return director;
 	}
 
-	public Album convertRowToAlbum(ResultSet albumRow, ResultSet artistRow,
-			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
+	public ArrayList<Artist> convertRowToArtist(ResultSet artistRow)
+			throws SQLException {
 		ArrayList<Artist> artist = new ArrayList<Artist>();
-
-		Album album = new Album(albumRow.getString("name"),
-				albumRow.getString("year"), albumRow.getInt("id"));
 
 		while (artistRow.next()) {
 			artist.add(new Artist(artistRow.getString("name")));
 		}
 
+		return artist;
+	}
+
+	public Album convertRowToAlbum(ResultSet albumRow, ResultSet artistRow,
+			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
+
+		Album album = new Album(albumRow.getString("name"),
+				albumRow.getString("year"), albumRow.getInt("id"));
+
 		album.setReview(convertRowToReview(reviewRow));
 		album.setRating(convertRowToRating(ratingRow));
-		album.setArtist(artist);
+		album.setArtist(convertRowToArtist(artistRow));
 		return album;
 	}
 
 	// String title, String genre, String director, String year, int id
 	public Movie convertRowToMovie(ResultSet movieRow, ResultSet directorRow,
 			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
-		ArrayList<Director> Director = new ArrayList<Director>();
 
 		Movie movie = new Movie(movieRow.getString("title"),
 				movieRow.getString("genre"), movieRow.getString("year"),
