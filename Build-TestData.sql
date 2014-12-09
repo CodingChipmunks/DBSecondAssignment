@@ -31,5 +31,5 @@ INSERT INTO Media (Mediatype_Id, Genre, Title, Year, Duration) VALUES (3, 4, "Da
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,2); -- Rammstein = Rosenrot
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
 
-INSERT INTO Review (Media_Id, Username, Title, Text) VALUES (1, "KittyMeows", "Rammstein??", "Ist Sehr Gut. Keine Fragen.");
+INSERT INTO Review (Media_Id, Username, Title, Text) VALUES (1, "KittyMeows", "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
 
