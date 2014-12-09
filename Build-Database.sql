@@ -1,5 +1,6 @@
 -- Admin
--- Warning: Running This Script Will Reset Your Database.
+-- Warning: Running This Script Will Change Root Password!
+-- Warning: Running This Script Will Reset Database.MediaCollection!
 
 -- Reset the schema.
 DROP SCHEMA IF EXISTS MediaCollection;
@@ -105,8 +106,8 @@ CREATE TABLE IF NOT EXISTS Review(
 -- Create a database user with read access for every normal user, the user does not need to supply
 -- Login credentials when reading from the database. Login information will be sent when required by the 
 -- Database, when creating a review or rating. 
-CREATE USER 'clientapp'@'localhost' IDENTIFIED BY 'qwerty';
-REVOKE ALL ON *.* FROM 'clientapp'@'%';					  -- Remove any default.
+CREATE USER 'clientapp'@'localhost' IDENTIFIED BY 'qwerty'; -- the password is on github and in the application.
+REVOKE ALL ON MediaCollection.* FROM 'clientapp'@'%';	  -- Remove any default.
 GRANT SELECT ON MediaCollection.* TO 'clientapp'@'%';	  -- Grant read on all tables.
 REVOKE ALL ON MediaCollection.User FROM 'clientapp'@'%';  -- Removes select from User table, where passwords are stored.
 -- The admin logs on with write access, enabling the creation of accounts in User table, or to add
