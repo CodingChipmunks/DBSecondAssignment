@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS Mediatype(
 	PRIMARY KEY (Id)
 );
 
+INSERT INTO Mediatype (Name) VALUES ("Album");
+INSERT INTO Mediatype (Name) VALUES ("E-Book");
+INSERT INTO Mediatype (Name) VALUES ("Movie");
+
 -- Create Movie/Album
 CREATE TABLE IF NOT EXISTS Media(
 		Id INTEGER AUTO_INCREMENT, 
@@ -42,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Media(
         Year INTEGER, Duration INTEGER, 
 	PRIMARY KEY (Id), 
 	FOREIGN KEY (Mediatype_Id) REFERENCES Mediatype(Id),
-    FOREIGN KEY (Genre) REFERENCES Genre(Id)
+    FOREIGN KEY (Genre) REFERENCES Genre(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
     
 -- Add Indexing Media on Media Type and Title
@@ -53,8 +57,8 @@ CREATE INDEX TitleIndex ON Media (Title);
 CREATE TABLE IF NOT EXISTS Contributor(
 		Creator_Id INTEGER,
         Media_Id INTEGER, 
-	FOREIGN KEY (Creator_Id) REFERENCES Creator(Id), 
-	FOREIGN KEY (Media_Id) REFERENCES Media(Id)
+	FOREIGN KEY (Creator_Id) REFERENCES Creator(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
+	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
 -- Create User, Contains password and username for use in the post-review/post-rating procedures.
@@ -69,7 +73,7 @@ CREATE TABLE IF NOT EXISTS Rating(
 		Media_Id INTEGER, 
 		Username VARCHAR(24) UNIQUE, 
 		Rating INTEGER, 
-	FOREIGN KEY (Media_Id) REFERENCES Media(Id)
+	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Create Review, Username is unique so that every user may only create one review.
@@ -78,7 +82,7 @@ CREATE TABLE IF NOT EXISTS Review(
         Username VARCHAR(24) UNIQUE, 
         Title VARCHAR(24) NOT NULL, 
         Text VARCHAR(500) NOT NULL, 
-	FOREIGN KEY (Media_Id) REFERENCES Media(Id)
+	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Create a database user with read access for every normal user, the user does not need to supply
