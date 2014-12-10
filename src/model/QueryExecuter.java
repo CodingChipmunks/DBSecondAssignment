@@ -239,7 +239,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public List<Album> getAlbumsByAny(String text) throws SQLException {
+	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ArrayList<Album> temp;
 
@@ -259,8 +259,16 @@ public final class QueryExecuter implements QueryInterpreter {
 				if (!album.contains(temp))
 					album.add(temp.get(i));
 
-		// search by rating
 		// search by artist
+
+		temp = getAlbumsByArtist(text);
+
+		if (null != temp)
+			for (int i = 0; i < temp.size(); i++)
+				if (!album.contains(temp))
+					album.add(temp.get(i));
+
+		// search by rating
 		return album;
 	}
 
@@ -287,8 +295,6 @@ public final class QueryExecuter implements QueryInterpreter {
 
 				album = getAllAlbums(rsetAlbum);
 			}
-			// get genre ids from name
-			// query resultset with id
 		} finally {
 			listClose(new Statement[] { stAlbum, stGenre }, new ResultSet[] {
 					rsetAlbum, rsetGenre });
@@ -318,41 +324,55 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public List<Artist> searchByArtist(String artist) throws SQLException {
-		List<Artist> resultingArtists = new ArrayList<Artist>();
-
+	public ArrayList<Album> getAlbumsByArtist(String artist)
+			throws SQLException {
+		ArrayList<Album> album = new ArrayList<Album>();
+		ResultSet rsetCreator = null;
+		Statement stCreator = connection.createStatement();
 		try {
-			artist = artist.trim();
-			artist += "%";
-			// first make sure there is no directors!
+			// get all creators that match pattern, get their Id
+			// in Contributor, match id and get the id of the album,
+			// group by Album Id.
+			// query album with the retrieved Ids.
+			rsetCreator = stCreator
+					.executeQuery("select Id from Creator where Name like '"
+							+ artist + "';");
+			while (rsetCreator.next()) {
+				Statement stContributor = connection.createStatement();
+				ResultSet rsetAlbum = null;
+				ResultSet rsetContributor = null;
+				Statement stAlbum = null;
+				try {
+					rsetContributor = stContributor
+							.executeQuery("select Media_Id from Contributor where Creator_Id = "
+									+ rsetCreator.getInt(1) + ";");
 
-			// Search for designated artist
-			preparedStatement = connection
-					.prepareStatement("select Name from Creator where Name like ?");
+					if (rsetContributor.isBeforeFirst()) {
+						rsetContributor.next();
 
-			preparedStatement.setString(1, artist);
-			resultSet = preparedStatement.executeQuery();
+						stAlbum = connection.createStatement();
+						rsetAlbum = stAlbum
+								.executeQuery("select * from Media where Mediatype_Id = 1 and Id = "
+										+ rsetContributor.getInt(1) + ";");
 
-			// loop through result set
-			while (resultSet.next()) {
-				// resultingArtists = rc.convertRowToArtist(resultSet);
-				resultingArtists.addAll(RowConverter
-						.convertRowToArtist(resultSet));
-			}
-
-			if (resultingArtists.size() > 0) {
-				System.out.println("Found Artists: ");
-				// NOTHING! but it should work...
-				// Char encodin issue?
-				for (Artist a : resultingArtists) {
-					System.out.println(a.toString());
+						ArrayList<Album> tmp = getAllAlbums(rsetAlbum);
+						if (null != tmp)
+							for (int i = 0; i < tmp.size(); i++)
+								if (!album.contains(tmp.get(i)))
+									album.add(tmp.get(i));
+					}
+				} finally {
+					listClose(new Statement[] { stAlbum, stContributor },
+							new ResultSet[] { rsetContributor, rsetAlbum });
 				}
 			}
-			return resultingArtists;
-
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} finally {
-			// closeStatementAndResultSet();
+			listClose(new Statement[] { stCreator },
+					new ResultSet[] { rsetCreator });
 		}
+		return album;
 	}
 
 	@Override
