@@ -327,50 +327,20 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByArtist(String artist)
 			throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
-		ResultSet rsetCreator = null;
-		Statement stCreator = connection.createStatement();
+		Statement stAlbum = connection.createStatement();
+		ResultSet rsetAlbum = null;
+
 		try {
-			// get all creators that match pattern, get their Id
-			// in Contributor, match id and get the id of the album,
-			// group by Album Id.
-			// query album with the retrieved Ids.
-			rsetCreator = stCreator
-					.executeQuery("select Id from Creator where Name like '"
-							+ artist + "';");
-			while (rsetCreator.next()) {
-				Statement stContributor = connection.createStatement();
-				ResultSet rsetAlbum = null;
-				ResultSet rsetContributor = null;
-				Statement stAlbum = null;
-				try {
-					rsetContributor = stContributor
-							.executeQuery("select Media_Id from Contributor where Creator_Id = "
-									+ rsetCreator.getInt(1) + ";");
+			rsetAlbum = stAlbum
+					.executeQuery("SELECT Media.Id, Media.Title, Media.MediaType_Id, Media.Year, Genre_Id, Account_Id"
+							+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
+							+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 1 AND Creator.Name LIKE '"
+							+ artist + "' GROUP BY Media.Id;");
 
-					if (rsetContributor.isBeforeFirst()) {
-						rsetContributor.next();
-
-						stAlbum = connection.createStatement();
-						rsetAlbum = stAlbum
-								.executeQuery("select * from Media where Mediatype_Id = 1 and Id = "
-										+ rsetContributor.getInt(1) + ";");
-
-						ArrayList<Album> tmp = getAllAlbums(rsetAlbum);
-						if (null != tmp)
-							for (int i = 0; i < tmp.size(); i++)
-								if (!album.contains(tmp.get(i)))
-									album.add(tmp.get(i));
-					}
-				} finally {
-					listClose(new Statement[] { stAlbum, stContributor },
-							new ResultSet[] { rsetContributor, rsetAlbum });
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			album = getAllAlbums(rsetAlbum);
 		} finally {
-			listClose(new Statement[] { stCreator },
-					new ResultSet[] { rsetCreator });
+			listClose(new Statement[] { stAlbum },
+					new ResultSet[] { rsetAlbum });
 		}
 		return album;
 	}
