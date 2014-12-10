@@ -41,7 +41,7 @@ public class Controller implements ActionListener {
 	// executes a query in a thread, when the query is done an event is
 	// added to gui thread, which will load all available data from the data
 	// bank in model.
-	public void executeQuery(final QueryType queryType) {
+	public void executeQuery(final QueryType queryType, String queryText) {
 		new Thread() {
 			String errormsg = "";
 			public void run() {
@@ -52,13 +52,13 @@ public class Controller implements ActionListener {
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
 					case BOOKSEARCH:
-						qx.getAllAlbums();
+						qx.getAllAlbums(queryText);
 						break;
 					case MOVIESEARCH:
-						qx.getAllAlbums();
+						qx.getAllAlbums(queryText);
 						break;
 					case ALBUMSEARCH:
-						qx.getAllAlbums();
+						qx.getAllAlbums(queryText);
 						break;
 					// TODO add rating/review
 					}
@@ -93,7 +93,7 @@ public class Controller implements ActionListener {
 				case 2:
 					qt = QueryType.MOVIESEARCH;
 				}
-				executeQuery(qt);
+				executeQuery(qt, wbview.getQuery());
 			}
 		});
 	}
