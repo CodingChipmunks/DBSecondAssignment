@@ -84,7 +84,7 @@ public class WBView extends JFrame {
 
 		JButton searchBtn = new JButton("Search");
 		searchBtn.setActionCommand("searchBtn");
-		searchBtn.addActionListener(controller);
+		controller.setButtonSearch(searchBtn); //searchBtn.addActionListener(controller);
 		searchPanel.add(searchBtn, BorderLayout.EAST);
 
 		JComboBox comboBox = new JComboBox(searchOptions);
@@ -103,58 +103,32 @@ public class WBView extends JFrame {
 		return (JComboBox) searchPanel.getComponent(2);
 	}
 
-	// unusable ref.
-	// public JComboBox getComboBox() {
-	// return comboBox;
-	// }
-
-	// unusable ref.
-	// public int getSelectedItem() {
-	// return comboBox.getSelectedIndex();
-	// }
-
-	// fed with an arraylist?, on click: get index id, map to ArrayList in Model
-	// and grab Pk-Id.
-	// TODO align columns by size, not equal size.
 	// TODO list some column names that should not be displayed, id & rating etc
-	// TODO specify ArrayList argument.
-	public void feedTable() {
-		// -------------------------- BEGIN TEST BLOCK --------------------------------
-		Album album1 = new Album("Namesy-1", "2013", "usr", 1);
-		Album album2 = new Album("Namesy-2", "2013", "usr", 1);
-		Album album3 = new Album("Namesy-3", "2013", "usr", 1);
-		album2.AddArtist("Celine-Dion");
+	public void feedTable(Object[] list) {
+		Object[][] data = { { "No Results Found!" } };
+		String[] columnNames = { "Error!" };
 
-		ArrayList<Album> albumish = new ArrayList<Album>();
-
-		if (new Random().nextBoolean()) {
-			albumish.add(album1);
-			albumish.add(album2);
-			albumish.add(album3);
-		}
-
-		// ------------------------- END TEST BLOCK -------------------------------
-		Object[][] data = { {"No Results Found!"} };
-		String[] columnNames = {"Error!"};
-
-		if (!albumish.isEmpty()) {
-			// get fields from the first object in array, one object required to get columns,
-			// unless class is added as a parameter? might look better when displaying empty results.
-			Field[] fieldNames = albumish.get(0).getClass().getDeclaredFields();
+		if (null != list && list.length > 0) {
+			// get fields from the first object in array, one object required to
+			// get columns,
+			// unless class is added as a parameter? might look better when
+			// displaying empty results.
+			Field[] fieldNames = list[0].getClass().getDeclaredFields();
 			columnNames = new String[fieldNames.length];
 
-			// copy field names to column names. TODO check if the column should be used
+			// copy field names to column names. TODO check if the column should
+			// be used
 			// or not, "if fieldname.getname in DontUseThisColumn" ...
 			for (int i = 0; i < fieldNames.length; i++)
 				columnNames[i] = fieldNames[i].getName();
 
 			// specify output size, object count x column count
-			data = new Object[albumish.size()][fieldNames.length];
+			data = new Object[list.length][fieldNames.length];
 
 			// iterate over field names getting their values.
-			for (int i = 0; i < albumish.size(); i++) {
+			for (int i = 0; i < list.length; i++) {
 				// the object
-				Album c = albumish.get(i);
+				Object c = list[i];
 				for (int j = 0; j < columnNames.length; j++) {
 					try {
 						// the field, "column"
@@ -164,7 +138,8 @@ public class WBView extends JFrame {
 						Object value = field.get(c);
 						if (null != value) {
 							System.out.println(value.toString());
-							data[i][j] = value.toString();
+							data[i][j] = value.toString().replace("[", "")
+									.replace("]", "");
 						} else
 							data[i][j] = "";
 						field.setAccessible(false);
@@ -184,6 +159,23 @@ public class WBView extends JFrame {
 		table = new JTable(data, columnNames);
 		scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane);
+
+		// resize columns, setting minWidth to length of every column
+		// loops through every row.
+		int[] minWidthColumn = new int[table.getColumnCount()];
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			for (int j = 0; j < table.getRowCount(); j++) {
+				String text = table.getValueAt(j, i).toString();
+
+				int columnWidth = table.getFontMetrics(table.getFont())
+						.stringWidth(text);
+				if (columnWidth > minWidthColumn[i]) {
+					minWidthColumn[i] = columnWidth;
+					table.getColumnModel().getColumn(i)
+							.setMinWidth(columnWidth + 6);
+				}
+			}
+		}
 
 		// update view
 		updateView();
@@ -217,5 +209,9 @@ public class WBView extends JFrame {
 
 	public void updateView() {
 		contentPane.updateUI();
+	}
+
+	public void showError(String errormsg) {
+		JOptionPane.showMessageDialog(this, errormsg);	
 	}
 }
