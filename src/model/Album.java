@@ -7,6 +7,7 @@ public class Album {
 	private String name;
 	private String year;
 	private String user;
+	private Genre genre = new Genre("");
 	private ArrayList<Artist> artist = new ArrayList<Artist>();
 	private ArrayList<Review> review = new ArrayList<Review>();
 	private ArrayList<Rating> rating = new ArrayList<Rating>();
@@ -18,12 +19,11 @@ public class Album {
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
-	public int getId()
-	{
+
+	public int getId() {
 		return id;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public ArrayList<Review> getReview() {
 		return (ArrayList<Review>) review.clone();
@@ -33,11 +33,10 @@ public class Album {
 		this.review = review;
 	}
 
-	public void setArtist(ArrayList<Artist> artist)
-	{
+	public void setArtist(ArrayList<Artist> artist) {
 		this.artist = artist;
 	}
-	
+
 	public ArrayList<Rating> getRating() {
 		return rating;
 	}
@@ -69,26 +68,23 @@ public class Album {
 		this.user = user;
 		this.id = id;
 	}
-	
-	public void AddArtist(String name)
-	{
+
+	public void AddArtist(String name) {
 		artist.add(new Artist(name));
 	}
-	
-	public float meanRating()
-	{
+
+	public float meanRating() {
 		float mean = 0.0f;
-		
+
 		for (int i = 0; i < rating.size(); i++)
 			mean += rating.get(i).getScore();
-		
+
 		return (mean / rating.size());
 	}
-	
-	public boolean hasArtist(String name)
-	{
+
+	public boolean hasArtist(String name) {
 		boolean result = false;
-		
+
 		for (int i = 0; i < artist.size(); i++)
 			if (name.equals(artist.get(i).getName()))
 				result = true;
@@ -98,8 +94,12 @@ public class Album {
 	@Override
 	public String toString() {
 		return "Album [id=" + id + ", name=" + name + ", year=" + year
-				+ ", user=" + user + ", artist=" + artist + ", review="
-				+ review + ", rating=" + rating + "]";
+				+ ", genre=" + genre + ", user=" + user + ", artist=" + artist
+				+ ", review=" + review + ", rating=" + rating + "]";
+	}
+
+	public void setGenre(String string) {
+		genre = new Genre(string);
 	}
 
 }
