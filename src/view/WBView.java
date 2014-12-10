@@ -33,7 +33,7 @@ public class WBView extends JFrame {
 
 	// dialogs
 	private AddMediaDialog addMediaDialog;
-	// private RateMediaDialog rate;
+	private RateMediaDialog rateMediaDialog;
 	private ReviewMediaDialog reviewMediaDialog;
 
 	private final String[] searchOptions = { "Album", "Movie", "Book" }; // Used
@@ -49,6 +49,7 @@ public class WBView extends JFrame {
 		Controller controller = new Controller(m, this);
 
 		addMediaDialog = new AddMediaDialog(m, this);
+		rateMediaDialog = new RateMediaDialog(m, this);
 		reviewMediaDialog = new ReviewMediaDialog(m, this);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,6 +63,7 @@ public class WBView extends JFrame {
 		table = new JTable();
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
+//		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane, BorderLayout.CENTER);
@@ -113,7 +115,7 @@ public class WBView extends JFrame {
 
 		// create components in methods
 		setVisible(true);
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(null);//wbview.getSelectedId();
 	}
 
 	public String[] getSearchOptions() {
@@ -136,6 +138,11 @@ public class WBView extends JFrame {
 	public int getSelectedId()
 	{
 		return new Integer(table.getValueAt(table.getSelectedRow(), 0).toString());
+	}
+	
+	public int getSelectedRowCount()
+	{
+		return table.getSelectedRowCount();
 	}
 
 	public String getMediaType() {
@@ -251,8 +258,16 @@ public class WBView extends JFrame {
 		this.setVisible(true);
 	}
 
-	public void invokeRateMediaDialog() {
-		// rate.setVisible(true);
+	public void invokeRateMediaDialog(int selectedRow) {
+		// TODO i'll fix this
+		rateMediaDialog.setSelectedRow(selectedRow);
+		rateMediaDialog.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	public void revokeRateMediaDialog() {
+		rateMediaDialog.setVisible(false);
+		this.setVisible(true);
 	}
 
 	public void invokeAddMediaDialog() {

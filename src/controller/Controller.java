@@ -145,10 +145,24 @@ public class Controller implements ActionListener {
 	public void setButtonRate(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				
-				
-				
-				System.out.println("Rate Button for Media_Id: " + wbview.getSelectedId());
+				try {
+					System.out.println("Rate Button for Media_Id: " + wbview.getSelectedId());
+					
+					// TODO Exception would b nicer!
+					if(wbview.getSelectedRowCount() == 1) {
+						wbview.invokeRateMediaDialog(wbview.getSelectedId());
+					} else {
+//						wbview.showError("You have to select ONE media item!");
+						throw new Exception("multiselect");
+					}
+					
+				} catch (Exception e) {
+					if(e.getMessage().equals("multiselect")) {
+						wbview.showError("You have to select ONE media item!");
+					} else {
+						wbview.showError("You have to select a media item!");
+					}
+				}
 			}
 		});
 	}
