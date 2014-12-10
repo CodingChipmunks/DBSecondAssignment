@@ -24,8 +24,6 @@ public class Start {
 				try {
 					Model model = new Model();
 					WBView frame = new WBView(model);
-					matchHostTheme(frame);
-					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -33,18 +31,6 @@ public class Start {
 		});
 		
 	}
-	
-	/**
-	 * Matches application theme to system theme
-	 * regardless of system
-	 * @param c a component to change theme on
-	 */
-	private static void matchHostTheme(Component c) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch(Exception e) {}
-		SwingUtilities.updateComponentTreeUI(c);
-	}
+
 
 }

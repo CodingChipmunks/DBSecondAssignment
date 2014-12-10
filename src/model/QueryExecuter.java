@@ -19,6 +19,8 @@ public class QueryExecuter implements QueryInterpreter {
 	private final static String driver = "com.mysql.jdbc.Driver";
 	private final static String host = "jdbc:mysql://localhost:3306/";
 
+	private Model model;
+	
 	private Connection connection;
 	private Statement statement;
 	private PreparedStatement preparedStatement;
@@ -28,17 +30,18 @@ public class QueryExecuter implements QueryInterpreter {
 
 	public static void main(String args[]) {
 		try {
-			QueryExecuter lols = new QueryExecuter();
+			QueryExecuter lols = new QueryExecuter(new Model());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public QueryExecuter() throws SQLException {
+	public QueryExecuter(Model model) throws SQLException {
 		// enabling conversion form relational to object model
 		rc = new RowConverter();
 
+		this.model = model;
 		connection = null;
 		statement = null;
 		preparedStatement = null;
