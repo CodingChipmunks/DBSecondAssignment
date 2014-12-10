@@ -27,6 +27,7 @@ public class WBView extends JFrame {
 	private JScrollPane scrollPane;
 	private String mediaType;
 	private int mediaIndex;
+	private String mediaQuery;
 	private ArrayList<String> columnFilter = new ArrayList<String>();
 
 	// dialogs
@@ -259,5 +260,9 @@ public class WBView extends JFrame {
 
 	public void showError(String errormsg) {
 		JOptionPane.showMessageDialog(this, errormsg);
+	}
+
+	public String getQuery() {
+		return mediaQuery;
 	}
 }

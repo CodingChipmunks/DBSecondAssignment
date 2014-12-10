@@ -28,7 +28,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	public static void main(String args[]) {
 		try {
 			QueryExecuter qx = new QueryExecuter(new Model());
-			qx.getAllAlbums();
+			qx.getAllAlbums("Rammstein");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -60,13 +60,13 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 	
 	@Override
-	public List<Album> getAllAlbums() throws SQLException {
+	public List<Album> getAllAlbums(String search) throws SQLException {
 		List<Album> albums = new ArrayList<Album>(); 
 		ResultSet rsetAlbum = null;
 
 		try {
 			rsetAlbum = statement
-					.executeQuery("select * from Media where Mediatype_Id = 1"); // 1
+					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '%"+search+"%'"); // 1
 
 			// for every album do...
 			while (rsetAlbum.next()) {
