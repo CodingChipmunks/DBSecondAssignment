@@ -3,11 +3,11 @@
 -- Warning: Running This Script Will Reset Database.MediaCollection!
 
 -- Reset the schema.
-DROP SCHEMA IF EXISTS MediaCollection;
+DROP SCHEMA IF EXISTS mediacollection;
 
 -- Create DB
-CREATE SCHEMA IF NOT EXISTS MediaCollection;
-USE MediaCollection;
+CREATE SCHEMA IF NOT EXISTS mediacollection;
+USE mediacollection;
 
 -- Generate tables
 
