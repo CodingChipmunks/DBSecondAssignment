@@ -14,7 +14,7 @@ public interface QueryInterpreter {
 	
 	public List<Album> searchByAlbumTitle(String title);
 	
-	public List<Album> searchByArtist(String artist);
+	public List<Artist> searchByArtist(String artist) throws SQLException;
 	
 	public List<Album> searchByGenre(String genre);	//enum? / JComboBoxItem! == Object[] 
 	

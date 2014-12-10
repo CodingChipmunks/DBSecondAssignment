@@ -25,6 +25,7 @@ public class QueryExecuter implements QueryInterpreter {
 	
 	private Connection connection;
 	private Statement statement;
+	private PreparedStatement preparedStatement;
 	private ResultSet resultSet;
 	
 	private RowConverter rc;
@@ -61,7 +62,9 @@ public class QueryExecuter implements QueryInterpreter {
 		
 		try {
 			getAllAlbums();
-			getDirectors();
+			//getDirectors();
+			//searchByAlbumTitle("R");
+			searchByArtist("R");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -240,10 +243,35 @@ public class QueryExecuter implements QueryInterpreter {
 		return null;
 	}
 
+	//searchByCreator???
 	@Override
-	public List<Album> searchByArtist(String artist) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Artist> searchByArtist(String artist) throws SQLException {
+		List<Artist> resultingArtists = new ArrayList<Artist>();
+		
+		try {	
+			artist += "%";
+			preparedStatement = connection.prepareStatement("select Name from Creator where Name like ?");
+			
+			preparedStatement.setString(1, artist);
+			resultSet = preparedStatement.executeQuery();
+
+			// loop through result set
+			while(resultSet.next()){
+				resultingArtists = rc.convertRowToArtist(resultSet);
+			}
+			
+			System.out.println("Found Artists: ");
+			// NOTHING! but it should work...
+			for (Artist a : resultingArtists) {
+				System.out.println(a.toString());
+			}
+			
+			return resultingArtists;
+			
+		}
+		finally {
+//			closeStatementAndResultSet();
+		}
 	}
 
 	@Override
