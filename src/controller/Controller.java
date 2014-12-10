@@ -41,7 +41,7 @@ public class Controller implements ActionListener {
 	// executes a query in a thread, when the query is done an event is
 	// added to gui thread, which will load all available data from the data
 	// bank in model.
-	public void executeQuery(final QueryType queryType, String queryText) {
+	public void executeQuery(final QueryType queryType, final String queryText) {
 		new Thread() {
 			String errormsg = "";
 			public void run() {
