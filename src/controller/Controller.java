@@ -40,6 +40,8 @@ public class Controller implements ActionListener {
 		this.model = m;
 		this.wbview = wbv;
 	}
+	
+	
 
 	// executes a query in a thread, when the query is done an event is
 	// added to gui thread, which will load all available data from the data
@@ -143,8 +145,10 @@ public class Controller implements ActionListener {
 	public void setButtonRate(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				// TODO create rate query..
-				System.out.println("Rate Button");
+				
+				
+				
+				System.out.println("Rate Button for Media_Id: " + wbview.getSelectedId());
 			}
 		});
 	}
