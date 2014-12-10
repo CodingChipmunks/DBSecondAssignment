@@ -95,4 +95,11 @@ public class Album {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "Album [id=" + id + ", name=" + name + ", year=" + year
+				+ ", user=" + user + ", artist=" + artist + ", review="
+				+ review + ", rating=" + rating + "]";
+	}
+
 }

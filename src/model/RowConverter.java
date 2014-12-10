@@ -13,8 +13,7 @@ public class RowConverter {
 		ArrayList<Review> review = new ArrayList<Review>();
 
 		while (reviewRow.next()) {
-			review.add(new Review(reviewRow.getString("text"), reviewRow
-					.getString("user")));
+			review.add(new Review(reviewRow.getString("text"), ""));// reviewRow.getString("user")
 		}
 
 		return review;
@@ -25,8 +24,8 @@ public class RowConverter {
 		ArrayList<Rating> rating = new ArrayList<Rating>();
 
 		while (ratingRow.next()) {
-			rating.add(new Rating(ratingRow.getString("user"), ratingRow
-					.getInt("rating")));
+			rating.add(new Rating("", ratingRow
+					.getInt("rating")));	// ratingRow.getString("user")
 		}
 
 		return rating;
@@ -57,12 +56,22 @@ public class RowConverter {
 	public Album convertRowToAlbum(ResultSet albumRow, ResultSet artistRow,
 			ResultSet reviewRow, ResultSet ratingRow) throws SQLException {
 
-		Album album = new Album(albumRow.getString("name"),
-				albumRow.getString("year"), albumRow.getString("user"), albumRow.getInt("id"));
+		Album album = new Album(albumRow.getString("title"),
+				albumRow.getString("year"), "", albumRow.getInt("id"));	//  albumRow.getString("user")
 
 		album.setReview(convertRowToReview(reviewRow));
 		album.setRating(convertRowToRating(ratingRow));
 		album.setArtist(convertRowToArtist(artistRow));
+		return album;
+	}
+	
+	// Demo purpose only, the one above is way better
+	public Album convertRowToAlbum(ResultSet bigAlbumRow) throws SQLException {
+
+		Album album = new Album(bigAlbumRow.getString("title"),
+				bigAlbumRow.getString("year"), "", bigAlbumRow.getInt("id"));
+
+		//hmmm
 		return album;
 	}
 
