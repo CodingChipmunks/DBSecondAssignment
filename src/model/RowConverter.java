@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public final class RowConverter {
 	public static Review convertRowToReview(ResultSet reviewRow)
 			throws SQLException {
-		return  new Review(reviewRow.getString("title"), reviewRow.getString("text"), "");// reviewRow.getString("user")
+		return  new Review(reviewRow.getString("title"), reviewRow.getString("text"), "");
 	}
 
 	public static ArrayList<Rating> convertRowToRating(ResultSet ratingRow)

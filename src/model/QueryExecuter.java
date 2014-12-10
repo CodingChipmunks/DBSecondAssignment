@@ -117,7 +117,8 @@ public final class QueryExecuter implements QueryInterpreter {
 				while(rsetReview.next())
 				{
 					Review review = RowConverter.convertRowToReview(rsetReview);
-					rsetUser = stUser.executeQuery("select Name from User where Id = " + rsetReview.getInt("Account_Id") + ";");
+					System.out.println(rsetReview.getInt(1));
+					rsetUser = stUser.executeQuery("select Name from Account where Id = " + rsetReview.getInt("Account_Id") + ";");
 					album.addReview(review);
 				}
 
