@@ -210,4 +210,8 @@ public class WBView extends JFrame {
 	public void updateView() {
 		contentPane.updateUI();
 	}
+
+	public void showError(String errormsg) {
+		JOptionPane.showMessageDialog(this, errormsg);	
+	}
 }

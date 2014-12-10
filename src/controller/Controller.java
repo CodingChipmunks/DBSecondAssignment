@@ -44,6 +44,7 @@ public class Controller implements ActionListener {
 	// bank in model.
 	public void executeQuery(QueryType queryType) {
 		new Thread() {
+			String errormsg = "";
 			public void run() {
 				System.out.println("query running!");
 				try {
@@ -64,12 +65,14 @@ public class Controller implements ActionListener {
 					}
 
 					System.out.println("query complete!");
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				} catch (SQLException e) {
+					errormsg = e.getMessage();
 				}
 				System.out.println("View Waiting for update..");
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
+						if (!errormsg.equals(""))
+							wbview.showError(errormsg);
 						wbview.feedTable(model.getBank());
 						System.out.println("View was updated!");
 					}
