@@ -18,7 +18,6 @@ import view.*;
 /**
  * Handles listeners
  * 
- * @author softish
  * 
  */
 public class Controller implements ActionListener {
