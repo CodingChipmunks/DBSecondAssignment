@@ -28,7 +28,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	public static void main(String args[]) {
 		try {
 			QueryExecuter qx = new QueryExecuter(new Model());
-			qx.getAlbumsByAny("Rosenrot");
+			qx.getAllAlbums("Rammstein");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -60,11 +60,15 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAllAlbums(ResultSet rsetAlbum)
-			throws SQLException {
-		ArrayList<Album> albums = new ArrayList<Album>();
+	public List<Album> getAllAlbums(String search) throws SQLException {
+		List<Album> albums = new ArrayList<Album>();
+		ResultSet rsetAlbum = null;
 
 		try {
+			rsetAlbum = statement
+					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '"
+							+ search + "'"); // 1
+
 			// for every album do...
 			while (rsetAlbum.next()) {
 				ResultSet rsetGenre;
@@ -147,6 +151,81 @@ public final class QueryExecuter implements QueryInterpreter {
 		} finally {
 			closeStatement(statement);
 			closeResultSet(rsetAlbum);
+		}
+
+		return null;
+	}
+
+	private void listClose(Statement[] statements, ResultSet[] resultSets) {
+		try {
+			for (int i = 0; i < statements.length; i++)
+				if (null != statements[i])
+					statements[i].close();
+			for (int i = 0; i < resultSets.length; i++)
+				if (null != resultSets[i])
+					resultSets[i].close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	// more research...
+	public List<Album> getAllAlbums2() throws SQLException {
+		List<Album> albums = new ArrayList<Album>();
+
+		// make statement and result set
+		Statement s = null;
+
+		Statement sAlbum = null;
+		Statement sArtist = null;
+		Statement sReview = null;
+		Statement sRating = null;
+
+		ResultSet rAlbum = null;
+		ResultSet rArtist = null;
+		ResultSet rReview = null;
+		ResultSet rRating = null;
+
+		try {
+			// use statement and result set to fetch info
+			s = connection.createStatement();
+
+			sAlbum = connection.createStatement();
+			sArtist = connection.createStatement();
+			sReview = connection.createStatement();
+			sRating = connection.createStatement();
+
+			// get info
+			rAlbum = sAlbum.executeQuery("select * " + "from Media "
+					+ "where Mediatype_Id = 1");
+
+			rArtist = sArtist.executeQuery("select Creator.Name "
+					+ "from Contributor, Creator, Media "
+					+ "where Contributor.Creator_Id = Media.Id "
+					+ "and Media.Mediatype_Id = 1");
+
+			rReview = sReview.executeQuery("select * " + "from Review, Media "
+					+ "where Review.Media_Id = Media.Id");
+
+			rRating = sRating.executeQuery("select * " + "from Rating, Media "
+					+ "where Rating.Media_Id = Media.Id");
+
+			// loop through result set
+			while (rAlbum.next()) {
+				albums.add(RowConverter.convertRowToAlbum(rAlbum, rArtist,
+						rReview, rRating));
+			}
+
+			// System.out.println("Albums");
+			// return list
+
+			for (Album a : albums) {
+				System.out.println(a.toString());
+			}
+
+		} finally {
+			// closeStatementAndResultSet(s, r);
 		}
 
 		return null;
@@ -239,82 +318,24 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public List<Album> getAlbumsByAny(String text) throws SQLException {
-		ArrayList<Album> album = new ArrayList<Album>();
-		ArrayList<Album> temp;
+	public List<Album> searchByAlbumTitle(String title) {
+		List<Album> resultingAlbum = new ArrayList<Album>();
 
-		temp = searchByAlbumTitle(text);
+		// make statement and result set
 
-		// add not yet added albums from title search.
-		if (null != temp)
-			for (int i = 0; i < temp.size(); i++)
-				if (!album.contains(temp))
-					album.add(temp.get(i));
-
-		temp = searchByGenre(text);
-
-		// search by genre
-		if (null != temp)
-			for (int i = 0; i < temp.size(); i++)
-				if (!album.contains(temp))
-					album.add(temp.get(i));
-
-		// search by rating
-		// search by artist
-		return album;
-	}
-
-	@Override
-	public ArrayList<Album> searchByGenre(String genre) throws SQLException {
-		ArrayList<Album> album = new ArrayList<Album>();
-		ResultSet rsetAlbum = null;
-		ResultSet rsetGenre = null;
-		Statement stGenre = null;
-		Statement stAlbum = null;
-
+		// TODO define sql query
 		try {
-			stGenre = connection.createStatement();
-			rsetGenre = stGenre
-					.executeQuery("select Id from Genre where Name like '"
-							+ genre + "';");
 
-			if (rsetGenre.isBeforeFirst()) {
-				rsetGenre.next();
-				stAlbum = connection.createStatement();
-				rsetAlbum = stAlbum
-						.executeQuery("select * from Media where MediaType_Id = 1 and Genre_Id='"
-								+ rsetGenre.getInt(1) + "';");
+			// statement with WHERE clause, prepare it correctly using
+			// PArameters
 
-				album = getAllAlbums(rsetAlbum);
-			}
-			// get genre ids from name
-			// query resultset with id
+			// loop through result set adding objects to list
+
+			// return list
 		} finally {
-			listClose(new Statement[] { stAlbum, stGenre }, new ResultSet[] {
-					rsetAlbum, rsetGenre });
+			// close statement and result set
 		}
-
-		return album;
-	}
-
-	@Override
-	public ArrayList<Album> searchByAlbumTitle(String title)
-			throws SQLException {
-		ArrayList<Album> album = new ArrayList<Album>();
-		ResultSet rsetAlbum = null;
-		Statement stAlbum = connection.createStatement();
-		try {
-			rsetAlbum = stAlbum
-					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '"
-							+ title + "'");
-			album = getAllAlbums(rsetAlbum);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			listClose(new Statement[] { stAlbum },
-					new ResultSet[] { rsetAlbum });
-		}
-		return album;
+		return null;
 	}
 
 	@Override
@@ -356,6 +377,12 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
+	public List<Album> searchByGenre(String genre) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public List<Album> searchByRating(int rating) {
 		// TODO Auto-generated method stub
 		return null;
@@ -394,19 +421,5 @@ public final class QueryExecuter implements QueryInterpreter {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private void listClose(Statement[] statements, ResultSet[] resultSets) {
-		try {
-			for (int i = 0; i < statements.length; i++)
-				if (null != statements[i])
-					statements[i].close();
-			for (int i = 0; i < resultSets.length; i++)
-				if (null != resultSets[i])
-					resultSets[i].close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
 	}
 }
