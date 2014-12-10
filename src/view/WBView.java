@@ -90,11 +90,14 @@ public class WBView extends JFrame {
 		searchPanel.add(textField, BorderLayout.CENTER); // TODO changed from
 															// NORTH, approve?
 		textField.setColumns(10);
+		controller.setQuerySource(textField);
 
 		JButton searchBtn = new JButton("Search");
 		// searchBtn.setActionCommand("searchBtn");
 		controller.setButtonSearch(searchBtn); // searchBtn.addActionListener(controller);
 		searchPanel.add(searchBtn, BorderLayout.EAST);
+		JRootPane rootPane = SwingUtilities.getRootPane(searchBtn);
+		rootPane.setDefaultButton(searchBtn);
 
 		JComboBox comboBox = new JComboBox(searchOptions);
 		// comboBox.setActionCommand("comboBox");
@@ -134,6 +137,12 @@ public class WBView extends JFrame {
 
 	public int getMediaIndex() {
 		return mediaIndex;
+	}
+
+	public String getMediaQuery()
+
+	{
+		return textField.getText();
 	}
 
 	public void setColumnFilter(String[] text) {
@@ -229,9 +238,8 @@ public class WBView extends JFrame {
 		reviewMediaDialog.setVisible(true);
 		this.setVisible(false);
 	}
-	
-	public void revokeReviewMediaDialog()
-	{
+
+	public void revokeReviewMediaDialog() {
 		reviewMediaDialog.setVisible(false);
 		this.setVisible(true);
 	}
@@ -250,19 +258,11 @@ public class WBView extends JFrame {
 		this.setVisible(true);
 	}
 
-	public String getSearchFieldText() {
-		return textField.getText();
-	}
-
 	public void updateView() {
 		contentPane.updateUI();
 	}
 
 	public void showError(String errormsg) {
 		JOptionPane.showMessageDialog(this, errormsg);
-	}
-
-	public String getQuery() {
-		return mediaQuery;
 	}
 }
