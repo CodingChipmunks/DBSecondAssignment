@@ -56,7 +56,7 @@ public class Controller implements ActionListener {
 						qx.getAllAlbums();
 						break;
 					case MOVIESEARCH:
-						qx.getMovie();
+						qx.getAllAlbums();
 						break;
 					case ALBUMSEARCH:
 						qx.getAllAlbums();
@@ -86,7 +86,7 @@ public class Controller implements ActionListener {
 			public void mousePressed(MouseEvent evt) {
 				QueryType qt = null;
 
-				switch (wbview.getSearchPanelComponent().getSelectedIndex()) {
+				switch (wbview.getMediaIndex()) { 
 				case 0:
 					qt = QueryType.ALBUMSEARCH;
 				case 1:
@@ -103,6 +103,7 @@ public class Controller implements ActionListener {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				//TODO create review query..
+				System.out.println("Review Button");
 			}
 		});
 	}
@@ -111,14 +112,18 @@ public class Controller implements ActionListener {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				// TODO create rate query..
+				System.out.println("Rate Button");
 			}
 		});
 	}
+	
 	
 	public void setButtonAdd(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				// TODO create add query
+				System.out.println("Add Button");
+				wbview.invokeAddMediaDialog();
 			}
 		});
 	}

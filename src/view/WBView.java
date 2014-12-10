@@ -1,24 +1,21 @@
 package view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
-import model.Album;
-import model.Artist;
 import model.Model;
-import model.QueryExecuter;
-import model.QueryInterpreter;
 
 /**
  * WindowBuilder class, compatible with git? Better than Start?
  * 
  */
+@SuppressWarnings("serial")
 public class WBView extends JFrame {
 
 	private JPanel contentPane;
@@ -27,12 +24,15 @@ public class WBView extends JFrame {
 	private JComboBox comboBox;
 	private JPanel searchPanel;
 	private JScrollPane scrollPane;
-
-	// private AddMediaDialog add;
+	private String mediaType;
+	private int mediaIndex;
+	
+	// dialogs
+	private AddMediaDialog addMediaDialog;
 	// private RateMediaDialog rate;
 	// private ReviewMediaDialog review;
-
-	private String[] searchOptions = { "Album", "Movie", "E-Book" };
+	
+	private String[] searchOptions = { "Album", "Movie", "Book" }; // Used with Class.ForName.
 
 	// declare all GUI components here
 
@@ -41,6 +41,9 @@ public class WBView extends JFrame {
 	 */
 	public WBView(Model m) {
 		Controller controller = new Controller(m, this);
+		
+		addMediaDialog = new AddMediaDialog(m, this);
+
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -48,6 +51,7 @@ public class WBView extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		View.setUITheme(this);
 
 		table = new JTable();
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
@@ -59,18 +63,18 @@ public class WBView extends JFrame {
 		contentPane.add(btnPanel, BorderLayout.SOUTH);
 
 		JButton rateBtn = new JButton("Rate Selected");
-		rateBtn.setActionCommand("rateBtn");
-		rateBtn.addActionListener(controller);
+		//rateBtn.setActionCommand("rateBtn");
+		controller.setButtonRate(rateBtn); //rateBtn.addActionListener(controller);
 		btnPanel.add(rateBtn);
 
 		JButton reviewBtn = new JButton("Review Selected");
-		reviewBtn.setActionCommand("reviewBtn");
+		controller.setButtonReview(reviewBtn); //reviewBtn.setActionCommand("reviewBtn");
 		reviewBtn.addActionListener(controller);
 		btnPanel.add(reviewBtn);
 
 		JButton addBtn = new JButton("Add Media");
-		addBtn.setActionCommand("addBtn");
-		addBtn.addActionListener(controller);
+		//addBtn.setActionCommand("addBtn");
+		controller.setButtonAdd(addBtn); //addBtn.addActionListener(controller);
 		btnPanel.add(addBtn);
 
 		searchPanel = new JPanel();
@@ -83,26 +87,58 @@ public class WBView extends JFrame {
 		textField.setColumns(10);
 
 		JButton searchBtn = new JButton("Search");
-		searchBtn.setActionCommand("searchBtn");
+		//searchBtn.setActionCommand("searchBtn");
 		controller.setButtonSearch(searchBtn); //searchBtn.addActionListener(controller);
 		searchPanel.add(searchBtn, BorderLayout.EAST);
 
 		JComboBox comboBox = new JComboBox(searchOptions);
-		comboBox.setActionCommand("comboBox");
+		//comboBox.setActionCommand("comboBox");
 		comboBox.setPrototypeDisplayValue("as long as this");
 		comboBox.setSelectedIndex(0);
-		comboBox.addActionListener(controller);
+		setMediaCombo(comboBox);
+		mediaType = searchOptions[0];
+		mediaIndex = 0;
+		//comboBox.addActionListener(controller); -- not required.
 		searchPanel.add(comboBox, BorderLayout.WEST);
 
 		// create components in methods
 		createDialogs();
+		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 
 	// PArt of the dangerous solution
-	public JComboBox getSearchPanelComponent() {
-		return (JComboBox) searchPanel.getComponent(2);
+	//public JComboBox getSearchPanelComponent() {
+	//	return (JComboBox) searchPanel.getComponent(2);
+	//}
+	
+	public String[] getSearchOptions()
+	{
+		return searchOptions;
+	}
+	
+	// updated, no longer requires the index of component, stores values on change.
+	public void setMediaCombo(JComboBox combo)
+	{
+		combo.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		        mediaType = combo.getSelectedItem().toString();
+		        mediaIndex = combo.getSelectedIndex();
+		        System.out.println("Selected media type: " + mediaType + ": " + mediaIndex);
+		    }
+		});
+	}
+	
+	public String getMediaType()
+	{
+		return mediaType;
 	}
 
+	public int getMediaIndex()
+	{
+		return mediaIndex;
+	}
+	
 	// TODO list some column names that should not be displayed, id & rating etc
 	public void feedTable(Object[] list) {
 		Object[][] data = { { "No Results Found!" } };
@@ -200,7 +236,14 @@ public class WBView extends JFrame {
 	}
 
 	public void invokeAddMediaDialog() {
-		// add.setVisible(true);
+		addMediaDialog.setVisible(true);
+		this.setVisible(false);
+	}
+	
+	public void revokeMediaDialog()
+	{
+		addMediaDialog.setVisible(false);
+		this.setVisible(true);
 	}
 
 	public String getSearchFieldText() {
