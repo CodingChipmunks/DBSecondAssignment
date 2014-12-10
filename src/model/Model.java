@@ -15,6 +15,7 @@ import view.*;
 public class Model {
 	private ArrayList<Album> album; // clear these on some queries.
 	private ArrayList<Movie> movie;
+	private ArrayList<Review> review;
 
 	// TODO: add QueryExecuter
 	public Model() throws SQLException {
@@ -32,6 +33,13 @@ public class Model {
 		return (ArrayList<Album>) album.clone();
 	}
 
+	@SuppressWarnings("unchecked")
+	public ArrayList<Review> getReview()
+	{
+		return ((ArrayList<Review>) review.clone());
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	public ArrayList<Movie> getMovie() {
 		return (ArrayList<Movie>) movie.clone();
