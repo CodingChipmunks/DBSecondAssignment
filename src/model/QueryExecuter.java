@@ -58,11 +58,10 @@ public final class QueryExecuter implements QueryInterpreter {
 		} catch (SQLException e) {
 		}
 	}
-
-	// TODO @ research
+	
 	@Override
 	public List<Album> getAllAlbums() throws SQLException {
-		List<Album> albums = new ArrayList<Album>();
+		List<Album> albums = new ArrayList<Album>(); 
 		ResultSet rsetAlbum = null;
 
 		try {
@@ -421,9 +420,5 @@ public final class QueryExecuter implements QueryInterpreter {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private void closeFinalAllTheStuff() {
-
 	}
 }

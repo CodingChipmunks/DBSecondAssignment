@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -26,13 +27,16 @@ public class WBView extends JFrame {
 	private JScrollPane scrollPane;
 	private String mediaType;
 	private int mediaIndex;
-	
+	private ArrayList<String> columnFilter = new ArrayList<String>();
+
 	// dialogs
 	private AddMediaDialog addMediaDialog;
 	// private RateMediaDialog rate;
 	private ReviewMediaDialog reviewMediaDialog;
-	
-	private String[] searchOptions = { "Album", "Movie", "Book" }; // Used with Class.ForName.
+
+	private final String[] searchOptions = { "Album", "Movie", "Book" }; // Used
+																			// with
+																			// Class.ForName.
 
 	// declare all GUI components here
 
@@ -41,10 +45,9 @@ public class WBView extends JFrame {
 	 */
 	public WBView(Model m) {
 		Controller controller = new Controller(m, this);
-		
+
 		addMediaDialog = new AddMediaDialog(m, this);
 		reviewMediaDialog = new ReviewMediaDialog(m, this);
-
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -64,18 +67,18 @@ public class WBView extends JFrame {
 		contentPane.add(btnPanel, BorderLayout.SOUTH);
 
 		JButton rateBtn = new JButton("Rate Selected");
-		//rateBtn.setActionCommand("rateBtn");
-		controller.setButtonRate(rateBtn); //rateBtn.addActionListener(controller);
+		// rateBtn.setActionCommand("rateBtn");
+		controller.setButtonRate(rateBtn); // rateBtn.addActionListener(controller);
 		btnPanel.add(rateBtn);
 
 		JButton reviewBtn = new JButton("Review Selected");
-		controller.setButtonReview(reviewBtn); //reviewBtn.setActionCommand("reviewBtn");
+		controller.setButtonReview(reviewBtn); // reviewBtn.setActionCommand("reviewBtn");
 		reviewBtn.addActionListener(controller);
 		btnPanel.add(reviewBtn);
 
 		JButton addBtn = new JButton("Add Media");
-		//addBtn.setActionCommand("addBtn");
-		controller.setButtonAdd(addBtn); //addBtn.addActionListener(controller);
+		// addBtn.setActionCommand("addBtn");
+		controller.setButtonAdd(addBtn); // addBtn.addActionListener(controller);
 		btnPanel.add(addBtn);
 
 		searchPanel = new JPanel();
@@ -88,58 +91,66 @@ public class WBView extends JFrame {
 		textField.setColumns(10);
 
 		JButton searchBtn = new JButton("Search");
-		//searchBtn.setActionCommand("searchBtn");
-		controller.setButtonSearch(searchBtn); //searchBtn.addActionListener(controller);
+		// searchBtn.setActionCommand("searchBtn");
+		controller.setButtonSearch(searchBtn); // searchBtn.addActionListener(controller);
 		searchPanel.add(searchBtn, BorderLayout.EAST);
 
 		JComboBox comboBox = new JComboBox(searchOptions);
-		//comboBox.setActionCommand("comboBox");
+		// comboBox.setActionCommand("comboBox");
 		comboBox.setPrototypeDisplayValue("as long as this");
 		comboBox.setSelectedIndex(0);
 		setMediaCombo(comboBox);
 		mediaType = searchOptions[0];
 		mediaIndex = 0;
-		//comboBox.addActionListener(controller); -- not required.
+		// comboBox.addActionListener(controller); -- not required.
 		searchPanel.add(comboBox, BorderLayout.WEST);
 
 		// create components in methods
-		createDialogs();
 		setVisible(true);
 		setLocationRelativeTo(null);
 	}
 
-	// PArt of the dangerous solution
-	//public JComboBox getSearchPanelComponent() {
-	//	return (JComboBox) searchPanel.getComponent(2);
-	//}
-	
-	public String[] getSearchOptions()
-	{
+	public String[] getSearchOptions() {
 		return searchOptions;
 	}
-	
-	// updated, no longer requires the index of component, stores values on change.
-	public void setMediaCombo(final JComboBox combo)
-	{
-		combo.addActionListener (new ActionListener () {
-		    public void actionPerformed(ActionEvent e) {
-		        mediaType = combo.getSelectedItem().toString();
-		        mediaIndex = combo.getSelectedIndex();
-		        System.out.println("Selected media type: " + mediaType + ": " + mediaIndex);
-		    }
+
+	// updated, no longer requires the index of component, stores values on
+	// change.
+	public void setMediaCombo(final JComboBox combo) {
+		combo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mediaType = combo.getSelectedItem().toString();
+				mediaIndex = combo.getSelectedIndex();
+				System.out.println("Selected media type: " + mediaType + ": "
+						+ mediaIndex);
+			}
 		});
 	}
-	
-	public String getMediaType()
-	{
+
+	public String getMediaType() {
 		return mediaType;
 	}
 
-	public int getMediaIndex()
-	{
+	public int getMediaIndex() {
 		return mediaIndex;
 	}
-	
+
+	public void setColumnFilter(String[] text) {
+		columnFilter.clear();
+		for (int i = 0; i < text.length; i++)
+			columnFilter.add(text[i]);
+	}
+
+	private String[] filterColumns(Field[] fieldNames) {
+		ArrayList<String> columns = new ArrayList<String>();
+
+		for (int i = 0; i < fieldNames.length; i++)
+			if (!columnFilter.contains(fieldNames[i].getName()))
+				columns.add(fieldNames[i].getName());
+
+		return columns.toArray(new String[columns.size()]);
+	}
+
 	// TODO list some column names that should not be displayed, id & rating etc
 	public void feedTable(Object[] list) {
 		Object[][] data = { { "No Results Found!" } };
@@ -153,11 +164,7 @@ public class WBView extends JFrame {
 			Field[] fieldNames = list[0].getClass().getDeclaredFields();
 			columnNames = new String[fieldNames.length];
 
-			// copy field names to column names. TODO check if the column should
-			// be used
-			// or not, "if fieldname.getname in DontUseThisColumn" ...
-			for (int i = 0; i < fieldNames.length; i++)
-				columnNames[i] = fieldNames[i].getName();
+			columnNames = filterColumns(fieldNames);
 
 			// specify output size, object count x column count
 			data = new Object[list.length][fieldNames.length];
@@ -214,22 +221,10 @@ public class WBView extends JFrame {
 			}
 		}
 
-		// update view
 		updateView();
 	}
 
-	public void createDialogs() {
-		// add = new AddMediaDialog();
-		// add.setVisible(false);
-		// rate = new RateMediaDialog();
-		// rate.setVisible(false);
-		// review = new ReviewMediaDialog();
-		// review.setVisible(false);
-	}
-
-	// show?
 	public void invokeReviewMediaDialog() {
-		// review.setVisible(true);
 		reviewMediaDialog.setVisible(true);
 		this.setVisible(false);
 	}
@@ -242,9 +237,8 @@ public class WBView extends JFrame {
 		addMediaDialog.setVisible(true);
 		this.setVisible(false);
 	}
-	
-	public void revokeMediaDialog()
-	{
+
+	public void revokeMediaDialog() {
 		addMediaDialog.setVisible(false);
 		this.setVisible(true);
 	}
@@ -258,6 +252,6 @@ public class WBView extends JFrame {
 	}
 
 	public void showError(String errormsg) {
-		JOptionPane.showMessageDialog(this, errormsg);	
+		JOptionPane.showMessageDialog(this, errormsg);
 	}
 }
