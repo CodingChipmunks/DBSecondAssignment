@@ -86,9 +86,8 @@ public class Controller implements ActionListener {
 			}
 		}.start();
 	}
-	
-	private QueryType queryType()
-	{
+
+	private QueryType queryType() {
 		QueryType qt = null;
 
 		switch (wbview.getMediaIndex()) {
@@ -99,7 +98,7 @@ public class Controller implements ActionListener {
 		case 2:
 			qt = QueryType.MOVIESEARCH;
 		}
-		
+
 		return qt;
 	}
 
@@ -112,13 +111,13 @@ public class Controller implements ActionListener {
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				System.out.println("Query=" + wbview.getMediaQuery());
-				executeQuery(queryType(), wbview.getMediaQuery());
+				executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				System.out.println("Query=" + wbview.getMediaQuery());
-				executeQuery(queryType(), wbview.getMediaQuery());
+				executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 			}
 		});
 	}
