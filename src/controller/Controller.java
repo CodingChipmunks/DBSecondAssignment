@@ -2,8 +2,14 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 
 import model.*;
@@ -33,52 +39,94 @@ public class Controller implements ActionListener {
 		this.wbview = wbv;
 	}
 
-	@Override // TODO set OnMouseListener for every object separately?
-	public void actionPerformed(ActionEvent e) {
+	// executes a query in a thread, when the query is done an event is
+	// added to gui thread, which will load all available data from the data
+	// bank in model.
+	public void executeQuery(QueryType queryType) {
+		new Thread() {
+			public void run() {
+				System.out.println("query running!");
+				try {
+					QueryExecuter qx = new QueryExecuter(model);
 
-		// Works great, but unusable
-		if (e.getActionCommand() == "comboBox") {
-			System.out.println("Checking mediaType...");
+					// determine type of query. EEEK!?!?!?
+					switch (queryType) {
+					case BOOKSEARCH:
+						qx.getAllAlbums();
+						break;
+					case MOVIESEARCH:
+						qx.getMovie();
+						break;
+					case ALBUMSEARCH:
+						qx.getAllAlbums();
+						break;
+					// TODO add rating/review
+					}
 
-			JComboBox cb = (JComboBox) e.getSource();
-			String item = (String) cb.getSelectedItem();
-			System.out.println("Item " + item);
-
-		}
-		
-		if (e.getActionCommand().equals("searchBtn")) {
-			System.out.println("Searching...");
-			
-			wbview.feedTable(); // resultset
-
-			// Dangerous solution but works!
-			JComboBox cb = wbview.getSearchPanelComponent();
-			String item = (String) cb.getSelectedItem();
-			System.out.println("Item " + item);
-
-			// selectedItemInCombobox = wbview.getSelectedItem();
-			// System.out.println("Selected mediaType..." +
-			// selectedItemInCombobox);
-		}
-		
-		if (e.getActionCommand().equals("rateBtn")) {
-			System.out.println("Rating dialog...");
-			wbview.invokeRateMediaDialog();
-		}
-		
-		if (e.getActionCommand().equals("reviewBtn")) {
-			System.out.println("Review dialog...");
-			wbview.invokeReviewMediaDialog();
-		}
-		
-		if (e.getActionCommand().equals("addBtn")) {
-			System.out.println("Adding dialog...");
-			wbview.invokeAddMediaDialog();
-		}
-		// TODO create a Thread that runs QueryExecuter, the thread will wait for
-		// QueryExecuter to finish and then call view.update();
-
-		// end with //view.updateView();
+					System.out.println("query complete!");
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				System.out.println("View Waiting for update..");
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						wbview.feedTable(model.getBank());
+						System.out.println("View was updated!");
+					}
+				});
+			}
+		}.start();
 	}
 
+	public void setButtonSearch(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				QueryType qt = null;
+
+				switch (wbview.getSearchPanelComponent().getSelectedIndex()) {
+				case 0:
+					qt = QueryType.ALBUMSEARCH;
+				case 1:
+					qt = QueryType.BOOKSEARCH;
+				case 2:
+					qt = QueryType.MOVIESEARCH;
+				}
+				executeQuery(qt);
+			}
+		});
+	}
+	
+	public void setButtonReview(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				//TODO create review query..
+			}
+		});
+	}
+	
+	public void setButtonRate(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				// TODO create rate query..
+			}
+		});
+	}
+	
+	public void setButtonAdd(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				// TODO create add query
+			}
+		});
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		//
+	}
+
+	// TODO add query types
+	public enum QueryType {
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH
+	};
 }

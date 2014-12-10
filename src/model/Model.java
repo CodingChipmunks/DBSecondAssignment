@@ -12,15 +12,28 @@ import view.*;
  * @author softish
  *
  */
-public class Model {
-	private ArrayList<Album> album; // clear these on some queries.
+ public class Model {
+	private ArrayList<Album> album; // TODO are these required?
 	private ArrayList<Movie> movie;
 	private ArrayList<Review> review;
+	private Object[] bank = null; // contains the result of last query.
 
 	// TODO: add QueryExecuter
-	public Model() throws SQLException {
+	public Model()
+	{
 		//QueryExecuter queryExecuter = new QueryExecuter("", "", "");	// dbInterpreter, dba(dataBaseAcess)
 		
+	}
+	
+	public void setBank(Object[] bank)
+	{
+		this.bank = bank;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Object[] getBank()
+	{
+		return bank;
 	}
 	
 	public void clear() {
