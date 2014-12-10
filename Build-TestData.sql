@@ -39,6 +39,6 @@ INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (1,1); --
 -- Review added by [1] = Foo:Foo, Second parameter.
 INSERT INTO Review (Media_Id, Account_Id, Title, Text) VALUES (1, 1, "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
 INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (1, 1, 5);
-INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (2, 1, 4);
+INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (2, 2, 4);
 
 

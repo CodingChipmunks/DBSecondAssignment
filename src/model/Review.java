@@ -40,7 +40,7 @@ public class Review {
 	
 	public String toString()
 	{
-		return title + "\r\n" + "Written by " + user + "\r\n" + text;
+		return title + " " + "Written by " + user + " " + text;
 	}
 
 }

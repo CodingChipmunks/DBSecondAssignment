@@ -92,9 +92,9 @@ CREATE TABLE IF NOT EXISTS Review(
 		Media_Id INTEGER, 
         Account_Id INTEGER UNIQUE, 
         Title VARCHAR(24) NOT NULL, 
-		Text VARCHAR(500) NOT NULL, 
-	FOREIGN KEY (Account_Id) REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
+		Text VARCHAR(500) NOT NULL,
+	 FOREIGN KEY (Account_Id)  REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+	 FOREIGN KEY (Media_Id)    REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Create a database user with read access for every normal user, the user does not need to supply
