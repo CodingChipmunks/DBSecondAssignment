@@ -32,18 +32,13 @@ INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (3, 5, 
 -- Adding media authors, Recommended to do this at least once for every media on insertion:
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,2); -- Rammstein = Rosenrot
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
+INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (4,2); -- Rammstein = Reise, Reise
 
 INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (1,1); -- 
 
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-
 -- Review added by [1] = Foo:Foo, Second parameter.
 INSERT INTO Review (Media_Id, Account_Id, Title, Text) VALUES (1, 1, "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
+INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (1, 1, 5);
+INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (2, 1, 4);
+
 

@@ -7,10 +7,10 @@ public class Album {
 	private String name;
 	private String year;
 	private String user;
+	private float rating;
 	private Genre genre = new Genre("");
 	private ArrayList<Artist> artist = new ArrayList<Artist>();
 	private ArrayList<Review> review = new ArrayList<Review>();
-	private ArrayList<Rating> rating = new ArrayList<Rating>();
 
 	public String getUser() {
 		return user;
@@ -37,11 +37,11 @@ public class Album {
 		this.artist = artist;
 	}
 
-	public ArrayList<Rating> getRating() {
+	public float getRating() {
 		return rating;
 	}
 
-	public void setRating(ArrayList<Rating> rating) {
+	public void setRating(float rating) {
 		this.rating = rating;
 	}
 
@@ -73,15 +73,6 @@ public class Album {
 		artist.add(new Artist(name));
 	}
 
-	public float meanRating() {
-		float mean = 0.0f;
-
-		for (int i = 0; i < rating.size(); i++)
-			mean += rating.get(i).getScore();
-
-		return (mean / rating.size());
-	}
-
 	public boolean hasArtist(String name) {
 		boolean result = false;
 
@@ -100,6 +91,10 @@ public class Album {
 
 	public void setGenre(String string) {
 		genre = new Genre(string);
+	}
+
+	public void addReview(Review review) {
+		this.review.add(review);
 	}
 
 }

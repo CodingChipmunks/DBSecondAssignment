@@ -8,15 +8,9 @@ import java.util.ArrayList;
  * Helper class for row conversion
  */
 public final class RowConverter {
-	public static ArrayList<Review> convertRowToReview(ResultSet reviewRow)
+	public static Review convertRowToReview(ResultSet reviewRow)
 			throws SQLException {
-		ArrayList<Review> review = new ArrayList<Review>();
-
-		while (reviewRow.next()) {
-			review.add(new Review(reviewRow.getString("text"), ""));// reviewRow.getString("user")
-		}
-
-		return review;
+		return  new Review(reviewRow.getString("title"), reviewRow.getString("text"), "");// reviewRow.getString("user")
 	}
 
 	public static ArrayList<Rating> convertRowToRating(ResultSet ratingRow)
@@ -59,9 +53,9 @@ public final class RowConverter {
 		Album album = new Album(albumRow.getString("title"),
 				albumRow.getString("year"), "", albumRow.getInt("id")); // albumRow.getString("user")
 
-		album.setReview(convertRowToReview(reviewRow));
-		album.setRating(convertRowToRating(ratingRow));
-		album.setArtist(convertRowToArtist(artistRow));
+		//album.setReview(convertRowToReview(reviewRow));
+		//album.setRating(convertRowToRating(ratingRow));
+		//album.setArtist(convertRowToArtist(artistRow));
 		return album;
 	}
 
@@ -85,9 +79,9 @@ public final class RowConverter {
 				movieRow.getString("genre"), movieRow.getString("year"),
 				movieRow.getString("user"), movieRow.getInt("id"));
 
-		movie.setRating(convertRowToRating(ratingRow));
-		movie.setReview(convertRowToReview(reviewRow));
-		movie.setDirector(convertRowToDirector(directorRow));
+		//movie.setRating(convertRowToRating(ratingRow));
+		//movie.setReview(convertRowToReview(reviewRow));
+		//movie.setDirector(convertRowToDirector(directorRow));
 		return movie;
 	}
 }
