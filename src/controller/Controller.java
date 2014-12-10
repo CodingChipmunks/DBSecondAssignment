@@ -9,8 +9,11 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import model.*;
 import view.*;
@@ -44,11 +47,15 @@ public class Controller implements ActionListener {
 	public void executeQuery(final QueryType queryType, final String queryText) {
 		new Thread() {
 			String errormsg = "";
+
 			public void run() {
 				System.out.println("query running!");
 				try {
 					QueryExecuter qx = new QueryExecuter(model);
-					wbview.setColumnFilter(new String[]{"review"}); // filter reviews unless: getReviews.. 
+					wbview.setColumnFilter(new String[] { "review" }); // filter
+																		// reviews
+																		// unless:
+																		// getReviews..
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
 					case BOOKSEARCH:
@@ -79,35 +86,61 @@ public class Controller implements ActionListener {
 			}
 		}.start();
 	}
+	
+	private QueryType queryType()
+	{
+		QueryType qt = null;
+
+		switch (wbview.getMediaIndex()) {
+		case 0:
+			qt = QueryType.ALBUMSEARCH;
+		case 1:
+			qt = QueryType.BOOKSEARCH;
+		case 2:
+			qt = QueryType.MOVIESEARCH;
+		}
+		
+		return qt;
+	}
+
+	// add listener
+	public void setQuerySource(JTextField textField) {
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				System.out.println("Query=" + wbview.getMediaQuery());
+				executeQuery(queryType(), wbview.getMediaQuery());
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				System.out.println("Query=" + wbview.getMediaQuery());
+				executeQuery(queryType(), wbview.getMediaQuery());
+			}
+		});
+	}
 
 	public void setButtonSearch(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				QueryType qt = null;
-
-				switch (wbview.getMediaIndex()) { 
-				case 0:
-					qt = QueryType.ALBUMSEARCH;
-				case 1:
-					qt = QueryType.BOOKSEARCH;
-				case 2:
-					qt = QueryType.MOVIESEARCH;
-				}
-				executeQuery(qt, wbview.getQuery());
+				executeQuery(queryType(), wbview.getMediaQuery());
 			}
 		});
 	}
-	
+
 	public void setButtonReview(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				//TODO create review query..
+				// TODO create review query..
 				System.out.println("Review Button");
 				wbview.invokeReviewMediaDialog();
 			}
 		});
 	}
-	
+
 	public void setButtonRate(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -116,8 +149,7 @@ public class Controller implements ActionListener {
 			}
 		});
 	}
-	
-	
+
 	public void setButtonAdd(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
