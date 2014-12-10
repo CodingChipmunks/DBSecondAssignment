@@ -48,7 +48,7 @@ public class Controller implements ActionListener {
 				System.out.println("query running!");
 				try {
 					QueryExecuter qx = new QueryExecuter(model);
-
+					wbview.setColumnFilter(new String[]{"review"}); // filter reviews unless: getReviews.. 
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
 					case BOOKSEARCH:
