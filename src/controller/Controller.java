@@ -61,13 +61,13 @@ public class Controller implements ActionListener {
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
 					case BOOKSEARCH:
-						qx.getAllAlbums(queryText);
+						qx.getAlbumsByAny(queryText);
 						break;
 					case MOVIESEARCH:
-						qx.getAllAlbums(queryText);
+						qx.getAlbumsByAny(queryText);
 						break;
 					case ALBUMSEARCH:
-						qx.getAllAlbums(queryText);
+						qx.getAlbumsByAny(queryText);
 						break;
 					// TODO add rating/review
 					}
