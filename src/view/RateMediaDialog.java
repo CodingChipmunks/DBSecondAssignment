@@ -1,21 +1,10 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.lang.reflect.Field;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import model.Model;
@@ -97,10 +86,7 @@ public class RateMediaDialog extends JFrame {
 				resetUI();
 			}
 		});
-		// Debug
-		System.out.println("!!! Selected row " + selectedRow);
 	}
-	
 	
 	private void hideFrame() {
 		this.setVisible(false);
@@ -120,28 +106,26 @@ public class RateMediaDialog extends JFrame {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				getValues();
+				//hideFrame();
+				System.out.println("RATING: " + getValues());
 			}
 		});
 	}
 	
-	public void getValues() {
-		// TODO fetch and save rating to db
+	// fetch rating 
+	public int getValues() {
+		return comboMedia.getSelectedIndex() + 1;
 	}
 	
 	private void resetUI() {
 		comboMedia.setSelectedIndex(0);
 	}
 	
-	
 	public void updateView() {
 		contentPane.updateUI();
 	}
 
-
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
 	}
-	
-	
-	
 }
