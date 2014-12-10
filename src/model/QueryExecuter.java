@@ -101,7 +101,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 				// get the rating.
 				rsetRating = stRating
-						.executeQuery("select avg(Rating) from rating where Media_Id = "
+						.executeQuery("select avg(Rating) from Rating where Media_Id = "
 								+ album.getId() + ";");
 
 				while (rsetRating.next())
@@ -109,7 +109,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 				// finally, get reviews..
 				rsetReview = stReview
-						.executeQuery("select Title, Text, Account_Id from review where Media_Id = "
+						.executeQuery("select Title, Text, Account_Id from Review where Media_Id = "
 								+ album.getId() + ";");
 
 				while (rsetReview.next()) {
