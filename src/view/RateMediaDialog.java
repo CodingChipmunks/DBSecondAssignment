@@ -18,19 +18,12 @@ public class RateMediaDialog extends JFrame {
 	private WBView view;
 	
 	private JComboBox comboMedia;
-	private JPanel contentPane, buttonPane, inputPane, comboPane, titlePane;
+	private JPanel contentPane, buttonPane, inputPane;
 	private JButton rate;
-	private JLabel hint;
 	private JButton cancel;
-	private int mediaIndex;
-	private Field[] field;
 	private final String[] ratings = { "1", "2", "3", "4", "5" };
 
 	private JLabel titleLbl;
-	private String defaultText;
-
-	private int WIDTH = 200;
-	private int HEIGHT = 135;
 	
 	public RateMediaDialog(Model m, final WBView view) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -45,18 +38,13 @@ public class RateMediaDialog extends JFrame {
 		this.view = view;
 
 		buttonPane = new JPanel();
-//		inputPane = new JPanel();
-		comboPane = new JPanel();
 		inputPane = new JPanel();
-
-		//contentPane.add(inputPane, BorderLayout.CENTER);
+		
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 		contentPane.add(inputPane, BorderLayout.NORTH);
 
 		comboMedia = new JComboBox(ratings);
-//		comboMedia.setPrototypeDisplayValue("");
 		comboMedia.setSelectedIndex(0);
-//		comboPane.add(comboMedia);
 		
 		titleLbl = new JLabel("Choose rating");
 		
