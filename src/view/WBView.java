@@ -63,7 +63,6 @@ public class WBView extends JFrame {
 		table = new JTable();
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
-//		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane, BorderLayout.CENTER);
