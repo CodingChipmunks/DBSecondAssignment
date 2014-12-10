@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.TreeSelectionModel;
 
 import controller.Controller;
 import model.Model;
@@ -61,6 +62,7 @@ public class WBView extends JFrame {
 		table = new JTable();
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);
+		table.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 
@@ -129,6 +131,11 @@ public class WBView extends JFrame {
 						+ mediaIndex);
 			}
 		});
+	}
+	
+	public int getSelectedId()
+	{
+		return new Integer(table.getValueAt(table.getSelectedRow(), 0).toString());
 	}
 
 	public String getMediaType() {

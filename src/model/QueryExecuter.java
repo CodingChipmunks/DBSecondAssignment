@@ -66,8 +66,8 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		try {
 			rsetAlbum = statement
-					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '%"
-							+ search + "%'"); // 1
+					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '"
+							+ search + "'"); // 1
 
 			// for every album do...
 			while (rsetAlbum.next()) {
