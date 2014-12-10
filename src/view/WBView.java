@@ -30,7 +30,7 @@ public class WBView extends JFrame {
 	// dialogs
 	private AddMediaDialog addMediaDialog;
 	// private RateMediaDialog rate;
-	// private ReviewMediaDialog review;
+	private ReviewMediaDialog reviewMediaDialog;
 	
 	private String[] searchOptions = { "Album", "Movie", "Book" }; // Used with Class.ForName.
 
@@ -43,6 +43,7 @@ public class WBView extends JFrame {
 		Controller controller = new Controller(m, this);
 		
 		addMediaDialog = new AddMediaDialog(m, this);
+		reviewMediaDialog = new ReviewMediaDialog(m, this);
 
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,7 +119,7 @@ public class WBView extends JFrame {
 	}
 	
 	// updated, no longer requires the index of component, stores values on change.
-	public void setMediaCombo(JComboBox combo)
+	public void setMediaCombo(final JComboBox combo)
 	{
 		combo.addActionListener (new ActionListener () {
 		    public void actionPerformed(ActionEvent e) {
@@ -229,6 +230,8 @@ public class WBView extends JFrame {
 	// show?
 	public void invokeReviewMediaDialog() {
 		// review.setVisible(true);
+		reviewMediaDialog.setVisible(true);
+		this.setVisible(false);
 	}
 
 	public void invokeRateMediaDialog() {

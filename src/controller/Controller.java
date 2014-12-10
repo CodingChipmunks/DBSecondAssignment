@@ -41,7 +41,7 @@ public class Controller implements ActionListener {
 	// executes a query in a thread, when the query is done an event is
 	// added to gui thread, which will load all available data from the data
 	// bank in model.
-	public void executeQuery(QueryType queryType) {
+	public void executeQuery(final QueryType queryType) {
 		new Thread() {
 			String errormsg = "";
 			public void run() {
@@ -103,6 +103,7 @@ public class Controller implements ActionListener {
 			public void mousePressed(MouseEvent evt) {
 				//TODO create review query..
 				System.out.println("Review Button");
+				wbview.invokeReviewMediaDialog();
 			}
 		});
 	}

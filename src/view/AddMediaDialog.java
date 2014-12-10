@@ -43,7 +43,7 @@ public class AddMediaDialog extends JFrame {
 	private ArrayList<JLabel> text = new ArrayList<JLabel>();
 	private ArrayList<JTextField> textField = new ArrayList<JTextField>();
 
-	public AddMediaDialog(Model m, WBView view) {
+	public AddMediaDialog(Model m, final WBView view) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, WIDTH, HEIGHT);
 		contentPane = new JPanel();
@@ -192,7 +192,7 @@ public class AddMediaDialog extends JFrame {
 	}
 
 	// reset ui on media-change.
-	private void setMediaCombo(JComboBox combo) {
+	private void setMediaCombo(final JComboBox combo) {
 		combo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mediaIndex = combo.getSelectedIndex();
