@@ -74,6 +74,11 @@ public final class QueryExecuter implements QueryInterpreter {
 				ResultSet rsetGenre;
 				ResultSet rsetArtist;
 				ResultSet rsetRating;
+				ResultSet rsetReview;
+				ResultSet rsetUser;
+				ResultSet rsetId = null;
+				Statement stId = connection.createStatement();
+				Statement stUser = connection.createStatement();
 				Statement stGenre = connection.createStatement();
 				Statement stArtist = connection.createStatement();
 				Statement stRating = connection.createStatement();
@@ -100,6 +105,11 @@ public final class QueryExecuter implements QueryInterpreter {
 					album.AddArtist(rsetArtist.getString("Name"));
 
 				albums.add(album);
+
+				// ha-ha
+				listClose(new Statement[] { stId, stUser, stGenre, stArtist,
+						stRating, stReview }, new ResultSet[] { rsetGenre,
+						rsetArtist, rsetRating, rsetReview, rsetUser, rsetId });
 			}
 
 			model.setBank(albums.toArray());
@@ -146,10 +156,24 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		} finally {
 			closeStatement(statement);
-			// TODO close result sets
+			closeResultSet(rsetAlbum);
 		}
 
 		return null;
+	}
+
+	private void listClose(Statement[] statements, ResultSet[] resultSets) {
+		try {
+			for (int i = 0; i < statements.length; i++)
+				if (null != statements[i])
+					statements[i].close();
+			for (int i = 0; i < resultSets.length; i++)
+				if (null != resultSets[i])
+					resultSets[i].close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	// more research...
@@ -403,5 +427,9 @@ public final class QueryExecuter implements QueryInterpreter {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void closeFinalAllTheStuff() {
+
 	}
 }
