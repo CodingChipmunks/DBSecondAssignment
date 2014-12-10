@@ -7,9 +7,9 @@ public class Album {
 	private String name;
 	private String year;
 	private String user;
-	private ArrayList<Artist> artist;
-	private ArrayList<Review> review;
-	private ArrayList<Rating> rating;
+	private ArrayList<Artist> artist = new ArrayList<Artist>();
+	private ArrayList<Review> review = new ArrayList<Review>();
+	private ArrayList<Rating> rating = new ArrayList<Rating>();
 
 	public String getUser() {
 		return user;
@@ -68,6 +68,11 @@ public class Album {
 		this.year = year;
 		this.user = user;
 		this.id = id;
+	}
+	
+	public void AddArtist(String name)
+	{
+		artist.add(new Artist(name));
 	}
 	
 	public float meanRating()

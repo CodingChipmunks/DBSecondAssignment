@@ -33,9 +33,8 @@ public class Controller implements ActionListener {
 		this.wbview = wbv;
 	}
 
-	@Override
+	@Override // TODO set OnMouseListener for every object separately?
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 
 		// Works great, but unusable
 		if (e.getActionCommand() == "comboBox") {
@@ -49,6 +48,8 @@ public class Controller implements ActionListener {
 		
 		if (e.getActionCommand().equals("searchBtn")) {
 			System.out.println("Searching...");
+			
+			wbview.feedTable(); // resultset
 
 			// Dangerous solution but works!
 			JComboBox cb = wbview.getSearchPanelComponent();
@@ -74,6 +75,8 @@ public class Controller implements ActionListener {
 			System.out.println("Adding dialog...");
 			wbview.invokeAddMediaDialog();
 		}
+		// TODO create a Thread that runs QueryExecuter, the thread will wait for
+		// QueryExecuter to finish and then call view.update();
 
 		// end with //view.updateView();
 	}
