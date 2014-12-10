@@ -76,7 +76,7 @@ public final class QueryExecuter implements QueryInterpreter {
 				ResultSet rsetRating;
 				ResultSet rsetReview;
 				ResultSet rsetUser;
-				Statement stUser;
+				Statement stUser = connection.createStatement();;
 				Statement stGenre = connection.createStatement();
 				Statement stArtist = connection.createStatement();
 				Statement stRating = connection.createStatement();
@@ -85,7 +85,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 				// get genre.
 				rsetGenre = stGenre
-						.executeQuery("select Name from genre where Id = "
+						.executeQuery("select Name from Genre where Id = "
 								+ rsetAlbum.getInt("Genre_Id"));
 				rsetGenre.first();
 				album.setGenre(rsetGenre.getString("Name"));
@@ -94,9 +94,9 @@ public final class QueryExecuter implements QueryInterpreter {
 				System.out.println("Id is: " + album.getId());
 
 				rsetArtist = stArtist
-						.executeQuery("select Name from contributor inner join creator where Media_Id = "
+						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
 								+ album.getId()
-								+ " and creator.id = contributor.Creator_Id;");
+								+ " and Creator.id = Contributor.Creator_Id;");
 
 				while (rsetArtist.next())
 					album.AddArtist(rsetArtist.getString("Name"));
@@ -115,7 +115,11 @@ public final class QueryExecuter implements QueryInterpreter {
 								+ album.getId() + ";");
 				
 				while(rsetReview.next())
-					album.addReview(RowConverter.convertRowToReview(rsetReview));
+				{
+					Review review = RowConverter.convertRowToReview(rsetReview);
+					rsetUser = stUser.executeQuery("select Name from User where Id = " + rsetReview.getInt("Account_Id") + ";");
+					album.addReview(review);
+				}
 
 				albums.add(album);
 			}

@@ -1,9 +1,20 @@
 package model;
 
 public class Review {
+	private String title;
 	private String text;
 	private String user;
 
+	public String getTitle()
+	{
+		return title;
+	}
+	
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+	
 	public String getText() {
 		return text;
 	}
@@ -16,14 +27,20 @@ public class Review {
 		return user;
 	}
 
-	public Review(String text, String user) {
+	public Review(String title, String text, String user) {
 		super();
+		this.title = title;
 		this.text = text;
 		this.user = user;
 	}
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+	
+	public String toString()
+	{
+		return title + "\r\n" + "Written by " + user + "\r\n" + text;
 	}
 
 }
