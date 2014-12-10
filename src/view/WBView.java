@@ -233,6 +233,12 @@ public class WBView extends JFrame {
 		reviewMediaDialog.setVisible(true);
 		this.setVisible(false);
 	}
+	
+	public void revokeReviewMediaDialog()
+	{
+		reviewMediaDialog.setVisible(false);
+		this.setVisible(true);
+	}
 
 	public void invokeRateMediaDialog() {
 		// rate.setVisible(true);

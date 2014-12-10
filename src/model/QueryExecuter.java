@@ -74,18 +74,12 @@ public final class QueryExecuter implements QueryInterpreter {
 				ResultSet rsetGenre;
 				ResultSet rsetArtist;
 				ResultSet rsetRating;
-				ResultSet rsetReview;
-				ResultSet rsetUser;
-				ResultSet rsetId;
-				Statement stId = connection.createStatement();
-				Statement stUser = connection.createStatement();
 				Statement stGenre = connection.createStatement();
 				Statement stArtist = connection.createStatement();
 				Statement stRating = connection.createStatement();
-				Statement stReview = connection.createStatement();
 				Album album = RowConverter.convertRowToAlbum(rsetAlbum);
 
-				// get genre.
+				// get genre
 				rsetGenre = stGenre
 						.executeQuery("select Name from Genre where Id = "
 								+ rsetAlbum.getInt("Genre_Id"));
@@ -99,45 +93,52 @@ public final class QueryExecuter implements QueryInterpreter {
 						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
 								+ album.getId()
 								+ " and Creator.id = Contributor.Creator_Id;");
-
+				
+				
+				
 				while (rsetArtist.next())
 					album.AddArtist(rsetArtist.getString("Name"));
-
-				// get the rating.
-				rsetRating = stRating
-						.executeQuery("select avg(Rating) from rating where Media_Id = "
-								+ album.getId() + ";");
-
-				while (rsetRating.next())
-					album.setRating(rsetRating.getFloat(1));
-
-				// finally, get reviews..
-				rsetReview = stReview
-						.executeQuery("select Title, Text, Account_Id from review where Media_Id = "
-								+ album.getId() + ";");
-
-				while (rsetReview.next()) {
-					Review review = RowConverter.convertRowToReview(rsetReview);
-
-					rsetUser = stUser
-							.executeQuery("select Name from Account where Id = "
-									+ rsetReview.getInt("Account_Id") + ";");
-					rsetUser.first();
-					review.setUser(rsetUser.getString("Name"));
-					album.addReview(review);
-				}
-
-				// ops, need user too..
-				rsetUser = stUser
-						.executeQuery("select Name from Account where Id = "
-								+ rsetAlbum.getInt("Account_Id"));
-				rsetUser.first();
-				album.setUser(rsetUser.getString("Name"));
 
 				albums.add(album);
 			}
 
 			model.setBank(albums.toArray());
+			;
+
+			// get Genre of album
+			// r = s.executeQuery("select Name from Genre where Id = 3");
+
+			// get name of Media
+			// r = s.executeQuery("select Name from Mediatype where Id = 1");
+
+			/*
+			 * r = s.executeQuery(
+			 * "select Media.Id, Media.Title, Creator.Name, Duration, Year, Review.Title from"
+			 * +
+			 * " (Media right outer join (Contributor, Review, Creator) on Media.Id)where "
+			 * + "Contributor.Creator_Id = Creator.Id " +
+			 * "and Contributor.Media_Id = Media.Id " +
+			 * "and Media.Mediatype_Id = 1 " +
+			 * "and Review.Media_Id = Media.Id");
+			 */
+
+			// Account info?
+
+			// rc.convertRowToAlbum(mediaRow, creatorRow, reviewRow, ratingRow)
+			// getArtists();
+			// System.out.println("All albums");
+			// loop through result set
+			// while (r.next()) {
+			// System.out.println(r.getString("Name"));
+			// convert row to Album and add to list: preferably with helper
+			// class
+			// rc.convertRowToAlbum(albumRow, artistRow, reviewRow,
+			// ratingRow)
+			// albums.add(RowConverter.convertRowToAlbum(r));
+			// }
+
+			// System.out.println("Albums");
+			// return list
 
 			for (Album a : albums) {
 				System.out.println(a.toString());
@@ -145,6 +146,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		} finally {
 			closeStatement(statement);
+			// TODO close result sets
 		}
 
 		return null;

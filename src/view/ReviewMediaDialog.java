@@ -33,6 +33,7 @@ public class ReviewMediaDialog extends JFrame {
 	private JTextField title;
 	private JTextArea text;
 	private JLabel titleLbl;
+	private String defaultText;
 
 	private int WIDTH = 200;
 	private int HEIGHT = 135;
@@ -60,10 +61,11 @@ public class ReviewMediaDialog extends JFrame {
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 		contentPane.add(titlePane, BorderLayout.NORTH);
 
+		defaultText = "Review of maximum 500 characters";
 		titleLbl = new JLabel("Review title");
 		title = new JTextField(16);
 		text = new JTextArea(15,26);
-		text.setText("Review of maximum 500 characters");
+		text.setText(defaultText);
 		
 		titlePane.add(titleLbl, BorderLayout.WEST);
 		titlePane.add(title, BorderLayout.EAST);
@@ -81,6 +83,17 @@ public class ReviewMediaDialog extends JFrame {
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(add); 
 		rootPane.setDefaultButton(add);
+		
+		// listener for show/hide events.
+		this.addComponentListener(new ComponentAdapter() {
+			public void componentHidden(ComponentEvent e) {
+				view.setVisible(true);
+			}
+
+			public void componentShown(ComponentEvent e) {
+				resetUI();
+			}
+		});
 		
 	}
 	
@@ -105,9 +118,18 @@ public class ReviewMediaDialog extends JFrame {
 	}
 	
 	public void getValues() {
-		
+		// fetch review to db
 	}
 	
+	private void resetUI() {
+		title.setText("");
+		text.setText(defaultText);
+	}
+	
+	
+	public void updateView() {
+		contentPane.updateUI();
+	}
 	
 
 }
