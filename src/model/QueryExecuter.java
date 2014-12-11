@@ -448,7 +448,7 @@ public final class QueryExecuter implements QueryInterpreter {
 				    connection.prepareCall(statement);
 			
 			//hard Data
-			callableStatement.setInt   (1, 3);
+			callableStatement.setInt   (1, media);
 			callableStatement.setString(2, model.getUser());
 			callableStatement.setString(3, model.getPass());
 			callableStatement.setInt   (4, rating);

@@ -82,10 +82,11 @@ CREATE TABLE IF NOT EXISTS Contributor(
 -- Create Rating, Username is unique so that every user may only create one rating.  
 CREATE TABLE IF NOT EXISTS Rating(
 		Media_Id INTEGER, 
-		Account_Id INTEGER UNIQUE, 
+		Account_Id INTEGER, 
 		Rating INTEGER, 
 	FOREIGN KEY (Account_Id) REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (Media_Id) REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (Account_Id, Media_Id)
 );
 
 -- Create Review, Username is unique so that every user may only create one review.
@@ -95,7 +96,8 @@ CREATE TABLE IF NOT EXISTS Review(
         Title VARCHAR(24) NOT NULL, 
 		Text VARCHAR(500) NOT NULL,
 	 FOREIGN KEY (Account_Id)  REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,
-	 FOREIGN KEY (Media_Id)    REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
+	 FOREIGN KEY (Media_Id)    REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+     PRIMARY KEY (Account_Id, Media_Id)
 );
 
 
