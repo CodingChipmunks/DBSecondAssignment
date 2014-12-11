@@ -122,7 +122,34 @@ GRANT SELECT (Name, Id) ON mediacollection.Account TO 'clientapp'@'localhost';
 -- Media.
 
 -- ----------------------- STORED PROCEDURES ----------------------------------
-DROP PROCEDURE IF EXISTS AddAlbum;
+DROP PROCEDURE IF EXISTS AddCreator;
+
+DELIMITER $$
+CREATE PROCEDURE AddCreator(
+in p_user varchar(32),
+in p_pass varchar(32),
+in p_creator varchar(32),
+in p_mediaId int)
+BEGIN
+	DECLARE MediaId int; 
+    DECLARE AccountId int;
+    DECLARE CreatorId int;
+    
+    SELECT Account.Id INTO AccountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
+    
+    IF AccountId IS NOT NULL THEN
+		-- if not exist genre then create
+        IF (NOT EXISTS (SELECT * FROM Creator WHERE Creator.Name = p_creator)) THEN 
+			INSERT INTO Creator(Name) VALUES (p_creator); 
+        END IF; 
+        
+		SELECT Id INTO CreatorId FROM Creator WHERE Name = p_creator;
+		INSERT INTO Contributor(Media_Id, Creator_Id) VALUES (p_mediaId, CreatorId);
+	END IF;
+END;
+
+
+DROP PROCEDURE IF EXISTS AddMedia;
 
 DELIMITER $$
 CREATE PROCEDURE AddMedia(
