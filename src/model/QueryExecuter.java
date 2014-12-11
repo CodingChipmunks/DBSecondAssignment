@@ -404,14 +404,13 @@ public final class QueryExecuter implements QueryInterpreter {
 		CallableStatement callableStatement = null;
 		try {
 			String statement = "{call Rate(?, ?, ?, ?)}";
-			// null ptr e
 			callableStatement =
 				    connection.prepareCall(statement);
 			
 			//hard Data
 			callableStatement.setInt   (1, 3);
-			callableStatement.setString(2, "Foo");
-			callableStatement.setString(3, "Foo");
+			callableStatement.setString(2, user);
+			callableStatement.setString(3, pass);
 			callableStatement.setInt   (4, rating);
 			
 			System.out.println("Executing stored procedure..." );
