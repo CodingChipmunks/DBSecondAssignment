@@ -86,23 +86,9 @@ public class RateMediaDialog extends JFrame {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				hideFrame();
-				// TODO seems to work afterall
-				System.out.println("!!! Selected row " + selectedRow);
 			}
 		});
 	}
-	
-//	private void setSubmit(JButton button) {
-//		button.addMouseListener(new MouseAdapter() {
-//			public void mousePressed(MouseEvent evt) {
-//				getValues();
-//				// TODO save 2 db
-//				// model.addRating(getValues());
-//				hideFrame();
-//				System.out.println("RATING: " + getValues());
-//			}
-//		});
-//	}
 	
 	// fetch rating 
 	public int getValues() {
