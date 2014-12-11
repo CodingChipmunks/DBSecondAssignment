@@ -111,4 +111,13 @@ public class Album {
 		else
 			return false;
 	}
+
+	public String getGenre() {
+		return this.genre.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<Artist> getArtist() {
+		return (ArrayList<Artist>) artist.clone();
+	}
 }

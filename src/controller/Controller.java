@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -30,18 +32,17 @@ public class Controller implements ActionListener {
 	private Model model;
 	private QueryInterpreter dbInterpreter;
 	private int selectedItemInCombobox;
+	private Album album = null;
 
-	public Controller(Model m, View v) {
-		this.model = m;
-		this.view = v;
-	}
+	/*
+	 * public Controller(Model m, View v) { this.model = m; this.view = v; }
+	 */
 
 	public Controller(Model m, WBView wbv) {
 		this.model = m;
 		this.wbview = wbv;
+		executeQuery(QueryType.ALBUMSEARCH, "%");
 	}
-	
-	
 
 	// executes a query in a thread, when the query is done an event is
 	// added to gui thread, which will load all available data from the data
@@ -57,6 +58,9 @@ public class Controller implements ActionListener {
 					wbview.setColumnFilter(new String[] { "review" });
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
+					case MEDIAADD:
+						qx.addMedia(album);
+						break;
 					case BOOKSEARCH:
 						qx.getAlbumsByAny(queryText);
 						break;
@@ -70,9 +74,7 @@ public class Controller implements ActionListener {
 					}
 				} catch (SQLException e) {
 					errormsg = e.getMessage();
-				}
-				finally
-				{
+				} finally {
 					qx.disconnect();
 				}
 				SwingUtilities.invokeLater(new Runnable() {
@@ -143,23 +145,57 @@ public class Controller implements ActionListener {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				try {
-					System.out.println("Rate Button for Media_Id: " + wbview.getSelectedId());
-					
+					System.out.println("Rate Button for Media_Id: "
+							+ wbview.getSelectedId());
+
 					// TODO Exception would b nicer!
-					if(wbview.getSelectedRowCount() == 1) {
+					if (wbview.getSelectedRowCount() == 1) {
 						wbview.invokeRateMediaDialog(wbview.getSelectedId());
 					} else {
-//						wbview.showError("You have to select ONE media item!");
+						// wbview.showError("You have to select ONE media item!");
 						throw new Exception("multiselect");
 					}
-					
+
 				} catch (Exception e) {
-					if(e.getMessage().equals("multiselect")) {
+					if (e.getMessage().equals("multiselect")) {
 						wbview.showError("You have to select ONE media item!");
 					} else {
 						wbview.showError("You have to select a media item!");
 					}
 				}
+			}
+		});
+	}
+
+	// button add submit in addMediaDialog
+	public void setSubmit(JButton button, AddMediaDialog dialog) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				Hashtable table = dialog.getValues();
+				dialog.setVisible(false);
+				album = new Album("", "", "", 0);
+
+				Enumeration e = table.keys();
+				while (e.hasMoreElements()) {
+					String key = (String) e.nextElement();
+					System.out.println(key + " : " + table.get(key));
+
+					if (key.toString().equals("name"))
+						album.setName(table.get(key).toString());
+					if (key.toString().equals("genre"))
+						album.setGenre(table.get(key).toString());
+					if (key.toString().equals("year"))
+						album.setYear(table.get(key).toString());
+					if (key.toString().equals("artist")) {
+						// TODO change split-pattern, ", " is common!
+						String[] artists = table.get(key).toString()
+								.split(", ");
+
+						for (int i = 0; i < artists.length; i++)
+							album.AddArtist(artists[i]);
+					}
+				}
+				executeQuery(QueryType.MEDIAADD, "");
 			}
 		});
 	}
@@ -181,6 +217,6 @@ public class Controller implements ActionListener {
 
 	// TODO add query types
 	public enum QueryType {
-		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD
 	};
 }

@@ -16,21 +16,31 @@ public class Start {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// instantiate model
-		// feed model to view when instantiating it
-	
+		String user;
+		String pass;
+		
+		// lazy programmer is out of args :(
+		if (args.length != 2) {
+			user = "Foo";
+			pass = "Foo";
+		}
+		else
+		{
+			user = args[0];
+			pass = args[1];
+		}
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Model model = new Model();
+					Model model = new Model(user, pass);
 					WBView frame = new WBView(model);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
-	}
 
+	}
 
 }

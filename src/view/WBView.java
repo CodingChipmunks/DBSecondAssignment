@@ -48,7 +48,7 @@ public class WBView extends JFrame {
 	public WBView(Model m) {
 		Controller controller = new Controller(m, this);
 
-		addMediaDialog = new AddMediaDialog(m, this);
+		addMediaDialog = new AddMediaDialog(m, this, controller);
 		rateMediaDialog = new RateMediaDialog(m, this);
 		reviewMediaDialog = new ReviewMediaDialog(m, this);
 

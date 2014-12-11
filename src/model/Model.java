@@ -16,12 +16,34 @@ import view.*;
 	private ArrayList<Movie> movie;
 	private ArrayList<Review> review;
 	private Object[] bank = null; // contains the result of last query.
+	private String user = "";
+	private String pass = "";
 
 	// TODO: add QueryExecuter
-	public Model()
+	public Model(String user, String pass)
 	{
-		//QueryExecuter queryExecuter = new QueryExecuter("", "", "");	// dbInterpreter, dba(dataBaseAcess)
-		
+		this.user = user;
+		this.pass = pass;
+	}
+	
+	public void setUser(String user)
+	{
+		this.user = user;
+	}
+	
+	public String getUser()
+	{
+		return this.user;
+	}
+	
+	public void setPass(String pass)
+	{
+		this.pass = pass;
+	}
+	
+	public String getPass()
+	{
+		return this.pass;
 	}
 	
 	public void setBank(Object[] bank)

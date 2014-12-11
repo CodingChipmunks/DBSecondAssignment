@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
 import model.Album;
 import model.Book;
 import model.Model;
@@ -43,7 +44,7 @@ public class AddMediaDialog extends JFrame {
 	private ArrayList<JLabel> text = new ArrayList<JLabel>();
 	private ArrayList<JTextField> textField = new ArrayList<JTextField>();
 
-	public AddMediaDialog(Model m, final WBView view) {
+	public AddMediaDialog(Model m, final WBView view, final Controller controller) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, WIDTH, HEIGHT);
 		contentPane = new JPanel();
@@ -74,7 +75,7 @@ public class AddMediaDialog extends JFrame {
 
 		add = new JButton("Add");
 		buttonPane.add(add);
-		setSubmit(add);
+		controller.setSubmit(add, this);
 
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
@@ -114,13 +115,6 @@ public class AddMediaDialog extends JFrame {
 		});
 	}
 
-	private void setSubmit(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				getValues();
-			}
-		});
-	}
 
 	private boolean hiddenField(String name) {
 		boolean hidden = false;
@@ -148,13 +142,6 @@ public class AddMediaDialog extends JFrame {
 			}
 
 		}
-
-		Enumeration e = table.keys();
-		while (e.hasMoreElements()) {
-			String key = (String) e.nextElement();
-			System.out.println(key + " : " + table.get(key));
-		}
-
 		return table;
 	}
 

@@ -20,6 +20,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	private final static String user = "clientapp";
 	private final static String pass = "qwerty";
 	private final static String driver = "com.mysql.jdbc.Driver";
+	private final static String config = "?noAccessToProcedureBodies=true";
 	private final static String host = "jdbc:mysql://localhost:3306/";
 
 	public Connection connection;
@@ -27,7 +28,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 	public static void main(String args[]) {
 		try {
-			QueryExecuter qx = new QueryExecuter(new Model());
+			QueryExecuter qx = new QueryExecuter(new Model("Foo", "Foo"));
 			qx.getAlbumsByAny("Rosenrot");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -40,8 +41,8 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		try {
 			Class.forName(driver);
-			connection = DriverManager.getConnection(host + database, user,
-					pass);
+			connection = DriverManager.getConnection(host + database + config,
+					user, pass);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -231,6 +232,49 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
+	public void addMedia(Album album) throws SQLException {
+		// AddMedia("Foo", "Foo", "Title", "2014", "Genre", Duration,
+		// MediaType);
+		CallableStatement stMedia = null;
+		CallableStatement stCreator = null;
+		try {
+			String sql = "{call AddMedia(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+			stMedia = connection.prepareCall(sql);
+
+			stMedia.setString(1, model.getUser());
+			stMedia.setString(2, model.getPass());
+			stMedia.setString(3, album.getName());
+			stMedia.setString(4, album.getYear());
+			stMedia.setString(5, album.getGenre());
+			stMedia.setInt(6, 0); // duration
+			stMedia.setInt(7, 1); // mediatype = album
+			stMedia.registerOutParameter(8, java.sql.Types.INTEGER);
+
+			// loop through artist and call AddCreator ...
+			stMedia.execute();
+
+			System.out.println("Returned PK = " + stMedia.getInt(8));
+
+			// CALL AddCreator("Foo", "Foo", "CreatorName", 1);
+			ArrayList<Artist> artist = album.getArtist();
+			sql = "{call AddCreator(?, ?, ?, ?)}";
+			stCreator = connection.prepareCall(sql);
+			for (int i = 0; i < artist.size(); i++) {
+				stCreator.setString(1, model.getUser());
+				stCreator.setString(2, model.getPass());
+				stCreator.setString(3, artist.get(i).getName());
+				stCreator.setInt(4, stMedia.getInt(8));
+				stCreator.execute();
+			}
+
+			model.setBank(getAlbumsByAny("%").toArray());
+		} finally {
+			closeStatement(stMedia);
+		}
+	}
+
+	@Override
 	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
 		Set<Album> album = new HashSet<Album>();
 
@@ -238,9 +282,9 @@ public final class QueryExecuter implements QueryInterpreter {
 		album.addAll(getAlbumsByRating(text));
 		album.addAll(getAlbumsByArtist(text));
 		album.addAll(searchByGenre(text));
-		
+
 		model.setBank(album.toArray()); // ...
-		
+
 		return new ArrayList<Album>(album);
 	}
 

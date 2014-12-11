@@ -47,10 +47,11 @@ INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (2, 2, 4);
 -- -------------------  SP _ TEST ! -----------
 -- Remember: Some values are already added -^
 
-CALL AddMedia("Foo", "Foo", "Title", "2014", "Genre", 120, 1);
+CALL AddMedia("Foo", "Foo", "Title", "2014", "Genre", 120, 1, @pkid);
 CALL AddCreator("Foo", "Foo", "CreatorName", 1);
 CALL MakeReview("Foo", "Foo", "Title", "Text", 1);
 CALL Rate(1, "FooBar", "FooBar", 3);
+SELECT @pkid;
 
 
 

@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS Media(
         Mediatype_Id INTEGER, 
         Genre_Id INTEGER DEFAULT 1, 
         Title VARCHAR(24) NOT NULL, 
-        Year INTEGER, 
+        Year VARCHAR(16), 
         Duration INTEGER, 
         Account_Id INTEGER DEFAULT 1,
 	PRIMARY KEY (Id), 
@@ -159,7 +159,8 @@ in p_title varchar(32),
 in p_year varchar(16),
 in p_genre varchar(16),
 in p_duration int,
-in p_mediatype int) 
+in p_mediatype int,
+out r_mediaId int) 
 BEGIN
 	DECLARE MediaId int;
     DECLARE AccountId int;
@@ -175,6 +176,7 @@ BEGIN
         
 		SELECT Id INTO GenreId FROM Genre WHERE Name = p_genre;
 		INSERT INTO Media(Title, Year, Duration, MediaType_Id, Genre_Id, Account_Id) VALUES (p_title, p_year, p_duration, p_mediatype, GenreId, AccountId);
+        SELECT LAST_INSERT_ID() INTO r_mediaId;
 	END IF;
 END$$
 
