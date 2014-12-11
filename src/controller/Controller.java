@@ -74,7 +74,8 @@ public class Controller implements ActionListener {
 						break;
 					case RATE:
 						qx.rateAlbum(rating, media);
-					// TODO add rating/review
+					case LOGIN: 
+					    qx.verifyAccount(model.getUser(), model.getPass());
 					}
 				} catch (SQLException e) {
 					errormsg = e.getMessage();
@@ -85,7 +86,22 @@ public class Controller implements ActionListener {
 					public void run() {
 						if (!errormsg.equals(""))
 							wbview.showError(errormsg);
+						
+						if (queryType != QueryType.LOGIN)
 						wbview.feedTable(model.getBank());
+						if (queryType == QueryType.LOGIN)
+						{
+							if (model.getValidAccount())
+							{
+								wbview.setVisible(true);
+								wbview.getLoginDialog().setVisible(false);
+							}
+							else
+							{
+								wbview.getLoginDialog().loginFailed();
+								wbview.showError("Invalid Login!\r\nPlease contact database admin\r\nto create a new account.");
+							}
+						}
 					}
 				});
 			}
@@ -239,6 +255,20 @@ public class Controller implements ActionListener {
 
 	// TODO add query types
 	public enum QueryType {
-		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD, RATE
-	};
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD, RATE, LOGIN
+	}
+
+	// check a users password and set model password
+	public void setLogin(JButton login, LoginDialog loginDialog) {
+		login.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				model.setPass(loginDialog.getPass());
+				model.setUser(loginDialog.getUser());
+				executeQuery(QueryType.LOGIN, "");
+				// how to update the UI with error message?
+				// call QE - login, calls stored procedure, returns t - f
+				// just throw a new error with message set? ;)
+			}
+		});
+	}
 }

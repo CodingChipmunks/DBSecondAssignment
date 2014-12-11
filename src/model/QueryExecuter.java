@@ -23,8 +23,21 @@ public final class QueryExecuter implements QueryInterpreter {
 	private final static String config = "?noAccessToProcedureBodies=true";
 	private final static String host = "jdbc:mysql://localhost:3306/";
 
-	public Connection connection;
-	public Model model;
+	
+	private Connection connection;
+	private Model model;
+	private static String lastQuery;
+	
+	private synchronized void setLastQuery(String lastQuery)
+	{
+		this.lastQuery = lastQuery;
+	}
+	
+	
+	private synchronized String getLastQuery()
+	{
+		return this.lastQuery;
+	}
 
 	public static void main(String args[]) {
 		try {
@@ -278,6 +291,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
 		Set<Album> album = new HashSet<Album>();
 
+		setLastQuery(text);
 		album.addAll(getAlbumsByUser(text));
 		album.addAll(getAlbumsByYear(text));
 		album.addAll(searchByAlbumTitle(text));
@@ -430,17 +444,13 @@ public final class QueryExecuter implements QueryInterpreter {
 	@Override
 	public void insertAlbum(Album album) {
 		// CALLING METHOD: show dialog
-
 		// CALLING METHOD: supply result as album
-
 		// make statement
-
 		// try to execute that statement to db
 	}
 
 	@Override
-	public void rateAlbum(int rating, int media) {
-		// TODO Auto-generated method stub
+	public void rateAlbum(int rating, int media) throws SQLException {
 		CallableStatement callableStatement = null;
 		try {
 			String statement = "{call Rate(?, ?, ?, ?)}";
@@ -455,11 +465,11 @@ public final class QueryExecuter implements QueryInterpreter {
 			
 			System.out.println("Executing stored procedure..." );
 			callableStatement.executeUpdate();
-			
+			model.setBank(this.getAlbumsByAny(getLastQuery()).toArray());
 
-		} catch (SQLException e) {
-			// TODO: handle exception
-			e.printStackTrace();
+		} finally
+		{
+			closeStatement(callableStatement);
 		}
 
 	}
@@ -494,5 +504,42 @@ public final class QueryExecuter implements QueryInterpreter {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void verifyAccount(String user, String pass) throws SQLException {
+		// call callable statement,
+		// get return value (account-id)
+		// if account-id != 0
+		// is validated, set model.validatedAccount accordingly!
+		System.out.println("Verifying account " + user + " - " + pass);
+		
+		int accountId;
+		CallableStatement stAccount = null;
+		try {
+			String sql = "{call VerifyAccount(?, ?, ?)}";
+			stAccount = connection.prepareCall(sql);
+			
+			//hard Data
+			stAccount.setString(1, model.getUser());
+			stAccount.setString(2, model.getPass());
+			stAccount.registerOutParameter(3, java.sql.Types.INTEGER);
+			
+			System.out.println("Executing stored procedure..." );
+			stAccount.executeUpdate();
+			accountId = stAccount.getInt(3);
+
+		} finally 
+		{
+			closeStatement(stAccount);
+		}
+		
+		System.out.println("Verify Returned: " + accountId);
+		
+		if (accountId > 0)
+			model.setValidAccount(true);
+		else
+			model.setValidAccount(false);
+		
 	}
 }

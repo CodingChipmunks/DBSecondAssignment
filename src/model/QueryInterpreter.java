@@ -14,7 +14,7 @@ public interface QueryInterpreter {
 	public List<Album> searchByAlbumTitle(String title) throws SQLException;
 	public List<Album> searchByGenre(String genre) throws SQLException;	//enum? / JComboBoxItem! == Object[] 
 	public void insertAlbum(Album album);
-	public void rateAlbum(int rating, int media);
+	public void rateAlbum(int rating, int media) throws SQLException;
 	ArrayList<Album> getAllAlbums(ResultSet rsetAlbum) throws SQLException;
 	ArrayList<Album> getAlbumsByAny(String title) throws SQLException;
 	ArrayList<Album> getAlbumsByArtist(String artist) throws SQLException;
@@ -22,6 +22,7 @@ public interface QueryInterpreter {
 	public void addMedia(Album album) throws SQLException;
 	ArrayList<Album> getAlbumsByYear(String year) throws SQLException;
 	ArrayList<Album> getAlbumsByUser(String user) throws SQLException;
+	void verifyAccount(String user, String pass) throws SQLException;
 	
 	// moved to helperclass rowConverter
 	// private methods can't be in interface

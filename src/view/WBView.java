@@ -32,6 +32,7 @@ public class WBView extends JFrame {
 	private ArrayList<String> columnFilter = new ArrayList<String>();
 
 	// dialogs
+	private LoginDialog loginDialog;
 	private AddMediaDialog addMediaDialog;
 	private RateMediaDialog rateMediaDialog;
 	private ReviewMediaDialog reviewMediaDialog;
@@ -48,6 +49,7 @@ public class WBView extends JFrame {
 	public WBView(Model m) {
 		Controller controller = new Controller(m, this);
 
+		loginDialog = new LoginDialog(m, this, controller);
 		addMediaDialog = new AddMediaDialog(m, this, controller);
 		rateMediaDialog = new RateMediaDialog(m, this, controller);
 		reviewMediaDialog = new ReviewMediaDialog(m, this);
@@ -112,7 +114,9 @@ public class WBView extends JFrame {
 		searchPanel.add(comboBox, BorderLayout.WEST);
 
 		// create components in methods
-		setVisible(true);
+		
+		loginDialog.setVisible(true);
+		//setVisible(true);
 		setLocationRelativeTo(null);//wbview.getSelectedId();
 	}
 
@@ -276,6 +280,11 @@ public class WBView extends JFrame {
 	public void revokeMediaDialog() {
 		addMediaDialog.setVisible(false);
 		this.setVisible(true);
+	}
+	
+	public LoginDialog getLoginDialog()
+	{
+		return loginDialog;
 	}
 
 	public void updateView() {

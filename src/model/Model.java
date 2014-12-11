@@ -16,6 +16,7 @@ import view.*;
 	private Object[] bank = null; // contains the result of last query.
 	private String user = "";
 	private String pass = "";
+	private boolean validatedAccount = false;
 
 	public Model(String user, String pass)
 	{
@@ -92,5 +93,16 @@ import view.*;
 
 	public Album getAlbum(int index) {
 		return album.get(index);
+	}
+	
+	// called from QueryExecuter.loginValidate(...);
+	public void setValidAccount(boolean is)
+	{
+		validatedAccount = is;
+	}
+	
+	// called from main thread post-query.
+	public boolean getValidAccount() {
+		return validatedAccount;
 	}
 }

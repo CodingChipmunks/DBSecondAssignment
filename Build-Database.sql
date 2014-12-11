@@ -127,6 +127,16 @@ GRANT SELECT (Name, Id) ON mediacollection.Account TO 'clientapp'@'localhost';
 DROP PROCEDURE IF EXISTS AddCreator;
 
 DELIMITER $$
+CREATE PROCEDURE VerifyAccount(
+in p_user varchar(32),
+in p_pass varchar(32),
+out s_accountId int)
+BEGIN
+	SET s_accountId := -1;
+    SELECT Account.Id INTO s_accountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
+END$$
+
+DELIMITER $$
 CREATE PROCEDURE AddCreator(
 in p_user varchar(32),
 in p_pass varchar(32),

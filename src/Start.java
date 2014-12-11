@@ -19,10 +19,9 @@ public class Start {
 		final String user;
 		final String pass;
 		
-		// lazy programmer is out of args :(
 		if (args.length != 2) {
-			user = "Foo";
-			pass = "Foo";
+			user = "";
+			pass = "";
 		}
 		else
 		{
