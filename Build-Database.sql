@@ -97,12 +97,15 @@ CREATE TABLE IF NOT EXISTS Review(
 	 FOREIGN KEY (Media_Id)    REFERENCES Media(Id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+
+
 -- Create a database user with read access for every normal user, the user does not need to supply
 -- Login credentials when reading from the database. Login information will be sent when required by the 
 -- Database, when creating a review or rating. 
 CREATE USER 'clientapp'@'localhost' IDENTIFIED BY 'qwerty'; -- the password is on github and in the application.
 
--- Grant select on all columns in the following tables
+-- Grant select on all columns in the following tables 
+GRANT EXECUTE ON mediacollection.* TO 'clientapp'@'localhost';
 GRANT SELECT ON mediacollection.Mediatype TO 'clientapp'@'localhost';	
 GRANT SELECT ON mediacollection.Media TO 'clientapp'@'localhost';	
 GRANT SELECT ON mediacollection.Contributor TO 'clientapp'@'localhost';	
@@ -113,6 +116,25 @@ GRANT SELECT ON mediacollection.Review TO 'clientapp'@'localhost';
 
 -- Do not allow access to Account passwords. Accountname is exposed, add nick-name?
 GRANT SELECT (Name, Id) ON mediacollection.Account TO 'clientapp'@'localhost'; 
-
 -- The admin logs on with write access, enabling the creation of accounts in User table.
 -- Media.
+
+DROP PROCEDURE IF EXISTS MakeReview;
+
+DELIMITER $$
+CREATE PROCEDURE MakeReview(
+    in  p_user varchar(32), 
+    in p_pass  varchar(32),
+    in p_title varchar(32),
+    in p_text varchar(500),
+    in p_media int)
+BEGIN
+    DECLARE AccountId int;
+ 
+    SELECT Account.Id INTO AccountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
+ 
+    IF AccountId > 0 THEN
+		INSERT INTO Review (Media_Id, Account_Id, Text, Title) VALUES (p_media, AccountId, p_title, p_text);
+    END IF;
+ 
+END$$
