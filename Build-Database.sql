@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS Rating(
 -- Create Review, Username is unique so that every user may only create one review.
 CREATE TABLE IF NOT EXISTS Review(
 		Media_Id INTEGER, 
-        Account_Id INTEGER UNIQUE, 
+        Account_Id INTEGER, 
         Title VARCHAR(24) NOT NULL, 
 		Text VARCHAR(500) NOT NULL,
 	 FOREIGN KEY (Account_Id)  REFERENCES Account(Id) ON DELETE CASCADE ON UPDATE CASCADE,

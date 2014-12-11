@@ -918,4 +918,24 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		model.setBank(review.toArray());
 	}
+
+	@Override
+	public void reviewMedia(Review review, int pk) throws SQLException {
+		CallableStatement stReview = null;
+		try {
+			String sql = "{call MakeReview(?, ?, ?, ?, ?)}";
+			stReview = connection.prepareCall(sql);
+
+			stReview.setString(1, model.getUser());
+			stReview.setString(2, model.getPass());
+			stReview.setString(3,  review.getTitle());
+			stReview.setString(4, review.getText());
+			stReview.setInt(5, pk);
+
+			stReview.executeUpdate();
+		} finally {
+			closeStatement(stReview);
+		}
+		rebootDataSet();
+	}
 }

@@ -37,9 +37,10 @@ public interface QueryInterpreter {
 	ArrayList<Book> getBookByGenre(String genre) throws SQLException;
 
 	void getReviewsByAny(String queryText) throws SQLException;
-	
+	void reviewMedia(Review review, int pk) throws SQLException;
 	void rateAlbum(int rating, int media) throws SQLException;
 	void verifyAccount(String user, String pass) throws SQLException;
 	void addMedia(String name, String year, String genre, Object[] objects,
 			int duration, int mediaType) throws SQLException;
+
 }

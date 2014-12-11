@@ -52,7 +52,7 @@ public class WBView extends JFrame {
 		loginDialog = new LoginDialog(m, this, controller);
 		addMediaDialog = new AddMediaDialog(m, this, controller);
 		rateMediaDialog = new RateMediaDialog(m, this, controller);
-		reviewMediaDialog = new ReviewMediaDialog(m, this);
+		reviewMediaDialog = new ReviewMediaDialog(m, this, controller);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -274,6 +274,11 @@ public class WBView extends JFrame {
 	public AddMediaDialog getMediaDialog()
 	{
 		return this.addMediaDialog;
+	}
+	
+	public ReviewMediaDialog getReviewDialog()
+	{
+		return this.reviewMediaDialog;
 	}
 
 	public void revokeMediaDialog() {

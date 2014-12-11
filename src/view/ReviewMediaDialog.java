@@ -5,9 +5,11 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
 import model.*;
 
 @SuppressWarnings("serial")
@@ -24,9 +26,10 @@ public class ReviewMediaDialog extends JFrame {
 
 	private int WIDTH = 350;
 	private int HEIGHT = 300;
+	private int pk;
 
 
-	public ReviewMediaDialog(Model m, final WBView view) {
+	public ReviewMediaDialog(Model m, final WBView view, Controller controller) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setSize(WIDTH, HEIGHT);
 		contentPane = new JPanel();
@@ -56,7 +59,7 @@ public class ReviewMediaDialog extends JFrame {
 		
 		add = new JButton("Add");
 		buttonPane.add(add);
-		setSubmit(add);
+		controller.setButtonAddReview(add);
 
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
@@ -92,26 +95,32 @@ public class ReviewMediaDialog extends JFrame {
 		});
 	}
 	
-	private void setSubmit(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				getValues();
-			}
-		});
-	}
-	
-	public void getValues() {
-		// fetch review to db
-	}
-	
 	private void resetUI() {
 		title.setText("");
 		text.setText(defaultText);
 	}
 	
+	public String getReviewTitle()
+	{
+		return title.getText();
+	}
+	
+	public String getReviewBody()
+	{
+		return text.getText();
+	}
 	
 	public void updateView() {
 		contentPane.updateUI();
+	}
+
+	public void setPK(int selectedId) {
+		this.pk = selectedId;
+	}
+	
+	public int getPK()
+	{
+		return this.pk;
 	}
 	
 

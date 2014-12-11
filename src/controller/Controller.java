@@ -29,6 +29,7 @@ public class Controller implements ActionListener {
 	private Album album = null;
 	private Movie movie = null;
 	private Book book = null;
+	private Review review = null;
 	private int rating;
 	private int media;
 
@@ -62,7 +63,8 @@ public class Controller implements ActionListener {
 						switch (queryType()) {
 						case ALBUMSEARCH:
 							qx.addMedia(album.getName(), album.getYear(), album
-									.getGenre(), album.getArtist().toArray(), 0, 1);
+									.getGenre(), album.getArtist().toArray(),
+									0, 1);
 							break;
 						case MOVIESEARCH:
 							qx.addMedia(movie.getTitle(), movie.getYear(),
@@ -98,6 +100,9 @@ public class Controller implements ActionListener {
 					case RATE:
 						qx.rateAlbum(rating, media);
 						break;
+					case REVIEW:
+						qx.reviewMedia(review, new Integer(queryText));
+						break;
 					case LOGIN:
 						qx.verifyAccount(model.getUser(), model.getPass());
 						break;
@@ -132,9 +137,8 @@ public class Controller implements ActionListener {
 			}
 		}.start();
 	}
-	
-	private QueryType addType()
-	{
+
+	private QueryType addType() {
 		QueryType qt = null;
 
 		switch (wbview.getMediaDialog().getMediaIndex()) {
@@ -165,7 +169,7 @@ public class Controller implements ActionListener {
 		case 2:
 			qt = QueryType.BOOKSEARCH;
 			break;
-		case 3: 
+		case 3:
 			qt = QueryType.REVIEWSEARCH;
 			break;
 		}
@@ -201,14 +205,39 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	public void setButtonAddReview(JButton button) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				ReviewMediaDialog reviewDialog = wbview.getReviewDialog();
+				review = new Review(reviewDialog.getReviewTitle(), reviewDialog.getReviewBody(), "", "", "");
+				executeQuery(QueryType.REVIEW, "" + reviewDialog.getPK());
+				wbview.getReviewDialog().setVisible(false);
+			}
+		});
+	}
+
 	public void setButtonReview(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				// TODO create review query..
-				System.out.println("Review Button");
-				wbview.invokeReviewMediaDialog();
+				try {
+					
+					if (wbview.getSelectedRowCount() == 1) {
+						wbview.getReviewDialog().setPK(wbview.getSelectedId());
+						wbview.invokeReviewMediaDialog();
+					} else {
+						throw new Exception("multiselect");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					if (e.getMessage().equals("multiselect")) {
+						wbview.showError("You have to select ONE media item!");
+					} else {
+						wbview.showError("You have to select a media item!");
+					}
+				}
 			}
 		});
+
 	}
 
 	public void setButtonRate(JButton button) {
@@ -229,7 +258,7 @@ public class Controller implements ActionListener {
 					}
 
 				} catch (Exception e) {
-					e.printStackTrace(); // TODO enable for debugging
+					// e.printStackTrace(); // TODO enable for debugging
 					if (e.getMessage().equals("multiselect")) {
 						wbview.showError("You have to select ONE media item!");
 					} else {
@@ -325,17 +354,11 @@ public class Controller implements ActionListener {
 	public void setSubmitRate(JButton button, final RateMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-
 				rating = dialog.getValues();
 				media = wbview.getSelectedId();
 				dialog.setVisible(false);
-
 				// set rating
 				executeQuery(QueryType.RATE, "");
-				// display update
-				// executeQuery(QueryType.ALBUMSEARCH, "%"); // 2 fast? - done
-				// internally in QE, must store type of query
-				// also stores lastQuery
 			}
 		});
 	}
@@ -345,7 +368,7 @@ public class Controller implements ActionListener {
 			public void mousePressed(MouseEvent evt) {
 				// TODO create add query
 				System.out.println("Add Button");
-				
+
 				// if not querying reviews, preset the addmediadialog with the
 				// same type that was searched for.
 				if (queryType() != QueryType.REVIEWSEARCH)
@@ -361,7 +384,7 @@ public class Controller implements ActionListener {
 	}
 
 	public enum QueryType {
-		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, REVIEWSEARCH, MEDIAADD, RATE, LOGIN
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, REVIEWSEARCH, MEDIAADD, RATE, LOGIN, REVIEW
 	}
 
 	// check a users password and set model password
