@@ -31,7 +31,7 @@ public class LoginDialog extends JFrame{
 		private int WIDTH = 200;
 		private int HEIGHT = 135;
 
-		public LoginDialog(Model m, final WBView view, final Controller controller) {
+		public LoginDialog(Model model, final WBView view, final Controller controller) {
 			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			setBounds(100, 100, WIDTH, HEIGHT);
 			contentPane = new JPanel();
@@ -49,6 +49,8 @@ public class LoginDialog extends JFrame{
 			
 			user = new JTextField(16);
 			pass = new JPasswordField(16);
+			user.setText(model.getUser());
+			pass.setText(model.getPass());
 			inputPane.add(user);
 			inputPane.add(pass);
 

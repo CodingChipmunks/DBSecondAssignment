@@ -18,9 +18,9 @@ import model.*;
 import view.*;
 
 /**
- * Handles listeners
+ * Handles listeners.
  * 
- * 
+ * @author Lazar Klincov, Robin Duda.
  */
 public class Controller implements ActionListener {
 
@@ -33,19 +33,18 @@ public class Controller implements ActionListener {
 	private int rating;
 	private int media;
 
-	/*
-	 * public Controller(Model m, View v) { this.model = m; this.view = v; }
-	 */
-
 	public Controller(Model m, WBView wbv) {
 		this.model = m;
 		this.wbview = wbv;
 		executeQuery(QueryType.ALBUMSEARCH, "%");
 	}
 
-	// executes a query in a thread, when the query is done an event is
-	// added to gui thread, which will load all available data from the data
-	// bank in model.
+	/** executes a query in a thread, when the query is done an event is
+	 	added to gui thread, which will load all available data from the data
+	 	bank in model.
+	 	
+	 	@param queryType type of query to be executed.
+	 	@param queryText text parameters to query. */
 	public void executeQuery(final QueryType queryType, final String queryText) {
 		new Thread() {
 			String errormsg = "";
@@ -56,9 +55,6 @@ public class Controller implements ActionListener {
 					qx = new QueryExecuter(model);
 					wbview.setColumnFilter(new String[] { "review" });
 					switch (queryType) {
-
-					// String name, String year, String genre, ArrayList<String>
-					// owner, int mediaType
 					case MEDIAADD:
 						switch (queryType()) {
 						case ALBUMSEARCH:
@@ -76,26 +72,21 @@ public class Controller implements ActionListener {
 									book.getGenre(),
 									book.getAuthor().toArray(), 0, 3);
 							break;
-
 						default:
 							break;
 						}
 						break;
 					case BOOKSEARCH:
 						qx.getBooksByAny(queryText);
-						System.out.println("Doing A Book Search!");
 						break;
 					case MOVIESEARCH:
 						qx.getMoviesByAny(queryText);
-						System.out.println("Doing A Movie Search!");
 						break;
 					case ALBUMSEARCH:
 						qx.getAlbumsByAny(queryText);
-						System.out.println("Doing A Album Search!");
 						break;
 					case REVIEWSEARCH:
 						qx.getReviewsByAny(queryText);
-						System.out.println("Doing A Review Search!");
 						break;
 					case RATE:
 						qx.rateAlbum(rating, media);
@@ -110,8 +101,6 @@ public class Controller implements ActionListener {
 						break;
 					}
 				} catch (SQLException e) {
-					// TODO remove-debug-only
-					e.printStackTrace();
 					errormsg = e.getMessage();
 				} finally {
 					qx.disconnect();
@@ -138,6 +127,7 @@ public class Controller implements ActionListener {
 		}.start();
 	}
 
+	/*** @return type of media seleted in AddDialog ***/
 	private QueryType addType() {
 		QueryType qt = null;
 
@@ -156,6 +146,7 @@ public class Controller implements ActionListener {
 		return qt;
 	}
 
+	/*** @return type of media selected in main search-form. ***/
 	private QueryType queryType() {
 		QueryType qt = null;
 
@@ -177,7 +168,7 @@ public class Controller implements ActionListener {
 		return qt;
 	}
 
-	// add listener
+	/*** listen to changes in the search-box, updates search. ***/
 	public void setQuerySource(JTextField textField) {
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -185,18 +176,17 @@ public class Controller implements ActionListener {
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				System.out.println("Query=" + wbview.getMediaQuery());
 				executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				System.out.println("Query=" + wbview.getMediaQuery());
 				executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 			}
 		});
 	}
 
+	/*** the search button, using this will return only exact matches. ***/
 	public void setButtonSearch(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -205,6 +195,7 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	/*** Event triggered when a revied is added from AddReviewDialog ***/
 	public void setButtonAddReview(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -216,6 +207,10 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	/*** Triggered before showind the AddReviewDialog, ensures that not more or less than a single
+	 * row is selected.
+	 * @param button triggers the event.
+	 */
 	public void setButtonReview(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -240,6 +235,7 @@ public class Controller implements ActionListener {
 
 	}
 
+	/*** Button used to show the rating dialog, ensures that valid amount of rows are selected ***/
 	public void setButtonRate(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -249,16 +245,10 @@ public class Controller implements ActionListener {
 
 					if (wbview.getSelectedRowCount() == 1) {
 						wbview.invokeRateMediaDialog(wbview.getSelectedId());
-
-						// while?
-
 					} else {
-						// wbview.showError("You have to select ONE media item!");
 						throw new Exception("multiselect");
 					}
-
 				} catch (Exception e) {
-					// e.printStackTrace(); // TODO enable for debugging
 					if (e.getMessage().equals("multiselect")) {
 						wbview.showError("You have to select ONE media item!");
 					} else {
@@ -269,6 +259,11 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	/*** Convert a list of values into an object.
+	 * 
+	 * @param key determines the name of the class attribute.
+	 * @param value determines the value of the class attribute.
+	 */
 	private void dataToAlbum(String key, String value) {
 		if (key.toString().equals("name"))
 			album.setName(value);
@@ -284,6 +279,12 @@ public class Controller implements ActionListener {
 		}
 	}
 
+
+	/*** Convert a list of values into an object.
+	 * 
+	 * @param key determines the name of the class attribute.
+	 * @param value determines the value of the class attribute.
+	 */
 	private void dataToMovie(String key, String value) {
 		if (key.toString().equals("title"))
 			movie.setTitle(value);
@@ -299,6 +300,12 @@ public class Controller implements ActionListener {
 		}
 	}
 
+
+	/*** Convert a list of values into an object.
+	 * 
+	 * @param key determines the name of the class attribute.
+	 * @param value determines the value of the class attribute.
+	 */
 	private void dataToBook(String key, String value) {
 		if (key.toString().equals("title"))
 			book.setTitle(value);
@@ -314,7 +321,8 @@ public class Controller implements ActionListener {
 		}
 	}
 
-	// button add submit in addMediaDialog
+	/*** Creates an object from given parameter values in dialog, type is determined
+	 * by search type. ***/
 	public void setSubmit(JButton button, final AddMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -351,26 +359,22 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	/*** Submits a media rating ***/
 	public void setSubmitRate(JButton button, final RateMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				rating = dialog.getValues();
 				media = wbview.getSelectedId();
 				dialog.setVisible(false);
-				// set rating
 				executeQuery(QueryType.RATE, "");
 			}
 		});
 	}
 
+	/*** Show add media dialog ***/
 	public void setButtonAdd(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				// TODO create add query
-				System.out.println("Add Button");
-
-				// if not querying reviews, preset the addmediadialog with the
-				// same type that was searched for.
 				if (queryType() != QueryType.REVIEWSEARCH)
 					wbview.invokeAddMediaDialog(wbview.getMediaIndex());
 				else
@@ -387,7 +391,7 @@ public class Controller implements ActionListener {
 		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, REVIEWSEARCH, MEDIAADD, RATE, LOGIN, REVIEW
 	}
 
-	// check a users password and set model password
+	/*** check a users password and set model password ***/
 	public void setLogin(JButton login, LoginDialog loginDialog) {
 		login.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -398,7 +402,7 @@ public class Controller implements ActionListener {
 		});
 	}
 
-	// called from wbview on ComboChanged.
+	/*** called from wbview on ComboChanged. ***/
 	public void comboMediaChanged() {
 		executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 	}
