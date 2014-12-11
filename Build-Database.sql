@@ -146,7 +146,7 @@ BEGIN
 		SELECT Id INTO CreatorId FROM Creator WHERE Name = p_creator;
 		INSERT INTO Contributor(Media_Id, Creator_Id) VALUES (p_mediaId, CreatorId);
 	END IF;
-END;
+END$$
 
 
 DROP PROCEDURE IF EXISTS AddMedia;
@@ -155,9 +155,10 @@ DELIMITER $$
 CREATE PROCEDURE AddMedia(
 in p_user varchar(32),
 in p_pass varchar(32),
-in p_name varchar(32),
+in p_title varchar(32),
 in p_year varchar(16),
 in p_genre varchar(16),
+in p_duration int,
 in p_mediatype int) 
 BEGIN
 	DECLARE MediaId int;
@@ -200,8 +201,9 @@ END$$
 DROP PROCEDURE IF EXISTS Rate;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Rate`(mediaId integer, user varchar(32), pass varchar(32), rating integer)
-    MODIFIES SQL DATA
+-- CREATE DEFINER=`root`@`localhost` PROCEDURE `Rate`(mediaId integer, user varchar(32), pass varchar(32), rating integer)
+ --    MODIFIES SQL DATA
+ CREATE PROCEDURE Rate(mediaId integer, user varchar(32), pass varchar(32), rating integer)
 BEGIN
 	declare YES integer;
 
