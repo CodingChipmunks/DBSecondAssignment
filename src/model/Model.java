@@ -7,19 +7,16 @@ import controller.*;
 import view.*;
 
 /**
- * Keeps track of components in the model
- * 
- *
+ * Keeps temporary track of components in the model
  */
  public class Model {
-	private ArrayList<Album> album; // TODO are these required?
+	private ArrayList<Album> album;
 	private ArrayList<Movie> movie;
 	private ArrayList<Review> review;
 	private Object[] bank = null; // contains the result of last query.
 	private String user = "";
 	private String pass = "";
 
-	// TODO: add QueryExecuter
 	public Model(String user, String pass)
 	{
 		this.user = user;
