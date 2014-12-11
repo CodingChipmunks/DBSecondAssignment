@@ -278,6 +278,8 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
 		Set<Album> album = new HashSet<Album>();
 
+		album.addAll(getAlbumsByUser(text));
+		album.addAll(getAlbumsByYear(text));
 		album.addAll(searchByAlbumTitle(text));
 		album.addAll(getAlbumsByRating(text));
 		album.addAll(getAlbumsByArtist(text));
@@ -286,6 +288,44 @@ public final class QueryExecuter implements QueryInterpreter {
 		model.setBank(album.toArray()); // ...
 
 		return new ArrayList<Album>(album);
+	}
+	
+	
+	@Override
+	public ArrayList<Album> getAlbumsByUser(String user) throws SQLException {
+		ArrayList<Album> album = new ArrayList<Album>();
+		ResultSet rsetAlbum = null;
+		Statement stAlbum = connection.createStatement();
+		try {
+			rsetAlbum = stAlbum
+					.executeQuery("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 1 "
+							+ "AND Account_Id = Account.Id " 
+							+ " AND Account.Name like '" + user + "';");
+
+			album = getAllAlbums(rsetAlbum);
+		}finally {
+			listClose(new Statement[] { stAlbum },
+					new ResultSet[] { rsetAlbum });
+		}
+		return album;
+	}
+
+	@Override
+	public ArrayList<Album> getAlbumsByYear(String year) throws SQLException {
+		ArrayList<Album> album = new ArrayList<Album>();
+		ResultSet rsetAlbum = null;
+		Statement stAlbum = connection.createStatement();
+		try {
+			rsetAlbum = stAlbum
+					.executeQuery("SELECT * FROM Media WHERE Media.MediaType_Id = 1 "
+							+ "AND Year like '" + year + "';");
+
+			album = getAllAlbums(rsetAlbum);
+		}finally {
+			listClose(new Statement[] { stAlbum },
+					new ResultSet[] { rsetAlbum });
+		}
+		return album;
 	}
 
 	@Override

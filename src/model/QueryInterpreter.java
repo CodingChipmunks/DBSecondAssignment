@@ -20,6 +20,8 @@ public interface QueryInterpreter {
 	ArrayList<Album> getAlbumsByArtist(String artist) throws SQLException;
 	ArrayList<Album> getAlbumsByRating(String rating) throws SQLException;
 	public void addMedia(Album album) throws SQLException;
+	ArrayList<Album> getAlbumsByYear(String year) throws SQLException;
+	ArrayList<Album> getAlbumsByUser(String user) throws SQLException;
 	
 	// moved to helperclass rowConverter
 	// private methods can't be in interface
