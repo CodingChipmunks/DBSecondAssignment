@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 public class Album {
 	private int id;
-	private String name;
-	private String year;
-	private String user;
-	private float rating;
 	private Genre genre = new Genre("");
+	private String year;
+	private String name;
+	private String user;
+	//private int length (in seconds)
+	private float rating;
 	private ArrayList<Artist> artist = new ArrayList<Artist>();
 	private ArrayList<Review> review = new ArrayList<Review>();
 

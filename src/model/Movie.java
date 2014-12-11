@@ -7,10 +7,11 @@ public class Movie {
 	private String genre;
 	private String year;
 	private String title;
+	private float rating;
+	private int duration;
 	private String user;
-	private ArrayList<Director> director;
-	private ArrayList<Review> review;
-	private ArrayList<Rating> rating;
+	private ArrayList<Director> director = new ArrayList<Director>();
+	private ArrayList<Review> review = new ArrayList<Review>();
 
 	public int getId() {
 		return id;
@@ -33,28 +34,39 @@ public class Movie {
 		this.review = review;
 	}
 
-	public ArrayList<Rating> getRating() {
+	public float getRating() {
 		return rating;
 	}
 
-	public void setRating(ArrayList<Rating> rating) {
-		this.rating = rating;
+	public void setRating(float f) {
+		this.rating = f;
 	}
 
 	public String getGenre() {
 		return genre;
+	}
+	
+	public void setDuration(int duration)
+	{
+		this.duration = duration;
+	}
+	
+	public int getDuration()
+	{
+		return this.duration;
 	}
 
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
 
-	public Movie(String title, String genre, String year, String user, int id) {
-		super();
+	public Movie(String title, String genre, String year, String user, int duration, int id) {
 		this.genre = genre;
 		this.year = year;
 		this.user = user;
 		this.title = title;
+		this.duration = duration;
+		this.id = id;
 	}
 
 	public ArrayList<Director> getDirector() {
@@ -79,6 +91,30 @@ public class Movie {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public void addReview(Review review) {
+		this.review.add(review);
+	}
+
+	public void addDirector(String string) {
+		director.add(new Director(string));
+		
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		Movie movie = (Movie) object;
+		if (movie.getId() == this.getId())
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.id;
 	}
 
 }

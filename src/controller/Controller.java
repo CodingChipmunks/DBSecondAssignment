@@ -27,6 +27,8 @@ public class Controller implements ActionListener {
 	private WBView wbview;
 	private Model model;
 	private Album album = null;
+	private Movie movie = null;
+	private Book book = null;
 	private int rating;
 	private int media;
 
@@ -52,26 +54,59 @@ public class Controller implements ActionListener {
 				try {
 					qx = new QueryExecuter(model);
 					wbview.setColumnFilter(new String[] { "review" });
-					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
+
+					// String name, String year, String genre, ArrayList<String>
+					// owner, int mediaType
 					case MEDIAADD:
-						qx.addMedia(album);
+						switch (queryType()) {
+						case ALBUMSEARCH:
+							qx.addMedia(album.getName(), album.getYear(), album
+									.getGenre(), album.getArtist().toArray(), 0, 1);
+							break;
+						case MOVIESEARCH:
+							qx.addMedia(movie.getTitle(), movie.getYear(),
+									movie.getGenre(), movie.getDirector()
+											.toArray(), movie.getDuration(), 2);
+							break;
+						case BOOKSEARCH:
+							qx.addMedia(book.getTitle(), book.getYear(),
+									book.getGenre(),
+									book.getAuthor().toArray(), 0, 3);
+							break;
+
+						default:
+							break;
+						}
 						break;
 					case BOOKSEARCH:
-						qx.getAlbumsByAny(queryText);
+						qx.getBooksByAny(queryText);
+						System.out.println("Doing A Book Search!");
 						break;
 					case MOVIESEARCH:
-						qx.getAlbumsByAny(queryText);
+						qx.getMoviesByAny(queryText);
+						System.out.println("Doing A Movie Search!");
 						break;
 					case ALBUMSEARCH:
 						qx.getAlbumsByAny(queryText);
+						System.out.println("Doing A Album Search!");
+						break;
+					case REVIEWSEARCH:
+						qx.getReviewsByAny(queryText);
+						System.out.println("Doing A Review Search!");
 						break;
 					case RATE:
 						qx.rateAlbum(rating, media);
-					case LOGIN: 
-					    qx.verifyAccount(model.getUser(), model.getPass());
+						break;
+					case LOGIN:
+						qx.verifyAccount(model.getUser(), model.getPass());
+						break;
+					default:
+						break;
 					}
 				} catch (SQLException e) {
+					// TODO remove-debug-only
+					e.printStackTrace();
 					errormsg = e.getMessage();
 				} finally {
 					qx.disconnect();
@@ -80,18 +115,14 @@ public class Controller implements ActionListener {
 					public void run() {
 						if (!errormsg.equals(""))
 							wbview.showError(errormsg);
-						
+
 						if (queryType != QueryType.LOGIN)
-						wbview.feedTable(model.getBank());
-						if (queryType == QueryType.LOGIN)
-						{
-							if (model.getValidAccount())
-							{
+							wbview.feedTable(model.getBank());
+						if (queryType == QueryType.LOGIN) {
+							if (model.getValidAccount()) {
 								wbview.setVisible(true);
 								wbview.getLoginDialog().setVisible(false);
-							}
-							else
-							{
+							} else {
 								wbview.getLoginDialog().loginFailed();
 								wbview.showError("Invalid Login!\r\nPlease contact database admin\r\nto create a new account.");
 							}
@@ -101,6 +132,25 @@ public class Controller implements ActionListener {
 			}
 		}.start();
 	}
+	
+	private QueryType addType()
+	{
+		QueryType qt = null;
+
+		switch (wbview.getMediaDialog().getMediaIndex()) {
+		case 0:
+			qt = QueryType.ALBUMSEARCH;
+			break;
+		case 1:
+			qt = QueryType.MOVIESEARCH;
+			break;
+		case 2:
+			qt = QueryType.BOOKSEARCH;
+			break;
+		}
+
+		return qt;
+	}
 
 	private QueryType queryType() {
 		QueryType qt = null;
@@ -108,10 +158,16 @@ public class Controller implements ActionListener {
 		switch (wbview.getMediaIndex()) {
 		case 0:
 			qt = QueryType.ALBUMSEARCH;
+			break;
 		case 1:
-			qt = QueryType.BOOKSEARCH;
-		case 2:
 			qt = QueryType.MOVIESEARCH;
+			break;
+		case 2:
+			qt = QueryType.BOOKSEARCH;
+			break;
+		case 3: 
+			qt = QueryType.REVIEWSEARCH;
+			break;
 		}
 
 		return qt;
@@ -164,15 +220,16 @@ public class Controller implements ActionListener {
 
 					if (wbview.getSelectedRowCount() == 1) {
 						wbview.invokeRateMediaDialog(wbview.getSelectedId());
-						
+
 						// while?
-						
+
 					} else {
 						// wbview.showError("You have to select ONE media item!");
 						throw new Exception("multiselect");
 					}
 
 				} catch (Exception e) {
+					e.printStackTrace(); // TODO enable for debugging
 					if (e.getMessage().equals("multiselect")) {
 						wbview.showError("You have to select ONE media item!");
 					} else {
@@ -183,6 +240,51 @@ public class Controller implements ActionListener {
 		});
 	}
 
+	private void dataToAlbum(String key, String value) {
+		if (key.toString().equals("name"))
+			album.setName(value);
+		if (key.toString().equals("genre"))
+			album.setGenre(value);
+		if (key.toString().equals("year"))
+			album.setYear(value);
+		if (key.toString().equals("artist")) {
+			String[] artists = value.split(", ");
+
+			for (int i = 0; i < artists.length; i++)
+				album.AddArtist(artists[i]);
+		}
+	}
+
+	private void dataToMovie(String key, String value) {
+		if (key.toString().equals("title"))
+			movie.setTitle(value);
+		if (key.toString().equals("genre"))
+			movie.setGenre(value);
+		if (key.toString().equals("year"))
+			movie.setYear(value);
+		if (key.toString().equals("director")) {
+			String[] director = value.split(", ");
+
+			for (int i = 0; i < director.length; i++)
+				movie.addDirector(director[i]);
+		}
+	}
+
+	private void dataToBook(String key, String value) {
+		if (key.toString().equals("title"))
+			book.setTitle(value);
+		if (key.toString().equals("genre"))
+			book.setGenre(value);
+		if (key.toString().equals("year"))
+			book.setYear(value);
+		if (key.toString().equals("author")) {
+			String[] author = value.split(", ");
+
+			for (int i = 0; i < author.length; i++)
+				book.addAuthor(author[i]);
+		}
+	}
+
 	// button add submit in addMediaDialog
 	public void setSubmit(JButton button, final AddMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
@@ -190,7 +292,10 @@ public class Controller implements ActionListener {
 				@SuppressWarnings("rawtypes")
 				Hashtable table = dialog.getValues();
 				dialog.setVisible(false);
+
 				album = new Album("", "", "", 0);
+				movie = new Movie("", "", "", "", 0, 0);
+				book = new Book("", "", 0);
 
 				@SuppressWarnings("rawtypes")
 				Enumeration e = table.keys();
@@ -198,38 +303,39 @@ public class Controller implements ActionListener {
 					String key = (String) e.nextElement();
 					System.out.println(key + " : " + table.get(key));
 
-					if (key.toString().equals("name"))
-						album.setName(table.get(key).toString());
-					if (key.toString().equals("genre"))
-						album.setGenre(table.get(key).toString());
-					if (key.toString().equals("year"))
-						album.setYear(table.get(key).toString());
-					if (key.toString().equals("artist")) {
-						// TODO change split-pattern, ", " is common!
-						String[] artists = table.get(key).toString()
-								.split(", ");
-
-						for (int i = 0; i < artists.length; i++)
-							album.AddArtist(artists[i]);
+					switch (addType()) {
+					case ALBUMSEARCH:
+						dataToAlbum(key, table.get(key).toString());
+						break;
+					case MOVIESEARCH:
+						dataToMovie(key, table.get(key).toString());
+						break;
+					case BOOKSEARCH:
+						dataToBook(key, table.get(key).toString());
+						break;
+					default:
+						break;
 					}
 				}
 				executeQuery(QueryType.MEDIAADD, "");
 			}
 		});
 	}
-	
+
 	public void setSubmitRate(JButton button, final RateMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				
+
 				rating = dialog.getValues();
 				media = wbview.getSelectedId();
 				dialog.setVisible(false);
-				
+
 				// set rating
 				executeQuery(QueryType.RATE, "");
 				// display update
-				executeQuery(QueryType.ALBUMSEARCH, "%");	// 2 fast?
+				// executeQuery(QueryType.ALBUMSEARCH, "%"); // 2 fast? - done
+				// internally in QE, must store type of query
+				// also stores lastQuery
 			}
 		});
 	}
@@ -239,19 +345,23 @@ public class Controller implements ActionListener {
 			public void mousePressed(MouseEvent evt) {
 				// TODO create add query
 				System.out.println("Add Button");
-				wbview.invokeAddMediaDialog();
+				
+				// if not querying reviews, preset the addmediadialog with the
+				// same type that was searched for.
+				if (queryType() != QueryType.REVIEWSEARCH)
+					wbview.invokeAddMediaDialog(wbview.getMediaIndex());
+				else
+					wbview.invokeAddMediaDialog(0);
 			}
 		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//
 	}
 
-	// TODO add query types
 	public enum QueryType {
-		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD, RATE, LOGIN
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, REVIEWSEARCH, MEDIAADD, RATE, LOGIN
 	}
 
 	// check a users password and set model password
@@ -261,10 +371,12 @@ public class Controller implements ActionListener {
 				model.setPass(loginDialog.getPass());
 				model.setUser(loginDialog.getUser());
 				executeQuery(QueryType.LOGIN, "");
-				// how to update the UI with error message?
-				// call QE - login, calls stored procedure, returns t - f
-				// just throw a new error with message set? ;)
 			}
 		});
+	}
+
+	// called from wbview on ComboChanged.
+	public void comboMediaChanged() {
+		executeQuery(queryType(), "%" + wbview.getMediaQuery() + "%");
 	}
 }

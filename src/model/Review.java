@@ -1,6 +1,16 @@
 package model;
 
 public class Review {
+	private String media;
+	private String mediaTitle;
+	public String getMediaTitle() {
+		return mediaTitle;
+	}
+
+	public void setMediaTitle(String mediaTitle) {
+		this.mediaTitle = mediaTitle;
+	}
+
 	private String title;
 	private String text;
 	private String user;
@@ -18,6 +28,16 @@ public class Review {
 	public String getText() {
 		return text;
 	}
+	
+	public String getMedia()
+	{
+		return this.media;
+	}
+	
+	public void setMedia(String media)
+	{
+		this.media = media;
+	}
 
 	public void setText(String text) {
 		this.text = text;
@@ -27,9 +47,11 @@ public class Review {
 		return user;
 	}
 
-	public Review(String title, String text, String user) {
+	public Review(String title, String text, String user, String media, String mediaTitle) {
 		super();
+		this.media = media;
 		this.title = title;
+		this.mediaTitle = mediaTitle;
 		this.text = text;
 		this.user = user;
 	}

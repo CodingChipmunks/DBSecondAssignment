@@ -1,6 +1,6 @@
 package model;
 
-public class Director {
+public class Author {
 	private String name;
 	
 	public String getName()
@@ -8,7 +8,7 @@ public class Director {
 		return this.name;
 	}
 	
-	public Director(String name)
+	public Author(String name)
 	{
 		this.name = name;
 	}
@@ -17,5 +17,4 @@ public class Director {
 	public String toString() {
 		return this.name;
 	}
-
 }

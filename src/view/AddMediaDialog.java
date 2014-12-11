@@ -22,7 +22,7 @@ import model.Model;
  * 
  */
 @SuppressWarnings("serial")
-public class AddMediaDialog extends JFrame {
+public class AddMediaDialog extends JFrame {	
 	private JPanel contentPane, buttonPane, inputPane, comboPane;
 	private JComboBox<String> comboMedia; // on change update forms.
 	private JButton add;
@@ -39,7 +39,8 @@ public class AddMediaDialog extends JFrame {
 	private ArrayList<JLabel> text = new ArrayList<JLabel>();
 	private ArrayList<JTextField> textField = new ArrayList<JTextField>();
 
-	public AddMediaDialog(Model m, final WBView view, final Controller controller) {
+	public AddMediaDialog(Model m, final WBView view,
+			final Controller controller) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, WIDTH, HEIGHT);
 		contentPane = new JPanel();
@@ -74,12 +75,12 @@ public class AddMediaDialog extends JFrame {
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
 		setCancel(cancel);
-		
+
 		Style.setUITheme(this);
-		
-		JRootPane rootPane = SwingUtilities.getRootPane(add); 
+
+		JRootPane rootPane = SwingUtilities.getRootPane(add);
 		rootPane.setDefaultButton(add);
-		
+
 		// listener for show/hide events.
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentHidden(ComponentEvent e) {
@@ -109,7 +110,6 @@ public class AddMediaDialog extends JFrame {
 		});
 	}
 
-
 	private boolean hiddenField(String name) {
 		boolean hidden = false;
 
@@ -126,7 +126,7 @@ public class AddMediaDialog extends JFrame {
 		Hashtable table = new Hashtable();
 
 		for (int i = 0; i < textField.size(); i++) {
-			
+
 			if (!field[i].getClass().isAssignableFrom(ArrayList.class)) {
 				table.put(text.get(i).getText(), textField.get(i).getText());
 			} else {
@@ -139,7 +139,8 @@ public class AddMediaDialog extends JFrame {
 		return table;
 	}
 
-	// id, user, review, rating should not show - /*(!field[i].getClass().isAssignableFrom(ArrayList.class))*/
+	// id, user, review, rating should not show -
+	// /*(!field[i].getClass().isAssignableFrom(ArrayList.class))*/
 	private void rebuildUI(Class<?> name) {
 		inputPane.removeAll();
 		text.clear();
@@ -149,23 +150,19 @@ public class AddMediaDialog extends JFrame {
 		for (int i = 0; i < field.length; i++) {
 			System.out.println("Field: " + field[i].getName().toString());
 			if (!hiddenField(field[i].getName().toString())) {
-				//if (true) {
-					System.out.println("Visible Field: " + field[i].getName().toString());
-					// do normal
-					
-					text.add(new JLabel(field[i].getName().toString()));
-					text.get(text.size() - 1)
-							.setPreferredSize(new Dimension(64, 16));
-					textField.add(new JTextField(""));
-					textField.get(textField.size() - 1).setPreferredSize(
-							new Dimension(WIDTH - 64 - 32, 16));
-					inputPane.add(text.get(text.size() - 1));
-					inputPane.add(textField.get(textField.size() - 1));
-				//}
+				text.add(new JLabel(field[i].getName().toString()));
+				text.get(text.size() - 1).setPreferredSize(
+						new Dimension(64, 16));
+				textField.add(new JTextField(""));
+				textField.get(textField.size() - 1).setPreferredSize(
+						new Dimension(WIDTH - 64 - 32, 16));
+				inputPane.add(text.get(text.size() - 1));
+				inputPane.add(textField.get(textField.size() - 1));
 			}
 		}
 		inputPane.add(hint);
-		this.setBounds(new Rectangle(100, 100, WIDTH, HEIGHT + (text.size() * 18)));
+		this.setBounds(new Rectangle(100, 100, WIDTH, HEIGHT
+				+ (text.size() * 18)));
 		this.setLocationRelativeTo(null);
 		updateView();
 	}
@@ -200,4 +197,9 @@ public class AddMediaDialog extends JFrame {
 	public void showError(String errormsg) {
 		JOptionPane.showMessageDialog(this, errormsg);
 	}
+
+	public void setComboIndex(int index) {
+			comboMedia.setSelectedIndex(index);
+	}
+
 }

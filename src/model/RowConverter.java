@@ -10,31 +10,16 @@ import java.util.ArrayList;
 public final class RowConverter {
 	public static Review convertRowToReview(ResultSet reviewRow)
 			throws SQLException {
-		return  new Review(reviewRow.getString("title"), reviewRow.getString("text"), "");
+		return  new Review(reviewRow.getString("title"), reviewRow.getString("text"), "", "", "");
 	}
-
-	public static ArrayList<Rating> convertRowToRating(ResultSet ratingRow)
-			throws SQLException {
-		ArrayList<Rating> rating = new ArrayList<Rating>();
-
-		while (ratingRow.next()) {
-			rating.add(new Rating(ratingRow.getInt("rating")));
-		}
-
-		return rating;
+	
+	public static Review convertRowToExtendedReview(ResultSet reviewRow) throws SQLException
+	{
+//		typename, itemtitle, username, revtitle, revtext
+		//Review(String title, String text, String user, String media, String mediaTitle)
+		return new Review(reviewRow.getString(4), reviewRow.getString(5), reviewRow.getString(3), reviewRow.getString(1), reviewRow.getString(2));	
 	}
-
-	public static ArrayList<Director> convertRowToDirector(ResultSet directorRow)
-			throws SQLException {
-		ArrayList<Director> director = new ArrayList<Director>();
-
-		while (directorRow.next()) {
-			director.add(new Director(directorRow.getString("name")));
-		}
-
-		return director;
-	}
-
+ 
 	// convert resultset to list of Artist objects
 	public static ArrayList<Artist> convertRowToArtist(ResultSet artistRow)
 			throws SQLException {
@@ -45,20 +30,6 @@ public final class RowConverter {
 		}
 
 		return artist;
-	}
-
-	// convert resultset to Album object
-	public static Album convertRowToAlbum(ResultSet albumRow,
-			ResultSet artistRow, ResultSet reviewRow, ResultSet ratingRow)
-			throws SQLException {
-
-		Album album = new Album(albumRow.getString("title"),
-				albumRow.getString("year"), "", albumRow.getInt("id"));
-
-		//album.setReview(convertRowToReview(reviewRow));
-		//album.setRating(convertRowToRating(ratingRow));
-		//album.setArtist(convertRowToArtist(artistRow));
-		return album;
 	}
 
 	public static Album convertRowToAlbum(ResultSet bigAlbumRow)
@@ -72,17 +43,18 @@ public final class RowConverter {
 
 	// String title, String genre, String director, String year, int id
 	// convert resultset to Movie object
-	public static Movie convertRowToMovie(ResultSet movieRow,
-			ResultSet directorRow, ResultSet reviewRow, ResultSet ratingRow)
+	public static Movie convertRowToMovie(ResultSet movieRow)
 			throws SQLException {
 
-		Movie movie = new Movie(movieRow.getString("title"),
-				movieRow.getString("genre"), movieRow.getString("year"),
-				movieRow.getString("user"), movieRow.getInt("id"));
+		Movie movie = new Movie(movieRow.getString("title"), "",
+				movieRow.getString("year"), "", movieRow.getInt("duration"), movieRow.getInt("id"));
 
-		//movie.setRating(convertRowToRating(ratingRow));
-		//movie.setReview(convertRowToReview(reviewRow));
-		//movie.setDirector(convertRowToDirector(directorRow));
 		return movie;
+	}
+
+	public static Book convertRowToBook(ResultSet bookRow) throws SQLException {
+		Book book = new Book(bookRow.getString("title"), bookRow.getString("year"), bookRow.getInt("id"));
+
+		return book;
 	}
 }

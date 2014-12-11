@@ -35,8 +35,9 @@ public class WBView extends JFrame {
 	private AddMediaDialog addMediaDialog;
 	private RateMediaDialog rateMediaDialog;
 	private ReviewMediaDialog reviewMediaDialog;
+	Controller controller;
 
-	private final String[] searchOptions = { "Album", "Movie", "Book" }; // Used
+	private final String[] searchOptions = { "Album", "Movie", "Book" , "Review"}; // Used
 																			// with
 																			// Class.ForName.
 
@@ -46,7 +47,7 @@ public class WBView extends JFrame {
 	 * Create the frame.
 	 */
 	public WBView(Model m) {
-		Controller controller = new Controller(m, this);
+		controller = new Controller(m, this);
 
 		loginDialog = new LoginDialog(m, this, controller);
 		addMediaDialog = new AddMediaDialog(m, this, controller);
@@ -125,6 +126,7 @@ public class WBView extends JFrame {
 				mediaIndex = combo.getSelectedIndex();
 				System.out.println("Selected media type: " + mediaType + ": "
 						+ mediaIndex);
+				controller.comboMediaChanged();
 			}
 		});
 	}
@@ -148,7 +150,6 @@ public class WBView extends JFrame {
 	}
 
 	public String getMediaQuery()
-
 	{
 		return textField.getText();
 	}
@@ -199,7 +200,7 @@ public class WBView extends JFrame {
 						field.setAccessible(true);
 						Object value = field.get(c);
 						if (null != value) {
-							System.out.println(value.toString());
+							//System.out.println(value.toString());
 							data[i][j] = value.toString().replace("[", "")
 									.replace("]", "");
 						} else
@@ -264,9 +265,15 @@ public class WBView extends JFrame {
 		this.setVisible(true);
 	}
 
-	public void invokeAddMediaDialog() {
+	public void invokeAddMediaDialog(int index) {
 		addMediaDialog.setVisible(true);
+		addMediaDialog.setComboIndex(index);
 		this.setVisible(false);
+	}
+	
+	public AddMediaDialog getMediaDialog()
+	{
+		return this.addMediaDialog;
 	}
 
 	public void revokeMediaDialog() {
