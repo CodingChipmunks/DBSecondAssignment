@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.tree.TreeSelectionModel;
 
 import controller.Controller;
 import model.Model;
@@ -23,12 +22,12 @@ public class WBView extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	private JPanel searchPanel;
 	private JScrollPane scrollPane;
 	private String mediaType;
 	private int mediaIndex;
-	private String mediaQuery;
+	//private String mediaQuery;
 	private ArrayList<String> columnFilter = new ArrayList<String>();
 
 	// dialogs
@@ -60,7 +59,6 @@ public class WBView extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		View.setUITheme(this);
 
 		table = new JTable();
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
@@ -72,18 +70,16 @@ public class WBView extends JFrame {
 		contentPane.add(btnPanel, BorderLayout.SOUTH);
 
 		JButton rateBtn = new JButton("Rate Selected");
-		// rateBtn.setActionCommand("rateBtn");
-		controller.setButtonRate(rateBtn); // rateBtn.addActionListener(controller);
+		controller.setButtonRate(rateBtn); 
 		btnPanel.add(rateBtn);
 
 		JButton reviewBtn = new JButton("Review Selected");
-		controller.setButtonReview(reviewBtn); // reviewBtn.setActionCommand("reviewBtn");
+		controller.setButtonReview(reviewBtn); 
 		reviewBtn.addActionListener(controller);
 		btnPanel.add(reviewBtn);
 
 		JButton addBtn = new JButton("Add Media");
-		// addBtn.setActionCommand("addBtn");
-		controller.setButtonAdd(addBtn); // addBtn.addActionListener(controller);
+		controller.setButtonAdd(addBtn); 
 		btnPanel.add(addBtn);
 
 		searchPanel = new JPanel();
@@ -91,33 +87,29 @@ public class WBView extends JFrame {
 		searchPanel.setLayout(new BorderLayout(0, 0));
 
 		textField = new JTextField();
-		searchPanel.add(textField, BorderLayout.CENTER); // TODO changed from
-															// NORTH, approve?
+		searchPanel.add(textField, BorderLayout.CENTER); 
+															
 		textField.setColumns(10);
 		controller.setQuerySource(textField);
 
 		JButton searchBtn = new JButton("Search");
-		// searchBtn.setActionCommand("searchBtn");
-		controller.setButtonSearch(searchBtn); // searchBtn.addActionListener(controller);
+
+		controller.setButtonSearch(searchBtn); 
 		searchPanel.add(searchBtn, BorderLayout.EAST);
 		JRootPane rootPane = SwingUtilities.getRootPane(searchBtn);
 		rootPane.setDefaultButton(searchBtn);
 
-		JComboBox comboBox = new JComboBox(searchOptions);
-		// comboBox.setActionCommand("comboBox");
+		comboBox = new JComboBox<String>(searchOptions);
 		comboBox.setPrototypeDisplayValue("as long as this");
 		comboBox.setSelectedIndex(0);
 		setMediaCombo(comboBox);
 		mediaType = searchOptions[0];
 		mediaIndex = 0;
-		// comboBox.addActionListener(controller); -- not required.
 		searchPanel.add(comboBox, BorderLayout.WEST);
-
-		// create components in methods
 		
+		Style.setUITheme(this);
 		loginDialog.setVisible(true);
-		//setVisible(true);
-		setLocationRelativeTo(null);//wbview.getSelectedId();
+		setLocationRelativeTo(null);
 	}
 
 	public String[] getSearchOptions() {
@@ -126,7 +118,7 @@ public class WBView extends JFrame {
 
 	// updated, no longer requires the index of component, stores values on
 	// change.
-	public void setMediaCombo(final JComboBox combo) {
+	public void setMediaCombo(final JComboBox<String> combo) {
 		combo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mediaType = combo.getSelectedItem().toString();

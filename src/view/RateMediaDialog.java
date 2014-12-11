@@ -2,8 +2,6 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
-import java.lang.reflect.Field;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -16,10 +14,7 @@ public class RateMediaDialog extends JFrame {
 
 	private int selectedRow;
 	
-	private String mediaType = "None";
-	private WBView view;
-	
-	private JComboBox comboMedia;
+	private JComboBox<String> comboMedia;
 	private JPanel contentPane, buttonPane, inputPane;
 	private JButton rate;
 	private JButton cancel;
@@ -29,7 +24,6 @@ public class RateMediaDialog extends JFrame {
 	
 	public RateMediaDialog(Model m, final WBView view, final Controller controller) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-//		setBounds(300, 300, WIDTH, HEIGHT);
 		setSize(200, 130);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -37,7 +31,6 @@ public class RateMediaDialog extends JFrame {
 		setContentPane(contentPane);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		this.view = view;
 
 		buttonPane = new JPanel();
 		inputPane = new JPanel();
@@ -45,7 +38,7 @@ public class RateMediaDialog extends JFrame {
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 		contentPane.add(inputPane, BorderLayout.NORTH);
 
-		comboMedia = new JComboBox(ratings);
+		comboMedia = new JComboBox<String>(ratings);
 		comboMedia.setSelectedIndex(0);
 		
 		titleLbl = new JLabel("Choose rating");
@@ -61,7 +54,7 @@ public class RateMediaDialog extends JFrame {
 		buttonPane.add(cancel);
 		setCancel(cancel);
 
-		View.setUITheme(this);
+		Style.setUITheme(this);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(rate); 
 		rootPane.setDefaultButton(rate);
@@ -101,6 +94,11 @@ public class RateMediaDialog extends JFrame {
 	
 	public void updateView() {
 		contentPane.updateUI();
+	}
+	
+	public int getSelectedRow()
+	{
+		return this.selectedRow;
 	}
 
 	public void setSelectedRow(int selectedRow) {

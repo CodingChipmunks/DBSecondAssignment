@@ -1,25 +1,15 @@
 	package view;
 
 	import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-	import javax.swing.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 	import controller.Controller;
-import model.Album;
-import model.Book;
 import model.Model;
-import model.Movie;
 
 /***
  * 
@@ -37,7 +27,6 @@ public class LoginDialog extends JFrame{
 		private JButton cancel;
 		private JTextField user;
 		private JPasswordField pass;
-		private WBView view;
 
 		private int WIDTH = 200;
 		private int HEIGHT = 135;
@@ -51,7 +40,6 @@ public class LoginDialog extends JFrame{
 			setContentPane(contentPane);
 			setResizable(false);
 			setLocationRelativeTo(null);
-			this.view = view;
 
 			buttonPane = new JPanel();
 			inputPane = new JPanel();
@@ -75,7 +63,7 @@ public class LoginDialog extends JFrame{
 			JRootPane rootPane = SwingUtilities.getRootPane(login); 
 			rootPane.setDefaultButton(login);
 			
-			View.setUITheme(this);
+			Style.setUITheme(this);
 			setVisible(true);
 			setLocationRelativeTo(null);
 			this.setTitle("Login!");

@@ -2,7 +2,6 @@ package model;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,13 +29,13 @@ public final class QueryExecuter implements QueryInterpreter {
 	
 	private synchronized void setLastQuery(String lastQuery)
 	{
-		this.lastQuery = lastQuery;
+		QueryExecuter.lastQuery = lastQuery;
 	}
 	
 	
 	private synchronized String getLastQuery()
 	{
-		return this.lastQuery;
+		return QueryExecuter.lastQuery;
 	}
 
 	public static void main(String args[]) {
@@ -349,7 +348,7 @@ public final class QueryExecuter implements QueryInterpreter {
 		ResultSet rsetAlbum = null;
 		Statement stAlbum = connection.createStatement();
 		try {
-			float ratingF = Float.parseFloat(rating.replace("%", ""));
+			Float.parseFloat(rating.replace("%", ""));
 			rating = rating.replace("%", "");
 			rsetAlbum = stAlbum
 					.executeQuery("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 1 "

@@ -1,10 +1,6 @@
 package model;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-
-import controller.*;
-import view.*;
 
 /**
  * Keeps temporary track of components in the model
@@ -49,7 +45,6 @@ import view.*;
 		this.bank = bank;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Object[] getBank()
 	{
 		return bank;

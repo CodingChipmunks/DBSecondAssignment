@@ -1,11 +1,4 @@
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import model.*;
 import view.*;
@@ -33,7 +26,7 @@ public class Start {
 			public void run() {
 				try {
 					Model model = new Model(user, pass);
-					WBView frame = new WBView(model);
+					new WBView(model);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

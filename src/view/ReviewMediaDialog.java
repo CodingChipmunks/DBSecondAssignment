@@ -1,17 +1,10 @@
 package view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Enumeration;
-
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -20,41 +13,31 @@ import model.*;
 @SuppressWarnings("serial")
 public class ReviewMediaDialog extends JFrame {
 	
-	private String mediaType = "None";
-	private WBView view;
-	
-	private JPanel contentPane, buttonPane, inputPane, comboPane, titlePane;
+	private JPanel contentPane, buttonPane, inputPane, titlePane;
 	private JButton add;
-	private JLabel hint;
 	private JButton cancel;
-	private int mediaIndex;
-	private Field[] field;
 	
 	private JTextField title;
 	private JTextArea text;
 	private JLabel titleLbl;
 	private String defaultText;
 
-	private int WIDTH = 200;
-	private int HEIGHT = 135;
-//	private final String[] HIDDEN = { "id", "review", "rating", "user" };
+	private int WIDTH = 350;
+	private int HEIGHT = 300;
 
 
 	public ReviewMediaDialog(Model m, final WBView view) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-//		setBounds(300, 300, WIDTH, HEIGHT);
-		setSize(350, 300);
+		setSize(WIDTH, HEIGHT);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		this.view = view;
 
 		buttonPane = new JPanel();
 		inputPane = new JPanel();
-		comboPane = new JPanel();
 		titlePane = new JPanel();
 
 		contentPane.add(inputPane, BorderLayout.CENTER);
@@ -79,7 +62,7 @@ public class ReviewMediaDialog extends JFrame {
 		buttonPane.add(cancel);
 		setCancel(cancel);
 
-		View.setUITheme(this);
+		Style.setUITheme(this);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(add); 
 		rootPane.setDefaultButton(add);

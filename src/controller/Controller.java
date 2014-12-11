@@ -5,15 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -28,10 +25,7 @@ import view.*;
 public class Controller implements ActionListener {
 
 	private WBView wbview;
-	private View view;
 	private Model model;
-	private QueryInterpreter dbInterpreter;
-	private int selectedItemInCombobox;
 	private Album album = null;
 	private int rating;
 	private int media;
@@ -193,10 +187,12 @@ public class Controller implements ActionListener {
 	public void setSubmit(JButton button, final AddMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
+				@SuppressWarnings("rawtypes")
 				Hashtable table = dialog.getValues();
 				dialog.setVisible(false);
 				album = new Album("", "", "", 0);
 
+				@SuppressWarnings("rawtypes")
 				Enumeration e = table.keys();
 				while (e.hasMoreElements()) {
 					String key = (String) e.nextElement();

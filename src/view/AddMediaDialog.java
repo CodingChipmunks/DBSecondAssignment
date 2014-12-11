@@ -9,17 +9,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
-import model.Album;
-import model.Book;
 import model.Model;
-import model.Movie;
 
 /**
  * WindowBuilder class, compatible with git? Better than Start?
@@ -28,11 +24,10 @@ import model.Movie;
 @SuppressWarnings("serial")
 public class AddMediaDialog extends JFrame {
 	private JPanel contentPane, buttonPane, inputPane, comboPane;
-	private JComboBox comboMedia; // on change update forms.
+	private JComboBox<String> comboMedia; // on change update forms.
 	private JButton add;
 	private JLabel hint;
 	private JButton cancel;
-	private WBView view;
 	private int mediaIndex;
 	private String mediaType = "None";
 	private Field[] field;
@@ -53,7 +48,6 @@ public class AddMediaDialog extends JFrame {
 		setContentPane(contentPane);
 		setResizable(false);
 		setLocationRelativeTo(null);
-		this.view = view;
 
 		buttonPane = new JPanel();
 		inputPane = new JPanel();
@@ -65,7 +59,7 @@ public class AddMediaDialog extends JFrame {
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 		contentPane.add(comboPane, BorderLayout.NORTH);
 
-		comboMedia = new JComboBox(view.getSearchOptions());
+		comboMedia = new JComboBox<String>(view.getSearchOptions());
 		comboMedia.setPrototypeDisplayValue("as long as this");
 		comboMedia.setSelectedIndex(0);
 		comboPane.add(comboMedia);
@@ -80,8 +74,8 @@ public class AddMediaDialog extends JFrame {
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
 		setCancel(cancel);
-
-		View.setUITheme(this);
+		
+		Style.setUITheme(this);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(add); 
 		rootPane.setDefaultButton(add);
@@ -127,7 +121,7 @@ public class AddMediaDialog extends JFrame {
 		return hidden;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Hashtable getValues() {
 		Hashtable table = new Hashtable();
 
@@ -151,7 +145,6 @@ public class AddMediaDialog extends JFrame {
 		text.clear();
 		textField.clear();
 		field = name.getDeclaredFields();
-		int hidden = 0;
 
 		for (int i = 0; i < field.length; i++) {
 			System.out.println("Field: " + field[i].getName().toString());
@@ -169,8 +162,7 @@ public class AddMediaDialog extends JFrame {
 					inputPane.add(text.get(text.size() - 1));
 					inputPane.add(textField.get(textField.size() - 1));
 				//}
-			} else
-				hidden++;
+			}
 		}
 		inputPane.add(hint);
 		this.setBounds(new Rectangle(100, 100, WIDTH, HEIGHT + (text.size() * 18)));
@@ -179,7 +171,7 @@ public class AddMediaDialog extends JFrame {
 	}
 
 	// reset ui on media-change.
-	private void setMediaCombo(final JComboBox combo) {
+	private void setMediaCombo(final JComboBox<String> combo) {
 		combo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mediaIndex = combo.getSelectedIndex();
