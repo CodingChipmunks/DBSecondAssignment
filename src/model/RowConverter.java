@@ -18,7 +18,7 @@ public final class RowConverter {
 		ArrayList<Rating> rating = new ArrayList<Rating>();
 
 		while (ratingRow.next()) {
-			rating.add(new Rating(ratingRow.getInt("rating"))); // ratingRow.getString("user")
+			rating.add(new Rating(ratingRow.getInt("rating")));
 		}
 
 		return rating;
@@ -35,6 +35,7 @@ public final class RowConverter {
 		return director;
 	}
 
+	// convert resultset to list of Artist objects
 	public static ArrayList<Artist> convertRowToArtist(ResultSet artistRow)
 			throws SQLException {
 		ArrayList<Artist> artist = new ArrayList<Artist>();
@@ -46,12 +47,13 @@ public final class RowConverter {
 		return artist;
 	}
 
+	// convert resultset to Album object
 	public static Album convertRowToAlbum(ResultSet albumRow,
 			ResultSet artistRow, ResultSet reviewRow, ResultSet ratingRow)
 			throws SQLException {
 
 		Album album = new Album(albumRow.getString("title"),
-				albumRow.getString("year"), "", albumRow.getInt("id")); // albumRow.getString("user")
+				albumRow.getString("year"), "", albumRow.getInt("id"));
 
 		//album.setReview(convertRowToReview(reviewRow));
 		//album.setRating(convertRowToRating(ratingRow));
@@ -59,18 +61,17 @@ public final class RowConverter {
 		return album;
 	}
 
-	// Demo purpose only, the one above is way better
 	public static Album convertRowToAlbum(ResultSet bigAlbumRow)
 			throws SQLException {
 
 		Album album = new Album(bigAlbumRow.getString("title"),
 				bigAlbumRow.getString("year"), "", bigAlbumRow.getInt("id"));
 
-		// hmmm
 		return album;
 	}
 
 	// String title, String genre, String director, String year, int id
+	// convert resultset to Movie object
 	public static Movie convertRowToMovie(ResultSet movieRow,
 			ResultSet directorRow, ResultSet reviewRow, ResultSet ratingRow)
 			throws SQLException {
