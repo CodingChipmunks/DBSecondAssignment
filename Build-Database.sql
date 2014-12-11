@@ -1,6 +1,7 @@
 -- Admin
 -- Warning: Running This Script Will Change Root Password!
 -- Warning: Running This Script Will Reset Database.MediaCollection!
+-- Warning: All Users Has Execute Rights In This Schema!
 
 -- Reset the schema.
 DROP SCHEMA IF EXISTS mediacollection;
@@ -102,10 +103,11 @@ CREATE TABLE IF NOT EXISTS Review(
 -- Create a database user with read access for every normal user, the user does not need to supply
 -- Login credentials when reading from the database. Login information will be sent when required by the 
 -- Database, when creating a review or rating. 
+DROP USER 'clientapp'@'localhost';
 CREATE USER 'clientapp'@'localhost' IDENTIFIED BY 'qwerty'; -- the password is on github and in the application.
 
 -- Grant select on all columns in the following tables 
-GRANT EXECUTE ON mediacollection.* TO 'clientapp'@'localhost';
+GRANT EXECUTE ON mediacollection.* TO 'clientapp'@'localhost'; 
 GRANT SELECT ON mediacollection.Mediatype TO 'clientapp'@'localhost';	
 GRANT SELECT ON mediacollection.Media TO 'clientapp'@'localhost';	
 GRANT SELECT ON mediacollection.Contributor TO 'clientapp'@'localhost';	
@@ -119,13 +121,42 @@ GRANT SELECT (Name, Id) ON mediacollection.Account TO 'clientapp'@'localhost';
 -- The admin logs on with write access, enabling the creation of accounts in User table.
 -- Media.
 
+-- ----------------------- STORED PROCEDURES ----------------------------------
+DROP PROCEDURE IF EXISTS AddAlbum;
+
+DELIMITER $$
+CREATE PROCEDURE AddMedia(
+in p_user varchar(32),
+in p_pass varchar(32),
+in p_name varchar(32),
+in p_year varchar(16),
+in p_genre varchar(16),
+in p_mediatype int) 
+BEGIN
+	DECLARE MediaId int;
+    DECLARE AccountId int;
+    DECLARE GenreId int;
+    
+    SELECT Account.Id INTO AccountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
+    
+    IF AccountId IS NOT NULL THEN
+		-- if not exist genre then create
+        IF (NOT EXISTS (SELECT * FROM Genre WHERE Genre.Name = p_genre)) THEN 
+			INSERT INTO GENRE(Name) VALUES (p_genre); 
+        END IF; 
+        
+		SELECT Id INTO GenreId FROM Genre WHERE Name = p_genre;
+		INSERT INTO Media(Title, Year, Duration, MediaType_Id, Genre_Id, Account_Id) VALUES (p_title, p_year, p_duration, p_mediatype, GenreId, AccountId);
+	END IF;
+END$$
+
 DROP PROCEDURE IF EXISTS MakeReview;
 
 DELIMITER $$
 CREATE PROCEDURE MakeReview(
     in  p_user varchar(32), 
     in p_pass  varchar(32),
-    in p_title varchar(32),
+    in p_title varchar(32),  
     in p_text varchar(500),
     in p_media int)
 BEGIN
@@ -137,4 +168,27 @@ BEGIN
 		INSERT INTO Review (Media_Id, Account_Id, Text, Title) VALUES (p_media, AccountId, p_title, p_text);
     END IF;
  
+END$$
+
+DROP PROCEDURE IF EXISTS Rate;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Rate`(mediaId integer, user varchar(32), pass varchar(32), rating integer)
+    MODIFIES SQL DATA
+BEGIN
+	declare YES integer;
+
+SELECT 
+    Id
+INTO YES FROM
+    Account
+WHERE
+    user = Account.user
+        AND pass = Account.pass;
+		
+            -- username & pwd == entry in Account
+    if (YES is not null) then 
+		insert into Rating (Media_Id, Account_Id, Rating) VALUES (MediaId, YES, rating);
+	end if;
+
 END$$
