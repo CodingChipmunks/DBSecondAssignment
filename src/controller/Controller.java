@@ -34,6 +34,7 @@ public class Controller implements ActionListener {
 	private int selectedItemInCombobox;
 	private Album album = null;
 	private int rating;
+	private int media;
 
 	/*
 	 * public Controller(Model m, View v) { this.model = m; this.view = v; }
@@ -72,7 +73,7 @@ public class Controller implements ActionListener {
 						qx.getAlbumsByAny(queryText);
 						break;
 					case RATE:
-						qx.rateAlbum(rating);
+						qx.rateAlbum(rating, media);
 					// TODO add rating/review
 					}
 				} catch (SQLException e) {
@@ -210,7 +211,7 @@ public class Controller implements ActionListener {
 			public void mousePressed(MouseEvent evt) {
 				
 				rating = dialog.getValues();
-				
+				media = wbview.getSelectedId();
 				dialog.setVisible(false);
 				
 				// set rating

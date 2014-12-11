@@ -399,7 +399,7 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public void rateAlbum(int rating) {
+	public void rateAlbum(int rating, int media) {
 		// TODO Auto-generated method stub
 		CallableStatement callableStatement = null;
 		try {
