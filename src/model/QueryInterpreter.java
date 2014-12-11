@@ -13,12 +13,12 @@ public interface QueryInterpreter {
 	public void disconnect();
 	public List<Album> searchByAlbumTitle(String title) throws SQLException;
 	public List<Album> searchByGenre(String genre) throws SQLException;	//enum? / JComboBoxItem! == Object[] 
-	public List<Album> searchByRating(int rating);	//object for ratings??
 	public void insertAlbum(Album album);
 	public void rateAlbum(int rating);
 	ArrayList<Album> getAllAlbums(ResultSet rsetAlbum) throws SQLException;
 	ArrayList<Album> getAlbumsByAny(String title) throws SQLException;
 	ArrayList<Album> getAlbumsByArtist(String artist) throws SQLException;
+	ArrayList<Album> getAlbumsByRating(String rating) throws SQLException;
 	
 	// moved to helperclass rowConverter
 	// private methods can't be in interface

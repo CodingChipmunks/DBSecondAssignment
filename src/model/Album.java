@@ -62,7 +62,7 @@ public class Album {
 	}
 
 	public Album(String name, String year, String user, int id) {
-		super();
+		// super();
 		this.name = name;
 		this.year = year;
 		this.user = user;
@@ -97,4 +97,12 @@ public class Album {
 		this.review.add(review);
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		Album album = (Album) object;
+		if (album.getId() == this.getId())
+			return true;
+		else
+			return false;
+	}
 }

@@ -51,13 +51,10 @@ public class Controller implements ActionListener {
 			String errormsg = "";
 
 			public void run() {
-				System.out.println("query running!");
+				QueryExecuter qx = null;
 				try {
-					QueryExecuter qx = new QueryExecuter(model);
-					wbview.setColumnFilter(new String[] { "review" }); // filter
-																		// reviews
-																		// unless:
-																		// getReviews..
+					qx = new QueryExecuter(model);
+					wbview.setColumnFilter(new String[] { "review" });
 					// determine type of query. EEEK!?!?!?
 					switch (queryType) {
 					case BOOKSEARCH:
@@ -71,18 +68,18 @@ public class Controller implements ActionListener {
 						break;
 					// TODO add rating/review
 					}
-
-					System.out.println("query complete!");
 				} catch (SQLException e) {
 					errormsg = e.getMessage();
 				}
-				System.out.println("View Waiting for update..");
+				finally
+				{
+					qx.disconnect();
+				}
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						if (!errormsg.equals(""))
 							wbview.showError(errormsg);
 						wbview.feedTable(model.getBank());
-						System.out.println("View was updated!");
 					}
 				});
 			}

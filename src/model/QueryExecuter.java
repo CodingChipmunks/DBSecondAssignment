@@ -2,7 +2,9 @@ package model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * All db interaction code resides here, could be called directly by view, or by
@@ -20,9 +22,6 @@ public final class QueryExecuter implements QueryInterpreter {
 	private final static String host = "jdbc:mysql://localhost:3306/";
 
 	public Connection connection;
-	public Statement statement;
-	public PreparedStatement preparedStatement;
-	public ResultSet resultSet;
 	public Model model;
 
 	public static void main(String args[]) {
@@ -42,7 +41,6 @@ public final class QueryExecuter implements QueryInterpreter {
 			Class.forName(driver);
 			connection = DriverManager.getConnection(host + database, user,
 					pass);
-			statement = connection.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,9 +85,6 @@ public final class QueryExecuter implements QueryInterpreter {
 								+ rsetAlbum.getInt("Genre_Id"));
 				rsetGenre.first();
 				album.setGenre(rsetGenre.getString("Name"));
-
-				// get artists.
-				System.out.println("Id is: " + album.getId());
 
 				rsetArtist = stArtist
 						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
@@ -140,16 +135,11 @@ public final class QueryExecuter implements QueryInterpreter {
 
 			model.setBank(albums.toArray());
 
-			for (Album a : albums) {
-				System.out.println(a.toString());
-			}
-
 		} finally {
-			closeStatement(statement);
 			closeResultSet(rsetAlbum);
 		}
 
-		return null;
+		return albums;
 	}
 
 	public void getGenre() throws SQLException {
@@ -163,6 +153,8 @@ public final class QueryExecuter implements QueryInterpreter {
 
 	public void getMovie() throws SQLException {
 		List<Movie> movies = new ArrayList<Movie>();
+		Statement statement;
+		ResultSet resultSet;
 		try {
 			// use statement and result set to fetch info
 			statement = connection.createStatement();
@@ -186,7 +178,8 @@ public final class QueryExecuter implements QueryInterpreter {
 
 	public List<Director> getDirectors() throws SQLException {
 		List<Director> directors = new ArrayList<Director>();
-
+		Statement statement = null;
+		ResultSet resultSet;
 		try {
 			// use statement and result set to fetch info
 			statement = connection.createStatement();
@@ -212,7 +205,8 @@ public final class QueryExecuter implements QueryInterpreter {
 
 	public List<Artist> getArtists() throws SQLException {
 		List<Artist> artists = new ArrayList<Artist>();
-
+		Statement statement = null;
+		ResultSet resultSet;
 		try {
 			// use statement and result set to fetch info
 			statement = connection.createStatement();
@@ -240,35 +234,39 @@ public final class QueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
+		Set<Album> album = new HashSet<Album>();
+
+		  album.addAll(searchByAlbumTitle(text));
+		  album.addAll(getAlbumsByRating(text));
+		  album.addAll(getAlbumsByArtist(text));
+		  album.addAll(searchByGenre(text));
+
+		return new ArrayList<Album>(album);
+	}
+
+	@Override
+	public ArrayList<Album> getAlbumsByRating(String rating)
+			throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
-		ArrayList<Album> temp;
+		ResultSet rsetAlbum = null;
+		Statement stAlbum = connection.createStatement();
+		try {
+			float ratingF = Float.parseFloat(rating.replace("%", ""));
+			rating = rating.replace("%", "");
+			rsetAlbum = stAlbum
+					.executeQuery("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 1 "
+							+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
+							+ "Rating.Media_Id) >= "
+							+ rating
+							+ " GROUP BY Media.Id;");
 
-		temp = searchByAlbumTitle(text);
-
-		// add not yet added albums from title search.
-		if (null != temp)
-			for (int i = 0; i < temp.size(); i++)
-				if (!album.contains(temp))
-					album.add(temp.get(i));
-
-		temp = searchByGenre(text);
-
-		// search by genre
-		if (null != temp)
-			for (int i = 0; i < temp.size(); i++)
-				if (!album.contains(temp))
-					album.add(temp.get(i));
-
-		// search by artist
-
-		temp = getAlbumsByArtist(text);
-
-		if (null != temp)
-			for (int i = 0; i < temp.size(); i++)
-				if (!album.contains(temp))
-					album.add(temp.get(i));
-
-		// search by rating
+			album = getAllAlbums(rsetAlbum);
+		} catch (NumberFormatException e) {
+			//e.printStackTrace();
+		} finally {
+			listClose(new Statement[] { stAlbum },
+					new ResultSet[] { rsetAlbum });
+		}
 		return album;
 	}
 
@@ -332,7 +330,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 		try {
 			rsetAlbum = stAlbum
-					.executeQuery("SELECT Media.Id, Media.Title, Media.MediaType_Id, Media.Year, Genre_Id, Account_Id"
+					.executeQuery("SELECT *"
 							+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
 							+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 1 AND Creator.Name LIKE '"
 							+ artist + "' GROUP BY Media.Id;");
@@ -343,12 +341,6 @@ public final class QueryExecuter implements QueryInterpreter {
 					new ResultSet[] { rsetAlbum });
 		}
 		return album;
-	}
-
-	@Override
-	public List<Album> searchByRating(int rating) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
