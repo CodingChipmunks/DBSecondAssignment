@@ -96,6 +96,12 @@ public class Album {
 	public void addReview(Review review) {
 		this.review.add(review);
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return this.getId();
+	}
 
 	@Override
 	public boolean equals(Object object) {

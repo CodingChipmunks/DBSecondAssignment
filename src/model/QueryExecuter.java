@@ -2,6 +2,7 @@ package model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -132,9 +133,6 @@ public final class QueryExecuter implements QueryInterpreter {
 						stRating, stReview }, new ResultSet[] { rsetGenre,
 						rsetArtist, rsetRating, rsetReview, rsetUser, rsetId });
 			}
-
-			model.setBank(albums.toArray());
-
 		} finally {
 			closeResultSet(rsetAlbum);
 		}
@@ -236,11 +234,13 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByAny(String text) throws SQLException {
 		Set<Album> album = new HashSet<Album>();
 
-		  album.addAll(searchByAlbumTitle(text));
-		  album.addAll(getAlbumsByRating(text));
-		  album.addAll(getAlbumsByArtist(text));
-		  album.addAll(searchByGenre(text));
-
+		album.addAll(searchByAlbumTitle(text));
+		album.addAll(getAlbumsByRating(text));
+		album.addAll(getAlbumsByArtist(text));
+		album.addAll(searchByGenre(text));
+		
+		model.setBank(album.toArray()); // ...
+		
 		return new ArrayList<Album>(album);
 	}
 
@@ -262,7 +262,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 			album = getAllAlbums(rsetAlbum);
 		} catch (NumberFormatException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		} finally {
 			listClose(new Statement[] { stAlbum },
 					new ResultSet[] { rsetAlbum });
