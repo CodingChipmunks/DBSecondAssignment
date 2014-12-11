@@ -10,5 +10,5 @@
 !.project
 !README.md
 !LICENSE
-!Build-Database.sql
-!Build-TestData.sql
+!*.sql
+
