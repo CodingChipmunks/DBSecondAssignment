@@ -49,7 +49,7 @@ public class WBView extends JFrame {
 		Controller controller = new Controller(m, this);
 
 		addMediaDialog = new AddMediaDialog(m, this, controller);
-		rateMediaDialog = new RateMediaDialog(m, this);
+		rateMediaDialog = new RateMediaDialog(m, this, controller);
 		reviewMediaDialog = new ReviewMediaDialog(m, this);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

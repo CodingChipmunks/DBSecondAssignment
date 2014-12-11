@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
+
 import model.Model;
 
 @SuppressWarnings("serial")
@@ -25,7 +27,7 @@ public class RateMediaDialog extends JFrame {
 
 	private JLabel titleLbl;
 	
-	public RateMediaDialog(Model m, final WBView view) {
+	public RateMediaDialog(Model m, final WBView view, final Controller controller) {
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 //		setBounds(300, 300, WIDTH, HEIGHT);
 		setSize(200, 130);
@@ -53,7 +55,7 @@ public class RateMediaDialog extends JFrame {
 		
 		rate = new JButton("Rate");
 		buttonPane.add(rate);
-		setSubmit(rate);
+		controller.setSubmitRate(rate, this);
 
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
@@ -90,17 +92,17 @@ public class RateMediaDialog extends JFrame {
 		});
 	}
 	
-	private void setSubmit(JButton button) {
-		button.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				getValues();
-				// TODO save 2 db
-				// model.addRating(getValues());
-				//hideFrame();
-				System.out.println("RATING: " + getValues());
-			}
-		});
-	}
+//	private void setSubmit(JButton button) {
+//		button.addMouseListener(new MouseAdapter() {
+//			public void mousePressed(MouseEvent evt) {
+//				getValues();
+//				// TODO save 2 db
+//				// model.addRating(getValues());
+//				hideFrame();
+//				System.out.println("RATING: " + getValues());
+//			}
+//		});
+//	}
 	
 	// fetch rating 
 	public int getValues() {

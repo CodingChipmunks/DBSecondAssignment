@@ -33,6 +33,7 @@ public class Controller implements ActionListener {
 	private QueryInterpreter dbInterpreter;
 	private int selectedItemInCombobox;
 	private Album album = null;
+	private int rating;
 
 	/*
 	 * public Controller(Model m, View v) { this.model = m; this.view = v; }
@@ -70,6 +71,8 @@ public class Controller implements ActionListener {
 					case ALBUMSEARCH:
 						qx.getAlbumsByAny(queryText);
 						break;
+					case RATE:
+						qx.rateAlbum(rating);
 					// TODO add rating/review
 					}
 				} catch (SQLException e) {
@@ -148,9 +151,11 @@ public class Controller implements ActionListener {
 					System.out.println("Rate Button for Media_Id: "
 							+ wbview.getSelectedId());
 
-					// TODO Exception would b nicer!
 					if (wbview.getSelectedRowCount() == 1) {
 						wbview.invokeRateMediaDialog(wbview.getSelectedId());
+						
+						// while?
+						
 					} else {
 						// wbview.showError("You have to select ONE media item!");
 						throw new Exception("multiselect");
@@ -168,7 +173,7 @@ public class Controller implements ActionListener {
 	}
 
 	// button add submit in addMediaDialog
-	public void setSubmit(JButton button, AddMediaDialog dialog) {
+	public void setSubmit(JButton button, final AddMediaDialog dialog) {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				Hashtable table = dialog.getValues();
@@ -199,6 +204,22 @@ public class Controller implements ActionListener {
 			}
 		});
 	}
+	
+	public void setSubmitRate(JButton button, final RateMediaDialog dialog) {
+		button.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent evt) {
+				
+				rating = dialog.getValues();
+				
+				dialog.setVisible(false);
+				
+				// set rating
+				executeQuery(QueryType.RATE, "");
+				// display update
+				executeQuery(QueryType.ALBUMSEARCH, "%");	// 2 fast?
+			}
+		});
+	}
 
 	public void setButtonAdd(JButton button) {
 		button.addMouseListener(new MouseAdapter() {
@@ -217,6 +238,6 @@ public class Controller implements ActionListener {
 
 	// TODO add query types
 	public enum QueryType {
-		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD
+		BOOKSEARCH, ALBUMSEARCH, MOVIESEARCH, MEDIAADD, RATE
 	};
 }

@@ -16,8 +16,8 @@ public class Start {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String user;
-		String pass;
+		final String user;
+		final String pass;
 		
 		// lazy programmer is out of args :(
 		if (args.length != 2) {
