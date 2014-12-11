@@ -449,8 +449,8 @@ public final class QueryExecuter implements QueryInterpreter {
 			
 			//hard Data
 			callableStatement.setInt   (1, 3);
-			callableStatement.setString(2, user);
-			callableStatement.setString(3, pass);
+			callableStatement.setString(2, model.getUser());
+			callableStatement.setString(3, model.getPass());
 			callableStatement.setInt   (4, rating);
 			
 			System.out.println("Executing stored procedure..." );
