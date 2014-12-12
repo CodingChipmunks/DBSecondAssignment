@@ -158,6 +158,7 @@ public final class QueryExecuter implements QueryInterpreter {
 		CallableStatement stCreator = null;
 		try {
 			connection.setAutoCommit(false);
+			//parameters: username, password, name, year, genre, duration, type
 			String sql = "{call AddMedia(?, ?, ?, ?, ?, ?, ?, ?)}";
 
 			stMedia = connection.prepareCall(sql);
@@ -182,10 +183,15 @@ public final class QueryExecuter implements QueryInterpreter {
 				stCreator.setString(3, objects[i].toString());
 				stCreator.setInt(4, stMedia.getInt(8));
 				stCreator.execute();
-			}
-			
+			}			
 			connection.commit();
-		} finally {
+		}
+		catch (SQLException e)
+		{
+			connection.rollback();
+			throw e;
+		}
+		 finally {
 			connection.setAutoCommit(true);
 			closeStatement(stMedia);
 			closeStatement(stCreator);
