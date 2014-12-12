@@ -89,12 +89,7 @@ public class Controller implements ActionListener {
 						qx.getReviewsByAny(queryText);
 						break;
 					case RATE:
-						try {
-							qx.rateAlbum(rating, media);
-						} catch (SQLException e) {
-							wbview.showError("You have already rated this entry!");
-						}
-						
+						qx.rateAlbum(rating, media);
 						break;
 					case REVIEW:
 						qx.reviewMedia(review, new Integer(queryText));
