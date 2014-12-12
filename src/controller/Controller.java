@@ -392,7 +392,7 @@ public class Controller implements ActionListener {
 	}
 
 	/*** check a users password and set model password ***/
-	public void setLogin(JButton login, LoginDialog loginDialog) {
+	public void setLogin(JButton login, final LoginDialog loginDialog) {
 		login.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				model.setPass(loginDialog.getPass());

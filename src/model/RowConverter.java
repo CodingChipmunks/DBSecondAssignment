@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 /*
  * Helper class for row conversion
+ * it performs the actual translation
+ * from the relational to the object model
  */
 public final class RowConverter {
 	public static Review convertRowToReview(ResultSet reviewRow)
