@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Media(
 		Id INTEGER AUTO_INCREMENT, 
         Mediatype_Id INTEGER, 
         Genre_Id INTEGER DEFAULT 1, 
-        Title VARCHAR(24) NOT NULL, 
+        Title VARCHAR(42) NOT NULL, 
         Year VARCHAR(16), 
         Duration INTEGER, 
         Account_Id INTEGER DEFAULT 1,
@@ -167,7 +167,7 @@ DELIMITER $$
 CREATE PROCEDURE AddMedia(
 in p_user varchar(32),
 in p_pass varchar(32),
-in p_title varchar(32),
+in p_title varchar(42),
 in p_year varchar(16),
 in p_genre varchar(16),
 in p_duration int,
