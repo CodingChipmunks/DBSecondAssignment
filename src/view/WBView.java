@@ -257,7 +257,6 @@ public class WBView extends JFrame {
 		rateMediaDialog.setSelectedRow(selectedRow);
 		rateMediaDialog.setVisible(true);
 		this.setVisible(false);
-		// TODO save to DB
 	}
 	
 	public void revokeRateMediaDialog() {

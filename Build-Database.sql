@@ -150,7 +150,7 @@ BEGIN
     SELECT Account.Id INTO AccountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
     
     IF AccountId IS NOT NULL THEN
-		-- if not exist genre then create
+		-- if not exist creator then create
         IF (NOT EXISTS (SELECT * FROM Creator WHERE Creator.Name = p_creator)) THEN 
 			INSERT INTO Creator(Name) VALUES (p_creator); 
         END IF; 
@@ -183,7 +183,7 @@ BEGIN
     IF AccountId IS NOT NULL THEN
 		-- if not exist genre then create
         IF (NOT EXISTS (SELECT * FROM Genre WHERE Genre.Name = p_genre)) THEN 
-			INSERT INTO GENRE(Name) VALUES (p_genre); 
+			INSERT INTO Genre(Name) VALUES (p_genre); 
         END IF; 
         
 		SELECT Id INTO GenreId FROM Genre WHERE Name = p_genre;
@@ -196,7 +196,7 @@ DROP PROCEDURE IF EXISTS MakeReview;
 
 DELIMITER $$
 CREATE PROCEDURE MakeReview(
-    in  p_user varchar(32), 
+    in p_user varchar(32), 
     in p_pass  varchar(32),
     in p_title varchar(32),  
     in p_text varchar(500),
@@ -217,7 +217,7 @@ DROP PROCEDURE IF EXISTS Rate;
 DELIMITER $$
 -- CREATE DEFINER=`root`@`localhost` PROCEDURE `Rate`(mediaId integer, user varchar(32), pass varchar(32), rating integer)
  --    MODIFIES SQL DATA
- CREATE PROCEDURE Rate(mediaId integer, user varchar(32), pass varchar(32), rating integer)
+CREATE PROCEDURE Rate(mediaId integer, user varchar(32), pass varchar(32), rating integer)
 BEGIN
 	declare YES integer;
 

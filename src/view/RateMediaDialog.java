@@ -96,7 +96,7 @@ public class RateMediaDialog extends JFrame {
 		contentPane.updateUI();
 	}
 	
-	public int getSelectedRow()
+	public int getSelectedId()
 	{
 		return this.selectedRow;
 	}

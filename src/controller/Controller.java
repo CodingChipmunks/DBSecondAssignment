@@ -89,7 +89,12 @@ public class Controller implements ActionListener {
 						qx.getReviewsByAny(queryText);
 						break;
 					case RATE:
-						qx.rateAlbum(rating, media);
+						try {
+							qx.rateAlbum(rating, media);
+						} catch (SQLException e) {
+							wbview.showError("You have already rated this entry!");
+						}
+						
 						break;
 					case REVIEW:
 						qx.reviewMedia(review, new Integer(queryText));
@@ -365,7 +370,7 @@ public class Controller implements ActionListener {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				rating = dialog.getValues();
-				media = wbview.getSelectedId();
+				media = dialog.getSelectedId();
 				dialog.setVisible(false);
 				executeQuery(QueryType.RATE, "");
 			}

@@ -366,7 +366,6 @@ public final class QueryExecuter implements QueryInterpreter {
 
 			System.out.println("Executing Rate procedure...");
 			callableStatement.executeUpdate();
-
 		} finally {
 			closeStatement(callableStatement);
 		}
@@ -888,13 +887,13 @@ public final class QueryExecuter implements QueryInterpreter {
 		ResultSet rsetReview = null;
 
 		try {
-			stReview = connection.prepareStatement("SELECT mediatype.name, media.title, account.Name, Review.Title, Review.Text FROM "
-					+ "review, media, account, mediatype WHERE "
-					+ "review.media_id = media.id AND review.Account_Id = account.Id AND mediatype.Id = media.Mediatype_Id "
-					+ "AND (media.title LIKE ?" 
-					+ "OR review.Title LIKE ? "
-					+ "OR review.text LIKE ? "
-					+ "OR mediatype.name LIKE ? "
+			stReview = connection.prepareStatement("SELECT Mediatype.Name, Media.Title, Account.Name, Review.Title, Review.Text FROM "
+					+ "Review, Media, Account, Mediatype WHERE "
+					+ "Review.Media_Id = Media.Id AND Review.Account_Id = Account.Id AND Mediatype.Id = Media.Mediatype_Id "
+					+ "AND (Media.Title LIKE ?" 
+					+ "OR Review.Title LIKE ? "
+					+ "OR Review.Text LIKE ? "
+					+ "OR Mediatype.Name LIKE ? "
 					+ "OR Account.Name LIKE ?);");
 			
 			stReview.setString(1, queryText);
