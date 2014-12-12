@@ -101,6 +101,7 @@ public class Controller implements ActionListener {
 						break;
 					}
 				} catch (SQLException e) {
+					e.printStackTrace();
 					errormsg = e.getMessage();
 				} finally {
 					qx.disconnect();

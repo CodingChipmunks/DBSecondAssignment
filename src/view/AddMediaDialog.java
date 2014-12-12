@@ -60,7 +60,9 @@ public class AddMediaDialog extends JFrame {
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 		contentPane.add(comboPane, BorderLayout.NORTH);
 
-		comboMedia = new JComboBox<String>(view.getSearchOptions());
+		// TODO get media from view, do not include hidden fields.
+		// the fields must match a class.
+		comboMedia = new JComboBox<String>(new String[]{"Album", "Movie", "Book"});
 		comboMedia.setPrototypeDisplayValue("as long as this");
 		comboMedia.setSelectedIndex(0);
 		comboPane.add(comboMedia);
@@ -148,7 +150,6 @@ public class AddMediaDialog extends JFrame {
 		field = name.getDeclaredFields();
 
 		for (int i = 0; i < field.length; i++) {
-			System.out.println("Field: " + field[i].getName().toString());
 			if (!hiddenField(field[i].getName().toString())) {
 				text.add(new JLabel(field[i].getName().toString()));
 				text.get(text.size() - 1).setPreferredSize(

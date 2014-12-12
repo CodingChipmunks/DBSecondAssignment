@@ -78,56 +78,54 @@ public final class QueryExecuter implements QueryInterpreter {
 				ResultSet rsetUser;
 				ResultSet rsetId = null;
 				Statement stId = connection.createStatement();
-				Statement stUser = connection.createStatement();
-				Statement stGenre = connection.createStatement();
-				Statement stArtist = connection.createStatement();
-				Statement stRating = connection.createStatement();
-				Statement stReview = connection.createStatement();
+				PreparedStatement stUser = connection
+						.prepareStatement("select Name from Account where Id = ?;");
+				PreparedStatement stGenre = connection
+						.prepareStatement("select Name from Genre where Id = ?;");
+				PreparedStatement stArtist = connection
+						.prepareStatement("select Name from Contributor inner join Creator where Media_Id = ? and Creator.id = Contributor.Creator_Id;");
+				PreparedStatement stRating = connection
+						.prepareStatement("select avg(Rating) from Rating where Media_Id = ?;");
+				PreparedStatement stReview = connection
+						.prepareStatement("select Title, Text, Account_Id from Review where Media_Id = ?;");
 				Album album = RowConverter.convertRowToAlbum(rsetAlbum);
 
-				// get genre.
-				rsetGenre = stGenre
-						.executeQuery("select Name from Genre where Id = "
-								+ rsetAlbum.getInt("Genre_Id"));
+				stGenre.setInt(1, rsetAlbum.getInt("Genre_Id"));
+				rsetGenre = stGenre.executeQuery();
+
 				rsetGenre.first();
 				album.setGenre(rsetGenre.getString("Name"));
 
-				rsetArtist = stArtist
-						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
-								+ album.getId()
-								+ " and Creator.id = Contributor.Creator_Id;");
+				stArtist.setInt(1, album.getId());
+				rsetArtist = stArtist.executeQuery();
 
 				while (rsetArtist.next())
 					album.AddArtist(rsetArtist.getString("Name"));
 
 				// get the rating.
-				rsetRating = stRating
-						.executeQuery("select avg(Rating) from Rating where Media_Id = "
-								+ album.getId() + ";");
+				stRating.setInt(1, album.getId());
+				rsetRating = stRating.executeQuery();
 
 				while (rsetRating.next())
 					album.setRating(rsetRating.getFloat(1));
 
 				// finally, get reviews..
-				rsetReview = stReview
-						.executeQuery("select Title, Text, Account_Id from Review where Media_Id = "
-								+ album.getId() + ";");
+				stReview.setInt(1, album.getId());
+				rsetReview = stReview.executeQuery();
 
 				while (rsetReview.next()) {
 					Review review = RowConverter.convertRowToReview(rsetReview);
 
-					rsetUser = stUser
-							.executeQuery("select Name from Account where Id = "
-									+ rsetReview.getInt("Account_Id") + ";");
+					stUser.setInt(1, rsetReview.getInt("Account_Id"));
+					rsetUser = stUser.executeQuery();
 					rsetUser.first();
 					review.setUser(rsetUser.getString("Name"));
 					album.addReview(review);
 				}
 
 				// ops, need user too..
-				rsetUser = stUser
-						.executeQuery("select Name from Account where Id = "
-								+ rsetAlbum.getInt("Account_Id"));
+				stUser.setInt(1, rsetAlbum.getInt("Account_Id"));
+				rsetUser = stUser.executeQuery();
 				rsetUser.first();
 				album.setUser(rsetUser.getString("Name"));
 
@@ -146,7 +144,8 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public void addMedia(String name, String year, String genre, Object[] objects, int duration, int mediaType) throws SQLException {
+	public void addMedia(String name, String year, String genre,
+			Object[] objects, int duration, int mediaType) throws SQLException {
 		// AddMedia("Foo", "Foo", "Title", "2014", "Genre", Duration,
 		CallableStatement stMedia = null;
 		CallableStatement stCreator = null;
@@ -160,7 +159,7 @@ public final class QueryExecuter implements QueryInterpreter {
 			stMedia.setString(3, name);
 			stMedia.setString(4, year);
 			stMedia.setString(5, genre);
-			stMedia.setInt(6, duration); // duration not implemented 
+			stMedia.setInt(6, duration); // duration not implemented
 			stMedia.setInt(7, mediaType);
 			stMedia.registerOutParameter(8, java.sql.Types.INTEGER);
 
@@ -170,7 +169,7 @@ public final class QueryExecuter implements QueryInterpreter {
 			System.out.println("Returned PK = " + stMedia.getInt(8));
 
 			// CALL AddCreator("Foo", "Foo", "CreatorName", 1);
-			
+
 			sql = "{call AddCreator(?, ?, ?, ?)}";
 			stCreator = connection.prepareCall(sql);
 			for (int i = 0; i < objects.length; i++) {
@@ -208,12 +207,11 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByUser(String user) throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ResultSet rsetAlbum = null;
-		Statement stAlbum = connection.createStatement();
+		PreparedStatement stAlbum = connection
+				.prepareStatement("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 1 AND Account_Id = Account.Id  AND Account.Name like ?;");
 		try {
-			rsetAlbum = stAlbum
-					.executeQuery("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 1 "
-							+ "AND Account_Id = Account.Id "
-							+ " AND Account.Name like '" + user + "';");
+			stAlbum.setString(1, user);
+			rsetAlbum = stAlbum.executeQuery();
 
 			album = getAllAlbums(rsetAlbum);
 		} finally {
@@ -227,11 +225,12 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByYear(String year) throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ResultSet rsetAlbum = null;
-		Statement stAlbum = connection.createStatement();
+		PreparedStatement stAlbum = connection
+				.prepareStatement("SELECT * FROM Media WHERE Media.MediaType_Id = 1 "
+						+ "AND Year like ?;");
 		try {
-			rsetAlbum = stAlbum
-					.executeQuery("SELECT * FROM Media WHERE Media.MediaType_Id = 1 "
-							+ "AND Year like '" + year + "';");
+			stAlbum.setString(1, year);
+			rsetAlbum = stAlbum.executeQuery();
 
 			album = getAllAlbums(rsetAlbum);
 		} finally {
@@ -246,16 +245,16 @@ public final class QueryExecuter implements QueryInterpreter {
 			throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ResultSet rsetAlbum = null;
-		Statement stAlbum = connection.createStatement();
+		PreparedStatement stAlbum = connection
+				.prepareStatement("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 1 "
+						+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
+						+ "Rating.Media_Id) >= ?" + " GROUP BY Media.Id;");
 		try {
-			Float.parseFloat(rating.replace("%", ""));
+			Float score = Float.parseFloat(rating.replace("%", ""));
 			rating = rating.replace("%", "");
-			rsetAlbum = stAlbum
-					.executeQuery("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 1 "
-							+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
-							+ "Rating.Media_Id) >= "
-							+ rating
-							+ " GROUP BY Media.Id;");
+
+			stAlbum.setFloat(1, score);
+			rsetAlbum = stAlbum.executeQuery();
 
 			album = getAllAlbums(rsetAlbum);
 		} catch (NumberFormatException e) {
@@ -271,14 +270,14 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByGenre(String genre) throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ResultSet rsetAlbum = null;
-		Statement stAlbum = null;
+		PreparedStatement stAlbum = null;
 
 		try {
-			stAlbum = connection.createStatement();
-			rsetAlbum = stAlbum
-					.executeQuery("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE '"
-							+ genre
-							+ "' And Media.Genre_Id = Genre.Id AND MediaType_Id = 1;");
+			stAlbum = connection
+					.prepareStatement("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE ?"
+							+ " And Media.Genre_Id = Genre.Id AND MediaType_Id = 1;");
+			stAlbum.setString(1, genre);
+			rsetAlbum = stAlbum.executeQuery();
 
 			if (rsetAlbum.isBeforeFirst()) {
 				album = getAllAlbums(rsetAlbum);
@@ -295,11 +294,11 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
 		ResultSet rsetAlbum = null;
-		Statement stAlbum = connection.createStatement();
+		PreparedStatement stAlbum = connection
+				.prepareStatement("select * from Media where Mediatype_Id = 1 and title like ?;");
 		try {
-			rsetAlbum = stAlbum
-					.executeQuery("select * from Media where Mediatype_Id = 1 and title like '"
-							+ title + "'");
+			stAlbum.setString(1, title);
+			rsetAlbum = stAlbum.executeQuery();
 			album = getAllAlbums(rsetAlbum);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -314,15 +313,16 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByArtist(String artist)
 			throws SQLException {
 		ArrayList<Album> album = new ArrayList<Album>();
-		Statement stAlbum = connection.createStatement();
+		PreparedStatement stAlbum = connection
+				.prepareStatement("SELECT *"
+						+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
+						+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 1 AND Creator.Name LIKE ? "
+						+ "GROUP BY Media.Id;");
 		ResultSet rsetAlbum = null;
 
 		try {
-			rsetAlbum = stAlbum
-					.executeQuery("SELECT *"
-							+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
-							+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 1 AND Creator.Name LIKE '"
-							+ artist + "' GROUP BY Media.Id;");
+			stAlbum.setString(1, artist);
+			rsetAlbum = stAlbum.executeQuery();
 
 			album = getAllAlbums(rsetAlbum);
 		} finally {
@@ -331,19 +331,18 @@ public final class QueryExecuter implements QueryInterpreter {
 		}
 		return album;
 	}
-	
-	private void rebootDataSet() throws SQLException
-	{
+
+	private void rebootDataSet() throws SQLException {
 		switch (getLastQueryType()) {
 		case ALBUMSEARCH:
 			model.setBank(getAlbumsByAny(getLastQuery()).toArray());
 			System.out.println("ALBUMSEARCH = " + getLastQuery());
 			break;
-		case BOOKSEARCH: 
+		case BOOKSEARCH:
 			model.setBank(getBooksByAny(getLastQuery()).toArray());
 			System.out.println("BOOKSEARCH = " + getLastQuery());
 			break;
-		case MOVIESEARCH: 
+		case MOVIESEARCH:
 			model.setBank(getMoviesByAny(getLastQuery()).toArray());
 			System.out.println("MOVIESEARCH = " + getLastQuery());
 			break;
@@ -365,7 +364,7 @@ public final class QueryExecuter implements QueryInterpreter {
 			callableStatement.setString(3, model.getPass());
 			callableStatement.setInt(4, rating);
 
-			System.out.println("Executing stored procedure...");
+			System.out.println("Executing Rate procedure...");
 			callableStatement.executeUpdate();
 
 		} finally {
@@ -382,74 +381,72 @@ public final class QueryExecuter implements QueryInterpreter {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 
 		try {
-			// for every movie do...
+			// for every album do...
 			while (rsetMovie.next()) {
 				ResultSet rsetGenre;
-				ResultSet rsetArtist;
+				ResultSet rsetDirector;
 				ResultSet rsetRating;
 				ResultSet rsetReview;
 				ResultSet rsetUser;
 				ResultSet rsetId = null;
 				Statement stId = connection.createStatement();
-				Statement stUser = connection.createStatement();
-				Statement stGenre = connection.createStatement();
-				Statement stArtist = connection.createStatement();
-				Statement stRating = connection.createStatement();
-				Statement stReview = connection.createStatement();
+				PreparedStatement stUser = connection
+						.prepareStatement("select Name from Account where Id = ?;");
+				PreparedStatement stGenre = connection
+						.prepareStatement("select Name from Genre where Id = ?;");
+				PreparedStatement stDirector = connection
+						.prepareStatement("select Name from Contributor inner join Creator where Media_Id = ? and Creator.id = Contributor.Creator_Id;");
+				PreparedStatement stRating = connection
+						.prepareStatement("select avg(Rating) from Rating where Media_Id = ?;");
+				PreparedStatement stReview = connection
+						.prepareStatement("select Title, Text, Account_Id from Review where Media_Id = ?;");
 				Movie movie = RowConverter.convertRowToMovie(rsetMovie);
 
-				// get genre.
-				rsetGenre = stGenre
-						.executeQuery("select Name from Genre where Id = "
-								+ rsetMovie.getInt("Genre_Id"));
+				stGenre.setInt(1, rsetMovie.getInt("Genre_Id"));
+				rsetGenre = stGenre.executeQuery();
+
 				rsetGenre.first();
 				movie.setGenre(rsetGenre.getString("Name"));
 
-				rsetArtist = stArtist
-						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
-								+ movie.getId()
-								+ " and Creator.id = Contributor.Creator_Id;");
+				stDirector.setInt(1, movie.getId());
+				rsetDirector = stDirector.executeQuery();
 
-				while (rsetArtist.next())
-					movie.addDirector(rsetArtist.getString("Name"));
+				while (rsetDirector.next())
+					movie.addDirector(rsetDirector.getString("Name"));
 
 				// get the rating.
-				rsetRating = stRating
-						.executeQuery("select avg(Rating) from Rating where Media_Id = "
-								+ movie.getId() + ";");
+				stRating.setInt(1, movie.getId());
+				rsetRating = stRating.executeQuery();
 
 				while (rsetRating.next())
 					movie.setRating(rsetRating.getFloat(1));
 
 				// finally, get reviews..
-				rsetReview = stReview
-						.executeQuery("select Title, Text, Account_Id from Review where Media_Id = "
-								+ movie.getId() + ";");
+				stReview.setInt(1, movie.getId());
+				rsetReview = stReview.executeQuery();
 
 				while (rsetReview.next()) {
 					Review review = RowConverter.convertRowToReview(rsetReview);
 
-					rsetUser = stUser
-							.executeQuery("select Name from Account where Id = "
-									+ rsetReview.getInt("Account_Id") + ";");
+					stUser.setInt(1, rsetReview.getInt("Account_Id"));
+					rsetUser = stUser.executeQuery();
 					rsetUser.first();
 					review.setUser(rsetUser.getString("Name"));
 					movie.addReview(review);
 				}
 
 				// ops, need user too..
-				rsetUser = stUser
-						.executeQuery("select Name from Account where Id = "
-								+ rsetMovie.getInt("Account_Id"));
+				stUser.setInt(1, rsetMovie.getInt("Account_Id"));
+				rsetUser = stUser.executeQuery();
 				rsetUser.first();
 				movie.setUser(rsetUser.getString("Name"));
 
 				movies.add(movie);
 
 				// ha-ha
-				listClose(new Statement[] { stId, stUser, stGenre, stArtist,
+				listClose(new Statement[] { stId, stUser, stGenre, stDirector,
 						stRating, stReview }, new ResultSet[] { rsetGenre,
-						rsetArtist, rsetRating, rsetReview, rsetUser, rsetId });
+						rsetDirector, rsetRating, rsetReview, rsetUser, rsetId });
 			}
 		} finally {
 			closeResultSet(rsetMovie);
@@ -458,16 +455,17 @@ public final class QueryExecuter implements QueryInterpreter {
 		return movies;
 	}
 
+
 	@Override
 	public ArrayList<Movie> getMovieByUser(String user) throws SQLException {
 		ArrayList<Movie> movie = new ArrayList<Movie>();
 		ResultSet rsetMovie = null;
-		Statement stMovie = connection.createStatement();
+		PreparedStatement stMovie = connection.prepareStatement("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 2 "
+				+ "AND Account_Id = Account.Id "
+				+ " AND Account.Name like ?;");
 		try {
-			rsetMovie = stMovie
-					.executeQuery("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 2 "
-							+ "AND Account_Id = Account.Id "
-							+ " AND Account.Name like '" + user + "';");
+			stMovie.setString(1,  user);
+			rsetMovie = stMovie.executeQuery();
 
 			movie = getAllMovies(rsetMovie);
 		} finally {
@@ -481,12 +479,11 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMovieByYear(String year) throws SQLException {
 		ArrayList<Movie> movie = new ArrayList<Movie>();
 		ResultSet rsetMovie = null;
-		Statement stMovie = connection.createStatement();
+		PreparedStatement stMovie = connection.prepareStatement("SELECT * FROM Media WHERE Media.MediaType_Id = 2 "
+				+ "AND Year like ?;");
 		try {
-			rsetMovie = stMovie
-					.executeQuery("SELECT * FROM Media WHERE Media.MediaType_Id = 2 "
-							+ "AND Year like '" + year + "';");
-
+			stMovie.setString(1, year);
+			rsetMovie = stMovie.executeQuery();
 			movie = getAllMovies(rsetMovie);
 		} finally {
 			listClose(new Statement[] { stMovie },
@@ -499,11 +496,10 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMovieByTitle(String title) throws SQLException {
 		ArrayList<Movie> movie = new ArrayList<Movie>();
 		ResultSet rsetMovie = null;
-		Statement stMovie = connection.createStatement();
+		PreparedStatement stMovie = connection.prepareStatement("select * from Media where Mediatype_Id = 2 and title like ?;");
 		try {
-			rsetMovie = stMovie
-					.executeQuery("select * from Media where Mediatype_Id = 2 and title like '"
-							+ title + "'");
+			stMovie.setString(1, title);
+			rsetMovie = stMovie.executeQuery();
 			movie = getAllMovies(rsetMovie);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -518,16 +514,16 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMovieByRating(String rating) throws SQLException {
 		ArrayList<Movie> movie = new ArrayList<Movie>();
 		ResultSet rsetMovie = null;
-		Statement stMovie = connection.createStatement();
+		PreparedStatement stMovie = connection.prepareStatement("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 2 "
+				+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
+				+ "Rating.Media_Id) >= "
+				+ "?"
+				+ " GROUP BY Media.Id;");
 		try {
-			Float.parseFloat(rating.replace("%", ""));
+			Float score = Float.parseFloat(rating.replace("%", ""));
 			rating = rating.replace("%", "");
-			rsetMovie = stMovie
-					.executeQuery("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 2 "
-							+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
-							+ "Rating.Media_Id) >= "
-							+ rating
-							+ " GROUP BY Media.Id;");
+			stMovie.setFloat(1, score);
+			rsetMovie = stMovie.executeQuery();
 
 			movie = getAllMovies(rsetMovie);
 		} catch (NumberFormatException e) {
@@ -540,18 +536,18 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Movie> getMovieByDirector(String artist)
+	public ArrayList<Movie> getMovieByDirector(String director)
 			throws SQLException {
 		ArrayList<Movie> album = new ArrayList<Movie>();
-		Statement stMovie = connection.createStatement();
+		PreparedStatement stMovie = connection.prepareStatement("SELECT *"
+				+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
+				+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 2 AND Creator.Name LIKE ?"
+				+ " GROUP BY Media.Id;");
 		ResultSet rsetMovie = null;
 
 		try {
-			rsetMovie = stMovie
-					.executeQuery("SELECT *"
-							+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
-							+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 2 AND Creator.Name LIKE '"
-							+ artist + "' GROUP BY Media.Id;");
+			stMovie.setString(1, director);
+			rsetMovie = stMovie.executeQuery();
 
 			album = getAllMovies(rsetMovie);
 		} finally {
@@ -565,14 +561,14 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMovieByGenre(String genre) throws SQLException {
 		ArrayList<Movie> movie = new ArrayList<Movie>();
 		ResultSet rsetMovie = null;
-		Statement stMovie = null;
+		PreparedStatement stMovie = null;
 
 		try {
-			stMovie = connection.createStatement();
+			stMovie = connection.prepareStatement("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE "
+					+ "? And Media.Genre_Id = Genre.Id AND MediaType_Id = 2;");
+			stMovie.setString(1, genre);
 			rsetMovie = stMovie
-					.executeQuery("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE '"
-							+ genre
-							+ "' And Media.Genre_Id = Genre.Id AND MediaType_Id = 2;");
+					.executeQuery();
 
 			if (rsetMovie.isBeforeFirst()) {
 				movie = getAllMovies(rsetMovie);
@@ -605,11 +601,12 @@ public final class QueryExecuter implements QueryInterpreter {
 	/********************************************************************************************************************************/
 
 	@Override
-	public ArrayList<Book> getAllBooks(ResultSet rsetBook) throws SQLException {
+	public ArrayList<Book> getAllBooks(ResultSet rsetBook)
+			throws SQLException {
 		ArrayList<Book> books = new ArrayList<Book>();
 
 		try {
-			// for every movie do...
+			// for every album do...
 			while (rsetBook.next()) {
 				ResultSet rsetGenre;
 				ResultSet rsetAuthor;
@@ -618,62 +615,60 @@ public final class QueryExecuter implements QueryInterpreter {
 				ResultSet rsetUser;
 				ResultSet rsetId = null;
 				Statement stId = connection.createStatement();
-				Statement stUser = connection.createStatement();
-				Statement stGenre = connection.createStatement();
-				Statement stAuthor = connection.createStatement();
-				Statement stRating = connection.createStatement();
-				Statement stReview = connection.createStatement();
+				PreparedStatement stUser = connection
+						.prepareStatement("select Name from Account where Id = ?;");
+				PreparedStatement stGenre = connection
+						.prepareStatement("select Name from Genre where Id = ?;");
+				PreparedStatement stAuthor = connection
+						.prepareStatement("select Name from Contributor inner join Creator where Media_Id = ? and Creator.id = Contributor.Creator_Id;");
+				PreparedStatement stRating = connection
+						.prepareStatement("select avg(Rating) from Rating where Media_Id = ?;");
+				PreparedStatement stReview = connection
+						.prepareStatement("select Title, Text, Account_Id from Review where Media_Id = ?;");
 				Book book = RowConverter.convertRowToBook(rsetBook);
 
-				// get genre.
-				rsetGenre = stGenre
-						.executeQuery("select Name from Genre where Id = "
-								+ rsetBook.getInt("Genre_Id"));
+				stGenre.setInt(1, rsetBook.getInt("Genre_Id"));
+				rsetGenre = stGenre.executeQuery();
+
 				rsetGenre.first();
 				book.setGenre(rsetGenre.getString("Name"));
 
-				rsetAuthor = stAuthor
-						.executeQuery("select Name from Contributor inner join Creator where Media_Id = "
-								+ book.getId()
-								+ " and Creator.id = Contributor.Creator_Id;");
+				stAuthor.setInt(1, book.getId());
+				rsetAuthor = stAuthor.executeQuery();
 
 				while (rsetAuthor.next())
 					book.addAuthor(rsetAuthor.getString("Name"));
 
 				// get the rating.
-				rsetRating = stRating
-						.executeQuery("select avg(Rating) from Rating where Media_Id = "
-								+ book.getId() + ";");
+				stRating.setInt(1, book.getId());
+				rsetRating = stRating.executeQuery();
 
 				while (rsetRating.next())
 					book.setRating(rsetRating.getFloat(1));
 
 				// finally, get reviews..
-				rsetReview = stReview
-						.executeQuery("select Title, Text, Account_Id from Review where Media_Id = "
-								+ book.getId() + ";");
+				stReview.setInt(1, book.getId());
+				rsetReview = stReview.executeQuery();
 
 				while (rsetReview.next()) {
 					Review review = RowConverter.convertRowToReview(rsetReview);
 
-					rsetUser = stUser
-							.executeQuery("select Name from Account where Id = "
-									+ rsetReview.getInt("Account_Id") + ";");
+					stUser.setInt(1, rsetReview.getInt("Account_Id"));
+					rsetUser = stUser.executeQuery();
 					rsetUser.first();
 					review.setUser(rsetUser.getString("Name"));
 					book.addReview(review);
 				}
 
 				// ops, need user too..
-				rsetUser = stUser
-						.executeQuery("select Name from Account where Id = "
-								+ rsetBook.getInt("Account_Id"));
+				stUser.setInt(1, rsetBook.getInt("Account_Id"));
+				rsetUser = stUser.executeQuery();
 				rsetUser.first();
 				book.setUser(rsetUser.getString("Name"));
 
 				books.add(book);
 
-				// ha-ha
+				// ha-ha 
 				listClose(new Statement[] { stId, stUser, stGenre, stAuthor,
 						stRating, stReview }, new ResultSet[] { rsetGenre,
 						rsetAuthor, rsetRating, rsetReview, rsetUser, rsetId });
@@ -689,12 +684,12 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Book> getBookByUser(String user) throws SQLException {
 		ArrayList<Book> book = new ArrayList<Book>();
 		ResultSet rsetBook = null;
-		Statement stBook = connection.createStatement();
+		PreparedStatement stBook = connection.prepareStatement("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 3 "
+				+ "AND Account_Id = Account.Id "
+				+ " AND Account.Name like ?;");
 		try {
-			rsetBook = stBook
-					.executeQuery("SELECT Media.* FROM Media, Account WHERE Media.MediaType_Id = 3 "
-							+ "AND Account_Id = Account.Id "
-							+ " AND Account.Name like '" + user + "';");
+			stBook.setString(1, user);
+			rsetBook = stBook.executeQuery();
 
 			book = getAllBooks(rsetBook);
 		} finally {
@@ -707,11 +702,11 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Book> getBookByYear(String year) throws SQLException {
 		ArrayList<Book> book = new ArrayList<Book>();
 		ResultSet rsetBook = null;
-		Statement stBook = connection.createStatement();
+		PreparedStatement stBook = connection.prepareStatement("SELECT * FROM Media WHERE Media.MediaType_Id = 3 "
+				+ "AND Year like ?;");
 		try {
-			rsetBook = stBook
-					.executeQuery("SELECT * FROM Media WHERE Media.MediaType_Id = 3 "
-							+ "AND Year like '" + year + "';");
+			stBook.setString(1, year);
+			rsetBook = stBook.executeQuery();
 
 			book = getAllBooks(rsetBook);
 		} finally {
@@ -724,11 +719,10 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Book> getBookByTitle(String title) throws SQLException {
 		ArrayList<Book> book = new ArrayList<Book>();
 		ResultSet rsetBook = null;
-		Statement stBook = connection.createStatement();
+		PreparedStatement stBook = connection.prepareStatement("select * from Media where Mediatype_Id = 3 and title like ?");
 		try {
-			rsetBook = stBook
-					.executeQuery("select * from Media where Mediatype_Id = 3 and title like '"
-							+ title + "'");
+			stBook.setString(1, title);
+			rsetBook = stBook.executeQuery();
 			book = getAllBooks(rsetBook);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -742,17 +736,15 @@ public final class QueryExecuter implements QueryInterpreter {
 	public ArrayList<Book> getBookByRating(String rating) throws SQLException {
 		ArrayList<Book> book = new ArrayList<Book>();
 		ResultSet rsetBook = null;
-		Statement stBook = connection.createStatement();
+		PreparedStatement stBook = connection.prepareStatement("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 3 "
+				+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
+				+ "Rating.Media_Id) >= ?"
+				+ " GROUP BY Media.Id;");
 		try {
-			Float.parseFloat(rating.replace("%", ""));
+			Float score = Float.parseFloat(rating.replace("%", ""));
 			rating = rating.replace("%", "");
-			rsetBook = stBook
-					.executeQuery("SELECT * FROM Media, Rating WHERE Media.MediaType_Id = 3 "
-							+ "AND Media.Id = Rating.Media_Id AND  (SELECT avg(Rating) FROM Rating WHERE Media.Id = "
-							+ "Rating.Media_Id) >= "
-							+ rating
-							+ " GROUP BY Media.Id;");
-
+			stBook.setFloat(1, score);
+			rsetBook = stBook.executeQuery();
 			book = getAllBooks(rsetBook);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -763,17 +755,17 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Book> getBookByAuthor(String artist) throws SQLException {
+	public ArrayList<Book> getBookByAuthor(String author) throws SQLException {
 		ArrayList<Book> book = new ArrayList<Book>();
-		Statement stBook = connection.createStatement();
+		PreparedStatement stBook = connection.prepareStatement("SELECT *"
+				+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
+				+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 3 AND Creator.Name LIKE ?"
+				+ " GROUP BY Media.Id;");
 		ResultSet rsetBook = null;
 
 		try {
-			rsetBook = stBook
-					.executeQuery("SELECT *"
-							+ " FROM Media, Contributor, Creator WHERE	Media.Id = Contributor.Media_Id AND "
-							+ "Contributor.Creator_Id = Creator.Id AND Media.Mediatype_Id = 3 AND Creator.Name LIKE '"
-							+ artist + "' GROUP BY Media.Id;");
+			stBook.setString(1, author);
+			rsetBook = stBook.executeQuery();
 
 			book = getAllBooks(rsetBook);
 		} finally {
@@ -787,15 +779,14 @@ public final class QueryExecuter implements QueryInterpreter {
 		ArrayList<Book> book = new ArrayList<Book>();
 		ResultSet rsetBook = null;
 		ResultSet rsetGenre = null;
-		Statement stGenre = null;
-		Statement stBook = null;
+		PreparedStatement stGenre = null;
+		PreparedStatement stBook = null;
 
 		try {
-			stBook = connection.createStatement();
-			rsetBook = stBook
-					.executeQuery("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE '"
-							+ genre
-							+ "' And Media.Genre_Id = Genre.Id AND MediaType_Id = 3;");
+			stBook = connection.prepareStatement("SELECT Media.* FROM Media, Genre WHERE Genre.Name LIKE ?"
+					+ " And Media.Genre_Id = Genre.Id AND MediaType_Id = 3;");
+			stBook.setString(1, genre);
+			rsetBook = stBook.executeQuery();
 
 			if (rsetBook.isBeforeFirst()) {
 				book = getAllBooks(rsetBook);
@@ -893,22 +884,29 @@ public final class QueryExecuter implements QueryInterpreter {
 		// resolve Media_Id & Account_Id to names
 		// use base search: title + text
 		ArrayList<Review> review = new ArrayList<Review>();
-		Statement stReview = null;
+		PreparedStatement stReview = null;
 		ResultSet rsetReview = null;
-		
+
 		try {
-			stReview = connection.createStatement();
-			rsetReview = stReview.executeQuery("SELECT mediatype.name, media.title, account.Name, Review.Title, Review.Text FROM " 
+			stReview = connection.prepareStatement("SELECT mediatype.name, media.title, account.Name, Review.Title, Review.Text FROM "
 					+ "review, media, account, mediatype WHERE "
-					+"review.media_id = media.id AND review.Account_Id = account.Id AND mediatype.Id = media.Mediatype_Id "
-					+"AND (media.title LIKE '"+queryText+"' OR review.Title LIKE '"+queryText+"' OR review.text LIKE '"+queryText+"' "
-					+"OR mediatype.name LIKE '"+queryText+"' OR Account.Name LIKE '"+queryText+"');");
+					+ "review.media_id = media.id AND review.Account_Id = account.Id AND mediatype.Id = media.Mediatype_Id "
+					+ "AND (media.title LIKE ?" 
+					+ "OR review.Title LIKE ? "
+					+ "OR review.text LIKE ? "
+					+ "OR mediatype.name LIKE ? "
+					+ "OR Account.Name LIKE ?);");
 			
-			while (rsetReview.next())
-			{
+			stReview.setString(1, queryText);
+			stReview.setString(2, queryText);
+			stReview.setString(3, queryText);
+			stReview.setString(4, queryText);
+			stReview.setString(5, queryText);
+			rsetReview = stReview.executeQuery();
+
+			while (rsetReview.next()) {
 				review.add(RowConverter.convertRowToExtendedReview(rsetReview));
 			}
-
 
 		} finally {
 			closeStatement(stReview);
@@ -927,7 +925,7 @@ public final class QueryExecuter implements QueryInterpreter {
 
 			stReview.setString(1, model.getUser());
 			stReview.setString(2, model.getPass());
-			stReview.setString(3,  review.getTitle());
+			stReview.setString(3, review.getTitle());
 			stReview.setString(4, review.getText());
 			stReview.setInt(5, pk);
 
