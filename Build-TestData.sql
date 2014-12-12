@@ -1,57 +1,58 @@
 -- Admin
 -- Generate Test Data.
+INSERT INTO Account (Name, User, Pass) VALUES ("MrFoo", "Foo", "Foo");
+INSERT INTO Account (Name, User, Pass) VALUES ("MrsBar", "Bar", "Bar");
+INSERT INTO Account (Name, User, Pass) VALUES ("Alice", "AUser", "APass");
+INSERT INTO Account (Name, User, Pass) VALUES ("Bob", "BUser", "BPass"); 
 
-INSERT INTO Creator (Name) VALUES ("John Lennon");
-INSERT INTO Creator (Name) VALUES ("Rammstein");
-INSERT INTO Creator (Name) VALUES ("Stanley Kubrick");
-INSERT INTO Creator (Name) VALUES ("Cristopher Nolan");
+-- Use this account to log in during development, it has no preset reviews/ratings.
+INSERT INTO Account (Name, User, Pass) VALUES ("User42", "User", "Pass");
 
-INSERT INTO Genre (Name) VALUES ("Action");
-INSERT INTO Genre (Name) VALUES ("Adventure");
-INSERT INTO Genre (Name) VALUES ("Good Music");
-INSERT INTO Genre (Name) VALUES ("Education"); 
+-- Adding some Albums to database.
+CALL AddMedia("Foo", "Foo", "Rosenrot", "2009", "Rammstyle", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "Rammstein", @pkid);
+CALL MakeReview("Bar", "Bar", "Excellent!", "With deep flavor and class...", @pkid);
+CALL MakeReview("Foo", "Foo", "Supberb.", "Very Good. Such Wack.", @pkid);
+CALL MakeReview("AUser", "APass", "Naaa?", "Sorry, not feeling it..", @pkid);
+CALL MakeReview("Buser", "BPass", "Alright", "Could have used more SQL..", @pkid);
+CALL Rate(@pkid, "BUser", "BPass", 2);
+CALL Rate(@pkid, "AUser", "APass", 5);
 
--- Authentication for uploading new content and submitting reviews, this is only visible to the
--- server or the admin creating a new account.
-INSERT INTO Account (Name, User, Pass) VALUES ("Foo", "Foo", "Foo");
-INSERT INTO Account (Name, User, Pass) VALUES ("Bar", "Bar", "Bar");
-INSERT INTO Account (Name, User, Pass) VALUES ("FooBar", "FooBar", "FooBar");
+CALL AddMedia("Bar", "Bar", "Reise, Reise", "2006", "Rammstyle", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "Rammstein", @pkid);
+CALL MakeReview("Bar", "Bar", "Extraordinary!", "This album.. !!!", @pkid);
+CALL MakeReview("Foo", "Foo", "Awesome.", "Can NOT have enough.", @pkid);
+CALL MakeReview("AUser", "APass", "Eeeh", "i dunn get it.", @pkid);
+CALL MakeReview("Buser", "BPass", "Okay", "Better than their last..", @pkid);
+CALL Rate(@pkid, "BUser", "BPass", 4);
+CALL Rate(@pkid, "AUser", "APass", 1);
 
--- Album = 1, Video = 2, E-Book = 3, Adding media.
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (1, 4, "Imagine", 1971, 43);
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (1, 4, "Rosenrot", 2005, 58);
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (1, 4, "Reise, Reise", 2004, 34);
-
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (2, 2, "The Shining", 1996, 180);
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (2, 2, "Full Metal Jacket", 1998, 120);
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (2, 2, "Interstellar", 1992, 90);
-
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (3, 5, "Databases", 2009, 681);
-INSERT INTO Media (Mediatype_Id, Genre_Id, Title, Year, Duration) VALUES (3, 5, "Databases^2", 2011, 2975);
-
--- Adding media authors, Recommended to do this at least once for every media on insertion:
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,2); -- Rammstein = Rosenrot
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (2,3); -- Rammstein = Reise, Reise
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (4,2); -- Rammstein = Reise, Reise
-
-INSERT INTO Contributor(Creator_Id, Media_Id) VALUES (1,1); -- 
-
--- Review added by [1] = Foo:Foo, Second parameter.
-INSERT INTO Review (Media_Id, Account_Id, Title, Text) VALUES (1, 1, "Rammstein??", "Ist Sehr Gut. Keine Fragen."); 
-INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (1, 1, 5);
-INSERT INTO Rating (Media_Id, Account_Id, Rating) VALUES (2, 2, 4);
+CALL AddMedia("Bar", "Bar", "Imagine", "2006", "Lennstyle", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "John Lennon", @pkid);
+CALL MakeReview("Bar", "Bar", "Its good", "I liked this album.", @pkid);
+CALL Rate(@pkid, "BUser", "BPass", 2);
+CALL Rate(@pkid, "AUser", "APass", 3);
 
 
+CALL AddMedia("Bar", "Bar", "Taylor Swift^2", "2012", "New Stuff", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "Swift", @pkid);
+CALL AddCreator("Foo", "Foo", "Go", @pkid);
+CALL AddCreator("Foo", "Foo", "Erlang", @pkid);
+CALL MakeReview("Bar", "Bar", "Dont Know", "Rammstein def better.", @pkid);
+CALL MakeReview("Foo", "Foo", "Mediocre", "Nothing new here.", @pkid);
+CALL MakeReview("AUser", "APass", "^2 ?", "What does it even mean??.", @pkid);
+CALL Rate(@pkid, "BUser", "BPass", 2);
+CALL Rate(@pkid, "AUser", "APass", 1);
 
+CALL AddMedia("AUser", "APass", "Chipmunks", "2014", "Chipcore", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "Alvin", @pkid);
+CALL AddCreator("Foo", "Foo", "Simon", @pkid);
+CALL AddCreator("Foo", "Foo", "Theodore", @pkid);
 
--- -------------------  SP _ TEST ! -----------
--- Remember: Some values are already added -^
+CALL AddMedia("BUser", "BPass", "Chipmunks: REMIXED", "2014", "Chipcore", 120, 1, @pkid);
+CALL AddCreator("Foo", "Foo", "Lysette", @pkid);
+CALL AddCreator("Foo", "Foo", "Aniela", @pkid);
 
-CALL AddMedia("Foo", "Foo", "Title", "2014", "Genre", 120, 1, @pkid);
-CALL AddCreator("Foo", "Foo", "CreatorName", 1);
-CALL MakeReview("Foo", "Foo", "Title", "Text", 1);
-CALL Rate(1, "FooBar", "FooBar", 3);
-SELECT @pkid;
 
 
 

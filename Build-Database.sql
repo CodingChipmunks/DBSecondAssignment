@@ -207,7 +207,7 @@ BEGIN
     SELECT Account.Id INTO AccountId FROM Account WHERE (Account.User = p_user AND Account.pass = p_pass);
  
     IF AccountId > 0 THEN
-		INSERT INTO Review (Media_Id, Account_Id, Text, Title) VALUES (p_media, AccountId, p_title, p_text);
+		INSERT INTO Review (Media_Id, Account_Id, Title, Text) VALUES (p_media, AccountId, p_title, p_text);
     END IF;
  
 END$$
