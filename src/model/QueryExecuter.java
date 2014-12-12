@@ -143,33 +143,37 @@ public final class QueryExecuter implements QueryInterpreter {
 		return albums;
 	}
 
+	/*** Adds new media to database.
+	 * @param name Name/Title of media.
+	 * @param year Release Year.
+	 * @param genre media genre
+	 * @param objects an array of creators (artists/directors/authors)
+	 * @param duration length of media. album-total length, movie duration, book pages.
+	 * @param mediaType type of media to be added (movie, book, album)
+	 */
 	@Override
 	public void addMedia(String name, String year, String genre,
 			Object[] objects, int duration, int mediaType) throws SQLException {
-		// AddMedia("Foo", "Foo", "Title", "2014", "Genre", Duration,
 		CallableStatement stMedia = null;
 		CallableStatement stCreator = null;
 		try {
+			connection.setAutoCommit(false);
 			String sql = "{call AddMedia(?, ?, ?, ?, ?, ?, ?, ?)}";
 
 			stMedia = connection.prepareCall(sql);
-
 			stMedia.setString(1, model.getUser());
 			stMedia.setString(2, model.getPass());
 			stMedia.setString(3, name);
 			stMedia.setString(4, year);
 			stMedia.setString(5, genre);
-			stMedia.setInt(6, duration); // duration not implemented
+			stMedia.setInt(6, duration); 
 			stMedia.setInt(7, mediaType);
+			// returns the PK of the newly added media item, required when adding creators. 
 			stMedia.registerOutParameter(8, java.sql.Types.INTEGER);
-
-			// loop through artist and call AddCreator ...
 			stMedia.execute();
 
-			System.out.println("Returned PK = " + stMedia.getInt(8));
-
-			// CALL AddCreator("Foo", "Foo", "CreatorName", 1);
-
+			// parameters: username, password, creator name, mediaId
+			// the stored procedure will create a creator if not exists.
 			sql = "{call AddCreator(?, ?, ?, ?)}";
 			stCreator = connection.prepareCall(sql);
 			for (int i = 0; i < objects.length; i++) {
@@ -179,11 +183,15 @@ public final class QueryExecuter implements QueryInterpreter {
 				stCreator.setInt(4, stMedia.getInt(8));
 				stCreator.execute();
 			}
-
-			rebootDataSet();
+			
+			connection.commit();
 		} finally {
+			connection.setAutoCommit(true);
 			closeStatement(stMedia);
+			closeStatement(stCreator);
 		}
+		// run last search query again, to display the added media.
+		rebootDataSet();
 	}
 
 	@Override
