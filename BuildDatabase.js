@@ -7,20 +7,18 @@
 // Warning: All Users Has Execute Rights In This Schema!
 
 
-
 // select db
 use mediacollection
-// Reset the schema.
 // clear it
 db.dropDatabase()
-
-// needed to make same again??
+// needed to do again after drop?
 use mediacollection
+// TODO: INSERT Admin into Acount!
 
-// TODO INSERT Admin into Acount!
 
-// make collection
-//db.Account
+// make collections
+
+//Create User, Contains password and username for use in the post-review/post-rating procedures.
 db.createCollection("Account")
 // These test accounts are used in the creation of new Media/Reviews/Ratings
 db.Account.insert({Name : 'MrFoo', User : 'Foo', Pass : 'Foo' })
@@ -30,40 +28,43 @@ db.Account.insert({Name : 'Bob', User : 'BUser', Pass : 'BPass' })
 // Use this account to log in during development, it has no preset reviews/ratings.
 db.Account.insert({Name : 'User42', User : 'User', Pass : 'Password' })
 
-
+// Create Director/Artist
 db.createCollection("Creator")
-// add index
+// TODO: add index
+
+// Create Genre
 db.createCollection("Genre")
+
+// Create Media Types
 db.createCollection("Mediatype")
-// add base types!!! is this it?
+// TODO: add base types!!! is this it?
 db.Mediatype.insert({Name : 'Album'})
 db.Mediatype.insert({Name : 'Movie'})
 db.Mediatype.insert({Name : 'E-Book'})
 db.Mediatype.insert({Name : 'Undefined'})
 // Genre defaults to undefined.
 
+// Create Movie/Album
 db.createCollection("Media")
-db.Media.insert								// USES SP !
+//db.Media.insert								// USES SP !
+// TODO: add index
 
-// add index
+// a way of adding index, needs more research
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 db.Media.ensureIndex( { userid: 1 } )
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+// researching how N:M tables are used in noSQL DB's
 db.createCollection("Contributor")
+
+// Create Rating, Username is unique so that every user may only create one rating.  
 db.createCollection("Rating")
+
+// Create Review, Username is unique so that every user may only create one review.
 db.createCollection("Review")
 
 // show what has been made
 show collections
-
-
-
-
-
-
-
 
 
 // rm users
@@ -93,13 +94,10 @@ db.getUsers()
 
 // TODO EQV. 2 stored procedures
 
-//////////////////////////////////////////////////////////////////////////
 // Clear Stored procedures
-// REALLY NEEDED IF DB IS DROPPED ERY TIME?
 db.system.js.remove({})
-//db.system.js.remove({_id : "Rate" })
 
-// Make stored procedures equivalent
+// Make equivalent of stored procedures 
 db.system.js.save(
    {
      _id : "Rate" ,
@@ -115,16 +113,10 @@ db.loadServerScripts();
 myAddFunction(3, 5);
 
 
-
-// list contents of db
-//db.fruit.find().pretty()
-
-// show what has been made
+// show what has been mde
 //show collections
 //show users
 //db.getUsers()
-
-
 //show roles
 //show profile
 //show dbs
