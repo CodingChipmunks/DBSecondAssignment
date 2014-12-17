@@ -27,15 +27,6 @@ public interface QueryInterpreter {
 	ArrayList<Movie> getMovieByDirector(String director) throws SQLException;
 	ArrayList<Movie> getMovieByGenre(String genre) throws SQLException;
 
-	ArrayList<Book> getBooksByAny(String queryText) throws SQLException;
-	ArrayList<Book> getAllBooks(ResultSet rsetBook) throws SQLException;
-	ArrayList<Book> getBookByUser(String user) throws SQLException;
-	ArrayList<Book> getBookByYear(String year) throws SQLException;
-	ArrayList<Book> getBookByTitle(String title) throws SQLException;
-	ArrayList<Book> getBookByRating(String rating) throws SQLException;
-	ArrayList<Book> getBookByAuthor(String artist) throws SQLException;
-	ArrayList<Book> getBookByGenre(String genre) throws SQLException;
-
 	void getReviewsByAny(String queryText) throws SQLException;
 	void reviewMedia(Review review, int pk) throws SQLException;
 	void rateAlbum(int rating, int media) throws SQLException;

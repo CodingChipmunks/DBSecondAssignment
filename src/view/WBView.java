@@ -37,7 +37,7 @@ public class WBView extends JFrame {
 	private ReviewMediaDialog reviewMediaDialog;
 	Controller controller;
 
-	private final String[] searchOptions = { "Album", "Movie", "Book" , "Review"}; // Used
+	private final String[] searchOptions = { "Album", "Movie" , "Review"}; // Used
 																			// with
 																			// Class.ForName.
 
