@@ -30,10 +30,15 @@ db.Account.insert({Name : 'User42', User : 'User', Pass : 'Password' })
 
 // Create Director/Artist
 db.createCollection("Creator")
-// TODO: add index
+db.Creator.insert({Name : "Rammstein"})
+
+// Adding index
+db.Creator.ensureIndex( { Name: 1 } )
 
 // Create Genre
 db.createCollection("Genre")
+db.Genre.insert({Name : "Rammstyle"})
+// TODO connect dem in good fashion
 
 // Create Media Types
 db.createCollection("Mediatype")
@@ -46,25 +51,57 @@ db.Mediatype.insert({Name : 'Undefined'})
 
 // Create Movie/Album
 db.createCollection("Media")
-//db.Media.insert								// USES SP !
-// TODO: add index
 
-// a way of adding index, needs more research
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-db.Media.ensureIndex( { userid: 1 } )
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  needs more research
+db.Media.insert({ 
+	Title : 'Rosenrot', 
+	Creator : "Rammstein", // FK
+	Genre : "Rammstyle", 	// FK
+	Year : "2009",
+	Duration : "120",
+	Mediatype : "1",	// FK
+	AddedBy : ""
+})
+// Ref 2 who added it!
+
+db.Media.ensureIndex( { Title: 1 } )
+db.Media.ensureIndex( { Mediatype_Id: 1 } )
+
 
 // researching how N:M tables are used in noSQL DB's
 db.createCollection("Contributor")
 
 // Create Rating, Username is unique so that every user may only create one rating.  
 db.createCollection("Rating")
+db.Rating.insert({User : "BUser", Rating : "2"})
+db.Rating.insert({User : "AUser", Rating : "5"})
 
 // Create Review, Username is unique so that every user may only create one review.
 db.createCollection("Review")
+db.Review.insert({
+	User : "Bar", 
+	Title : "Excellent!", 
+	Review : "With deep flavor and class..."
+})
+db.Review.insert({
+	User : "Foo", 
+	Title : "Supberb.", 
+	Review : "Very Good. Such Wack."
+})
+db.Review.insert({
+	User : "AUser", 
+	Title : "Naaa?", 
+	Review : "Sorry, not feeling it.."
+})
+db.Review.insert({
+	User : "Buser", 
+	Title : "Alright", 
+	Review : "Could have used more SQL.."
+})
+
 
 // show what has been made
-show collections
+//show collections
 
 
 // rm users
@@ -75,13 +112,14 @@ db.dropAllUsers()
 // Database, when creating a review or rating. 
 
 // make user for clientapp
+// TODO sync privlieges
 db.createUser(
     {
       user: "clientapp",
       pwd: "qwerty",
       roles: [
-         { role: "read", db: "first" },
-         { role: "readWrite", db: "healthy" }
+         { role: "read", db: "mediacollection" },
+         { role: "readWrite", db: "mediacollection" }
       ]
     }
 )
@@ -89,28 +127,6 @@ db.createUser(
 
 // list users
 db.getUsers()
-
-
-
-// TODO EQV. 2 stored procedures
-
-// Clear Stored procedures
-db.system.js.remove({})
-
-// Make equivalent of stored procedures 
-db.system.js.save(
-   {
-     _id : "Rate" ,
-     value : function (x, y){ return x + y; }
-   }
-);
-
-// call scripts
-db.eval( "myAddFunction( 1, 2)" )
-
-// vs.
-db.loadServerScripts();
-myAddFunction(3, 5);
 
 
 // show what has been mde
