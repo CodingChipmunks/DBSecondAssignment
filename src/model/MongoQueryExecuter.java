@@ -430,14 +430,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		 * true, true);
 		 */
 
-		BasicDBList dbl = new BasicDBList();
-		 dbl.add(new BasicDBObject("Title", review.getTitle()));
-		 dbl.add(new BasicDBObject("Text", review.getText()));
-		 dbl.add(new BasicDBObject("User", model.getUser()));
-		BasicDBObject outer = new BasicDBObject("_id", pk)
-				.append("Review", dbl);
+		DBObject findQuery = new BasicDBObject("_id", pk);
+		DBObject listItem = new BasicDBObject("Review", new BasicDBObject(
+				"Title", review.getTitle()).append("Text", review.getText())
+				.append("User", review.getUser()));
+		DBObject updateQuery = new BasicDBObject("$push", listItem);
+		coll.update(findQuery, updateQuery, true, false);
 
-		coll.update(dbl, outer, true, false);
+		// coll.update(dbl, outer, true, false);
 		// call last.
 		rebootDataSet();
 	}

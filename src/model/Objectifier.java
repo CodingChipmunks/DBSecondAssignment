@@ -113,7 +113,7 @@ public final class Objectifier {
 				
 				Review r = new Review(singleReview.getString("Title") , singleReview.getString("Text"), singleReview.getString("User"), 
 						dbo.getString("Mediatype"), dbo.getString("Title"));
-				
+
 				if (r.getText().contains(queryText) || 
 						r.getTitle().contains(queryText) || 
 						r.getUser().contains(queryText) || 
