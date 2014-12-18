@@ -330,7 +330,7 @@ public class Controller implements ActionListener {
 				dialog.setVisible(false);
 
 				album = new Album("", "", "", "");
-				movie = new Movie("", "", "", "", 0, 0);
+				movie = new Movie("", "", "", "", 0, "");
 				book = new Book("", "", 0);
 
 				@SuppressWarnings("rawtypes")

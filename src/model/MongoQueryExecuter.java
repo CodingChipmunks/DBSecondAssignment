@@ -1,6 +1,5 @@
 package model;
 
-import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,8 +20,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-import com.mongodb.WriteResult;
-
 import controller.Controller.QueryType;
 
 public class MongoQueryExecuter implements QueryInterpreter {

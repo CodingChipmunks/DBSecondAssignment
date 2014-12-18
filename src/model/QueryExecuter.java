@@ -417,21 +417,21 @@ public final class QueryExecuter implements QueryInterpreter {
 				rsetGenre.first();
 				movie.setGenre(rsetGenre.getString("Name"));
 
-				stDirector.setInt(1, movie.getId());
+				stDirector.setInt(1, new Integer(movie.getId()));
 				rsetDirector = stDirector.executeQuery();
 
 				while (rsetDirector.next())
 					movie.addDirector(rsetDirector.getString("Name"));
 
 				// get the rating.
-				stRating.setInt(1, movie.getId());
+				stRating.setInt(1, new Integer(movie.getId()));
 				rsetRating = stRating.executeQuery();
 
 				while (rsetRating.next())
 					movie.setRating(rsetRating.getFloat(1));
 
 				// finally, get reviews..
-				stReview.setInt(1, movie.getId());
+				stReview.setInt(1, new Integer(movie.getId()));
 				rsetReview = stReview.executeQuery();
 
 				while (rsetReview.next()) {

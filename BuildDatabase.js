@@ -142,6 +142,24 @@ db.Media.insert({
 	Mediatype : "Album"
 })
 
+db.Media.insert({ 
+	Title : "Lord ot. Rings", 
+	Creator : [
+		{Name: "Peter Jackson"}
+	],
+	Genre : "Balrogs",
+	Year : "2006",
+	Duration : "228",
+	Review : [
+
+	],
+	//Rating : [
+
+	//],
+	AddedBy : "Bar",
+	Mediatype : "Movie"
+})
+
 
 
 // show what has been made

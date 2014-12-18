@@ -49,7 +49,7 @@ public final class RowConverter {
 			throws SQLException {
 
 		Movie movie = new Movie(movieRow.getString("title"), "",
-				movieRow.getString("year"), "", movieRow.getInt("duration"), movieRow.getInt("id"));
+				movieRow.getString("year"), "", movieRow.getInt("duration"), movieRow.getInt("id") + "");
 
 		return movie;
 	}
