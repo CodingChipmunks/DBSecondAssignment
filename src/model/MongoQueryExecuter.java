@@ -112,7 +112,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -131,27 +130,32 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByGenre(String genre) throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAllAlbums(ResultSet rsetAlbum)
 			throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByAny(String title) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO set last query to title
+		// TODO set last query type to Album = 1
+		// TODO Create a set of album = no copies can be added (override hashCode & Compare % eqiaös)
+		
+		// TODO call every getXByX methods and add result to set.
+		
+		return null; // return set.toArrayList ? :o
 	}
 
 	@Override
@@ -183,8 +187,13 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public ArrayList<Movie> getMoviesByAny(String queryText)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO set last query to title
+		// TODO set last query type to Album = 1
+		// TODO Create a set of album = no copies can be added (override hashCode & Compare % eqiaös)
+		
+		// TODO call every getXByX methods and add result to set.
+		
+		return null; // return set.toArrayList ? :o
 	}
 
 	@Override
