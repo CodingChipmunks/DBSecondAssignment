@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -31,8 +30,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	private final static String database = "mediacollection";
 	private final static String user = "clientapp";
 	private final static String pass = "qwerty";
-	private final static String host = "mongodb://";
-	private final static String connection = "localhost:27017/";
 
 	private MongoCredential cr = null;
 	private MongoClient mc = null;
@@ -65,8 +62,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public MongoQueryExecuter(Model model) {
 		this.model = model;
 		try {
-			cr = MongoCredential.createMongoCRCredential("clientapp",
-					"mediacollection", "qwerty".toCharArray());
+			cr = MongoCredential.createMongoCRCredential(user,
+					database, pass.toCharArray());
 			mc = new MongoClient(new ServerAddress(), Arrays.asList(cr));
 
 			db = mc.getDB("mediacollection");
@@ -135,9 +132,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void disconnect() {
-
+		// called after creation; after queries are executed.
 	}
 
+	@Override
+	public void open() {
+		// called after creation; before queries are executed.
+	}
+	
 	private synchronized void setLastQuery(String lastQuery, QueryType queryType) {
 		MongoQueryExecuter.lastQuery = lastQuery;
 		MongoQueryExecuter.lastQueryType = queryType;
@@ -364,13 +366,17 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public void reviewMedia(Review review, int pk) throws SQLException {
 		// TODO Auto-generated method stub
-
+		
+		// call last.
+		rebootDataSet();
 	}
 
 	@Override
 	public void rateAlbum(int rating, int media) throws SQLException {
 		// TODO Auto-generated method stub
-
+		
+		// call last.
+		rebootDataSet();
 	}
 
 	@Override
@@ -414,11 +420,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		oneDocument.put("Creator", creators);
 
 		coll.insert(oneDocument);
-	}
-
-	@Override
-	public void open() {
-		// TODO Auto-generated method stub
-
+		rebootDataSet();
 	}
 }
