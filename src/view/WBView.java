@@ -133,10 +133,11 @@ public class WBView extends JFrame {
 		});
 	}
 	
-	public int getSelectedId()
+	public String getSelectedId()
 	{
-		return new Integer(table.getValueAt(table.getSelectedRow(), 0).toString());
+		return table.getValueAt(table.getSelectedRow(), 0).toString();
 	}
+	
 	
 	public int getSelectedRowCount()
 	{
@@ -252,11 +253,11 @@ public class WBView extends JFrame {
 
 	public void revokeReviewMediaDialog() {
 		reviewMediaDialog.setVisible(false);
-		this.setVisible(true);
+		//this.setVisible(true);
 	}
 
-	public void invokeRateMediaDialog(int selectedRow) {
-		rateMediaDialog.setSelectedRow(selectedRow);
+	public void invokeRateMediaDialog() {
+		rateMediaDialog.setSelectedRow(table.getSelectedRow());
 		rateMediaDialog.setVisible(true);
 		//this.setVisible(false);
 	}
