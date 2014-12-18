@@ -48,6 +48,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
 		
 		mqe.getAlbumsByTitle("Rosenrot");
+		mqe.getAlbumsByGenre("Lennstyle");
 
 		//mqe.peek();
 	}
@@ -171,8 +172,21 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByGenre(String genre) throws SQLException {
-
-		return null;
+		ArrayList<Album> result = new ArrayList<Album>();
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Genre", genre);
+		Pattern regex = Pattern.compile(genre);
+		query.put("Genre", regex);
+		Cursor cursor = collection.find(query);
+		System.out.println("Entering search ...");
+		while (cursor.hasNext()) {
+			System.out.println("Searching by genre " + genre + " ...");
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			Album a = Objectifier.cursorToAlbum(dbo);
+			result.add(a);
+		}
+		System.out.println(result);
+		return result;
 	}
 
 	@Override
