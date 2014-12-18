@@ -47,6 +47,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		mqe.getAlbumsByTitle("Rosenrot");
 		mqe.getAlbumsByGenre("Lennst");
 		mqe.getAlbumsByRating("3");
+		mqe.getAlbumsByArtist("Rammstein");
 
 		//mqe.peek();
 	}
@@ -228,10 +229,51 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByArtist(String artist)
-			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Album> getAlbumsByArtist(String artist) throws SQLException {
+		// TODO: fixit
+		ArrayList<Album> result = new ArrayList<Album>();
+		
+		DBCollection collection =  db.getCollection("Media");
+		DBObject query = new BasicDBObject("Creator", "...");
+		System.out.println("QUERY"  + query);
+		
+		Pattern regex = Pattern.compile(artist);
+		query.put("Creator", regex);
+		
+		// TODO: let db decide how big rating is
+		Cursor cursor = collection.find();
+		System.out.println("Entering search ...");
+		
+		// TODO: more effective searches
+		
+		try {	
+			while(cursor.hasNext()) {
+				
+				System.out.println("Searching by artist " + artist + " ...");
+				
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				
+				// dbo.get("Score");
+				
+				// Make Album from result of query
+				Album a = Objectifier.cursorToAlbum(dbo);
+				
+				// TODO: aid by research
+				ArrayList<Artist> tmp = a.getArtist();
+				
+				// mm aj lajk de speed of this database
+				for (Artist artists : tmp) {
+					if(artists.getName().contains(artist)) {
+						// put in list, if rating is greater than desired
+						result.add(a);
+					}
+				}
+			}
+			System.out.println(result);
+			return result;
+		} finally {
+			cursor.close();
+		}
 	}
 
 	@Override
