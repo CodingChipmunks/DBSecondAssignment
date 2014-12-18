@@ -67,6 +67,7 @@ public class LoginDialog extends JDialog{
 			rootPane.setDefaultButton(login);
 			
 			Style.setUITheme(this.getRootPane());
+			//this.setModal(true);
 			
 			setVisible(true);
 			setLocationRelativeTo(null);

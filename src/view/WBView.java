@@ -247,7 +247,7 @@ public class WBView extends JFrame {
 
 	public void invokeReviewMediaDialog() {
 		reviewMediaDialog.setVisible(true);
-		this.setVisible(false);
+		//this.setVisible(false);
 	}
 
 	public void revokeReviewMediaDialog() {
@@ -258,18 +258,18 @@ public class WBView extends JFrame {
 	public void invokeRateMediaDialog(int selectedRow) {
 		rateMediaDialog.setSelectedRow(selectedRow);
 		rateMediaDialog.setVisible(true);
-		this.setVisible(false);
+		//this.setVisible(false);
 	}
 	
 	public void revokeRateMediaDialog() {
 		rateMediaDialog.setVisible(false);
-		this.setVisible(true);
+		//this.setVisible(true);
 	}
 
 	public void invokeAddMediaDialog(int index) {
 		addMediaDialog.setVisible(true);
 		addMediaDialog.setComboIndex(index);
-		this.setVisible(false);
+		//this.setVisible(false);
 	}
 	
 	public AddMediaDialog getMediaDialog()

@@ -13,7 +13,7 @@ import controller.Controller;
 import model.*;
 
 @SuppressWarnings("serial")
-public class ReviewMediaDialog extends JDialog {
+public class ReviewMediaDialog extends JFrame {
 	
 	private JPanel contentPane, buttonPane, inputPane, titlePane;
 	private JButton add;
@@ -66,6 +66,7 @@ public class ReviewMediaDialog extends JDialog {
 		setCancel(cancel);
 
 		Style.setUITheme(this.getRootPane());
+		//this.setModal(true);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(add); 
 		rootPane.setDefaultButton(add);

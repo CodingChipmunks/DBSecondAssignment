@@ -10,7 +10,7 @@ import controller.Controller;
 import model.Model;
 
 @SuppressWarnings("serial")
-public class RateMediaDialog extends JDialog {
+public class RateMediaDialog extends JFrame {
 
 	private int selectedRow;
 	
@@ -55,6 +55,7 @@ public class RateMediaDialog extends JDialog {
 		setCancel(cancel);
 
 		Style.setUITheme(this.getRootPane());
+		//this.setModal(true);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(rate); 
 		rootPane.setDefaultButton(rate);
