@@ -76,9 +76,6 @@ public class Controller implements ActionListener {
 							break;
 						}
 						break;
-					case BOOKSEARCH:
-						qx.getBooksByAny(queryText);
-						break;
 					case MOVIESEARCH:
 						qx.getMoviesByAny(queryText);
 						break;

@@ -62,7 +62,7 @@ public class AddMediaDialog extends JFrame {
 
 		// TODO get media from view, do not include hidden fields.
 		// the fields must match a class.
-		comboMedia = new JComboBox<String>(new String[]{"Album", "Movie", "Book"});
+		comboMedia = new JComboBox<String>(new String[]{"Album", "Movie"});
 		comboMedia.setPrototypeDisplayValue("as long as this");
 		comboMedia.setSelectedIndex(0);
 		comboPane.add(comboMedia);
