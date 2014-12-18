@@ -405,10 +405,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBObject st1 = new BasicDBObject("Review.Title", regex);
 		DBObject st2 = new BasicDBObject("Review.Text", regex);
 		DBObject st3 = new BasicDBObject("Review.User", regex);
+		DBObject st4 = new BasicDBObject("Mediatype", regex);
+		DBObject st5 = new BasicDBObject("Title", regex);
 		BasicDBList or = new BasicDBList();
 		or.add(st1);
 		or.add(st2);
 		or.add(st3);
+		or.add(st4);
+		or.add(st5);
 		DBObject query = new BasicDBObject("$or", or);
 
 		Cursor cursor = collection.find(query);
