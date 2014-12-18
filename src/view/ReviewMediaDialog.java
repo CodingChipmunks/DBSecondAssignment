@@ -13,7 +13,7 @@ import controller.Controller;
 import model.*;
 
 @SuppressWarnings("serial")
-public class ReviewMediaDialog extends JFrame {
+public class ReviewMediaDialog extends JDialog {
 	
 	private JPanel contentPane, buttonPane, inputPane, titlePane;
 	private JButton add;
@@ -26,7 +26,7 @@ public class ReviewMediaDialog extends JFrame {
 
 	private int WIDTH = 350;
 	private int HEIGHT = 300;
-	private int pk;
+	private String pk;
 
 
 	public ReviewMediaDialog(Model m, final WBView view, Controller controller) {
@@ -66,7 +66,7 @@ public class ReviewMediaDialog extends JFrame {
 		setCancel(cancel);
 
 		Style.setUITheme(this.getRootPane());
-		//this.setModal(true);
+		this.setModal(true);
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(add); 
 		rootPane.setDefaultButton(add);
@@ -115,11 +115,11 @@ public class ReviewMediaDialog extends JFrame {
 		contentPane.updateUI();
 	}
 
-	public void setPK(int selectedId) {
-		this.pk = selectedId;
+	public void setPK(String string) {
+		this.pk = string;
 	}
 	
-	public int getPK()
+	public String getPK()
 	{
 		return this.pk;
 	}

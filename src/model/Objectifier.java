@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
@@ -84,6 +85,12 @@ public final class Objectifier {
 
 		
 		return album;
+	}
+
+	public static Review cursorToReview(BasicDBObject dbo) {
+		//Review review = new Review(String title, String text, String user, String media, String mediaTitle);
+		Review review = null;
+		return review;
 	}
 	
 //	// convert mDB equivalence of Result set to object

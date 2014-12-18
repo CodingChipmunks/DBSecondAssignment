@@ -706,8 +706,9 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public void reviewMedia(Review review, int pk) throws SQLException {
+	public void reviewMedia(Review review, String spk) throws SQLException {
 		CallableStatement stReview = null;
+		int pk = new Integer(spk);
 		try {
 			String sql = "{call MakeReview(?, ?, ?, ?, ?)}";
 			stReview = connection.prepareCall(sql);

@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
 import com.mongodb.DB;
@@ -209,18 +210,13 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		Set<Album> album = new HashSet<Album>();
 		setLastQuery(query, QueryType.ALBUMSEARCH);
 
-		// TODO set last query to title
-		// TODO set last query type to Album = 1
-		// TODO Create a set of album = no copies can be added (override
-		// hashCode & Compare % eqia�s)
-
-		// TODO call every getXByX methods and add result to set.
-		// TODO call model.setBank(arraylist<movie>.toArray())
+		// TODO add AlbumByArtist
 
 		album.addAll(getAlbumsByTitle(query));
 		album.addAll(getAlbumsByYear(query));
 		album.addAll(getAlbumsByUser(query));
 		album.addAll(getAlbumsByGenre(query));
+		album.addAll(getAlbumsByRating(query));
 
 		model.setBank(album.toArray());
 		return new ArrayList<Album>(album);
@@ -432,12 +428,31 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void getReviewsByAny(String queryText) throws SQLException {
-		// TODO Auto-generated method stub
-
+		ArrayList<Review> reviews = new ArrayList<Review>();
+		DBCollection collection = db.getCollection("Media");
+		Pattern regex = Pattern.compile(queryText);
+		
+		// tis codess
+		DBObject clause1 = new BasicDBObject("Review.Title", regex);  
+		DBObject clause2 = new BasicDBObject("Review.Text", regex);    
+		BasicDBList or = new BasicDBList();
+		or.add(clause1);
+		or.add(clause2);
+		DBObject query = new BasicDBObject("$or", or);
+		
+		Cursor cursor = collection.find(query);
+		System.out.println("Searching by Review " + queryText + " ...");
+		while (cursor.hasNext()) {
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			Review r = Objectifier.cursorToReview(dbo);
+			reviews.add(r);
+		}
+		
+		model.setBank(reviews.toArray());
 	}
 
 	@Override
-	public void reviewMedia(Review review, int pk) throws SQLException {
+	public void reviewMedia(Review review, String pk) throws SQLException {
 		// TODO Auto-generated method stub
 		
 		// call last.

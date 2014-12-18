@@ -90,7 +90,7 @@ public class Controller implements ActionListener {
 						qx.rateAlbum(rating, media);
 						break;
 					case REVIEW:
-						qx.reviewMedia(review, new Integer(queryText));
+						qx.reviewMedia(review, queryText);
 						break;
 					case LOGIN:
 						qx.verifyAccount(model.getUser(), model.getPass());
@@ -243,7 +243,7 @@ public class Controller implements ActionListener {
 							+ wbview.getSelectedId());
 
 					if (wbview.getSelectedRowCount() == 1) {
-						wbview.invokeRateMediaDialog(wbview.getSelectedId());
+						wbview.invokeRateMediaDialog();
 					} else {
 						throw new Exception("multiselect");
 					}
