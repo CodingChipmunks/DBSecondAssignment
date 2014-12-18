@@ -23,11 +23,24 @@ public final class Objectifier {
 		
 		// Artists will be many
 		//BasicDBObject artist = (BasicDBObject) dbo.get("Creator");
-		String creator = dbo.getString("Creator");
-		Artist artist = new Artist(creator);
+		
+		/*String creator = dbo.getString("Creator");
+		Artist artist = new Artist(creator);*/
 		
 		ArrayList<Artist> artists = new ArrayList<Artist>();
-		artists.add(artist);
+		BasicDBList creators = (BasicDBList) dbo.get("Creator");
+		
+		if (null != creators)
+		{
+			Object[] arrayOfCreators = creators.toArray();
+			
+			for (int i = 0; i < arrayOfCreators.length; i++)
+			{
+				BasicDBObject singleCreator = (BasicDBObject) arrayOfCreators[i];
+				
+				artists.add(new Artist(singleCreator.getString("Name")));
+			}
+		}
 		
 		// get sub document of ratings and users
 		BasicDBList ratings = (BasicDBList) dbo.get("Rating");

@@ -66,7 +66,9 @@ db.Media.ensureIndex( { Mediatype_Id: 1 } )
 
 db.Media.insert({ 
 	Title : "Reise, Reise", 
-	Creator : "Rammstein",	// will become list []
+	Creator : [
+		{Name: "Rammstein"}
+	],
 	Genre : "Rammstyle",
 	Year : "2006",
 	Duration : "120",
@@ -94,7 +96,9 @@ db.Media.insert({
 
 db.Media.insert({ 
 	Title : "Imagine", 
-	Creator : "Rammstein",	// will become list []
+	Creator : [
+		{Name: "John Lennon"}
+	],
 	Genre : "Lennstyle",
 	Year : "2006",
 	Duration : "120",
@@ -122,7 +126,9 @@ db.Media.insert({
 
 db.Media.insert({ 
 	Title : "Chipmunks", 
-	Creator : "Alvin",	// will become list []
+	Creator : [
+		{Name: "Alvin"}
+	],
 	Genre : "Chipcore",
 	Year : "2014",
 	Duration : "120",
