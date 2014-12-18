@@ -77,6 +77,7 @@ public class AddMediaDialog extends JDialog {
 		cancel = new JButton("Cancel");
 		buttonPane.add(cancel);
 		setCancel(cancel);
+		this.setModal(true);
 
 		Style.setUITheme(this.getRootPane());
 
