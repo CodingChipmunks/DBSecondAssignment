@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
@@ -45,13 +46,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			SQLException {
 		Model model = new Model("User42", "");
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
-		mqe.addMedia("Lenny Hits", "1998", "Lennstyle", new Object[] {
-				"Lenny P", "Lenny K" }, 360, 1);
+		
+		mqe.getAlbumsByTitle("Rosenrot");
 
-		mqe.addMedia("Rosenrot", "2005", "Rammstyle",
-				new Object[] { "Rammstein" }, 360, 1);
-
-		mqe.peek();
+		//mqe.peek();
 	}
 
 	// TODO remove
@@ -60,7 +58,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// rough peek
 		while (fetchAll.hasNext()) {
 			System.out.println(fetchAll.next());
-		} 
+		}
 	}
 
 	public MongoQueryExecuter(Model model) {
@@ -107,18 +105,17 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 			// specified peek
 
-			
 			// tst search
-			ArrayList<Album> a = getAlbumsByYear("2009");
-			System.out.println("Found some: " + a.toString());
-			ArrayList<Album> u = getAlbumsByUser("Foo");
-			System.out.println("Found some usr's: " + u.toString());
-			
+			//ArrayList<Album> a = getAlbumsByYear("2009");
+			//System.out.println("Found some: " + a.toString());
+			//ArrayList<Album> u = getAlbumsByUser("Foo");
+			//System.out.println("Found some usr's: " + u.toString());
+
 		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
 		}
 	}
-	
+
 	// run this after rating/review/add
 	private void rebootDataSet() throws SQLException {
 		switch (getLastQueryType()) {
@@ -155,8 +152,21 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
-
-		return null;
+		ArrayList<Album> result = new ArrayList<Album>();
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Title", title);
+		Pattern regex = Pattern.compile(title);
+		query.put("Title", regex);
+		Cursor cursor = collection.find(query);
+		System.out.println("Entering search ...");
+		while (cursor.hasNext()) {
+			System.out.println("Searching by title " + title + " ...");
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			Album a = Objectifier.cursorToAlbum(dbo);
+			result.add(a);
+		}
+		System.out.println(result);
+		return result;
 	}
 
 	@Override
@@ -169,11 +179,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAllAlbums(ResultSet rsetAlbum)
 			throws SQLException {
 		ArrayList<Album> albums = new ArrayList<Album>();
-		
+
 		Cursor cr = coll.find();
-		
-		while (cr.hasNext())
-		{
+
+		while (cr.hasNext()) {
 			cr.next();
 		}
 
@@ -183,10 +192,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public ArrayList<Album> getAlbumsByAny(String query) throws SQLException {
 		query = query.replace("%", "");
-		System.out.println("Query For Albums LIKE " + query);	
+		System.out.println("Query For Albums LIKE " + query);
 		Set<Album> album = new HashSet<Album>();
 		setLastQuery(query, QueryType.ALBUMSEARCH);
-		
+
 		// TODO set last query to title
 		// TODO set last query type to Album = 1
 		// TODO Create a set of album = no copies can be added (override
@@ -194,9 +203,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		// TODO call every getXByX methods and add result to set.
 		// TODO call model.setBank(arraylist<movie>.toArray())
-		
+
+		album.addAll(getAlbumsByTitle(query));
 		album.addAll(getAlbumsByYear(query));
-		//album.addAll(getAlbumsByUser(query));
+		// album.addAll(getAlbumsByUser(query));
 
 		model.setBank(album.toArray());
 		return new ArrayList<Album>(album);
@@ -210,11 +220,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByRating(String rating) throws SQLException {
+	public ArrayList<Album> getAlbumsByRating(String rating)
+			throws SQLException {
 		// TODO Auto-generated method stub
-		
-		
-		
+
 		return null;
 	}
 
@@ -222,26 +231,27 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByYear(String year) throws SQLException {
 		// TODO ADD TRYCATCH FOR CORRECT EXCEPTION researching API
 		ArrayList<Album> result = new ArrayList<Album>();
-		
-		DBCollection collection =  db.getCollection("Media");
+
+		DBCollection collection = db.getCollection("Media");
 		DBObject query = new BasicDBObject("Year", year);
+		Pattern regex = Pattern.compile(year);
+		query.put("Year", regex);
 		Cursor cursor = collection.find(query);
 		System.out.println("Entering search ...");
-		while(cursor.hasNext()) {
+		while (cursor.hasNext()) {
 			System.out.println("Searching by year " + year + " ...");
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			// Make Album from result of query
 			Album a = Objectifier.cursorToAlbum(dbo);
-			//System.out.println(a.toString());
-			
+			// System.out.println(a.toString());
+
 			// put in list
 			result.add(a);
 		}
 		System.out.println("Done searching ...");
-		
+
 		// DEBUG: print them out
-		
-		
+
 		return result;
 	}
 
@@ -250,18 +260,18 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		try {
 			// TODO Auto-generated method stub
 			ArrayList<Album> result = new ArrayList<Album>();
-			
-			DBCollection collection =  db.getCollection("Media");
+
+			DBCollection collection = db.getCollection("Media");
 			DBObject query = new BasicDBObject("AddedBy", user);
 			Cursor cursor = collection.find(query);
 			System.out.println("Entering search ...");
-			while(cursor.hasNext()) {
+			while (cursor.hasNext()) {
 				System.out.println("Searching by user: " + user + " ...");
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 				// Make Album from result of query
 				Album a = Objectifier.cursorToAlbum(dbo);
-				//System.out.println(a.toString());
-				
+				// System.out.println(a.toString());
+
 				// put in list
 				result.add(a);
 				return result;
@@ -362,8 +372,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	/***
 	 * @param objects
-	private DB db;
-	 *            an array of creators.
+	 *            private DB db; an array of creators.
 	 ***/
 	@Override
 	public void addMedia(String name, String year, String genre,
