@@ -428,7 +428,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public void rateAlbum(int rating, String pk) throws SQLException {
 		// TODO Auto-generated method stub
+		DBObject findQuery = new BasicDBObject();
+		findQuery.put("_id", new ObjectId(pk));
 
+		DBObject listItem = new BasicDBObject("Rating", new BasicDBObject(
+				"Score", rating)
+				.append("User", model.getUser()));
+		DBObject updateQuery = new BasicDBObject("$push", listItem);
+		coll.update(findQuery, updateQuery, true, false);
 		// call last.
 		rebootDataSet();
 	}
