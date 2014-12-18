@@ -1,11 +1,8 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 
 public final class Objectifier {
 	
@@ -33,7 +30,7 @@ public final class Objectifier {
 		// get sub document of ratings and users
 		BasicDBList ratings = (BasicDBList) dbo.get("Rating");
 		// make sure media is rated
-		if(!ratings.isEmpty()) {
+		if(null != ratings) {
 			// put sub document of ratings in array
 			Object[] arrayOfRatings = ratings.toArray();	// nullPtrExc if no rating in fetched obj
 			
@@ -60,7 +57,7 @@ public final class Objectifier {
 		// get reviews
 		BasicDBList reviewInDB = (BasicDBList) dbo.get("Review");
 		
-		if(!reviewInDB.isEmpty()) {
+		if(null != reviewInDB) {
 			// make array of sub documents, each review
 			Object[] arrayOfReveiws = reviewInDB.toArray();
 			

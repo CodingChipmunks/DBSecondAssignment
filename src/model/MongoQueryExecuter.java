@@ -36,11 +36,9 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	private DB db = null;
 	private DBCollection coll = null;
 
-	// URI styled
-	// host + user + ":" + pass + "@" + connection + database
-
 	public static void main(String args[]) throws UnknownHostException,
 			SQLException {
+		
 		Model model = new Model("User42", "");
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
 		
