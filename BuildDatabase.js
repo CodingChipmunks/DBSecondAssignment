@@ -127,9 +127,9 @@ db.Media.insert({
 	Review : [
 
 	],
-	Rating : [
+	//Rating : [
 
-	],
+	//],
 	AddedBy : "Bar",
 	Mediatype : "Album"
 })
