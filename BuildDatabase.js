@@ -1,5 +1,3 @@
-// Q separate data and collections
-// Q make empty collections?
 
 // Admin
 // Warning: Running This Script Will Change Root Password!
@@ -94,7 +92,7 @@ db.Review.insert({
 	Review : "Sorry, not feeling it.."
 })
 db.Review.insert({
-	User : "Buser", 
+	User : "BUser", 
 	Title : "Alright", 
 	Review : "Could have used more SQL.."
 })
