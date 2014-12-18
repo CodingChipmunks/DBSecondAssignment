@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.mongodb.BasicDBObject;
@@ -59,7 +60,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// rough peek
 		while (fetchAll.hasNext()) {
 			System.out.println(fetchAll.next());
-		}
+		} 
 	}
 
 	public MongoQueryExecuter(Model model) {
@@ -117,6 +118,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			System.out.println("catch: " + e.toString());
 		}
 	}
+	
+	// run this after rating/review/add
+	private void rebootDataSet() throws SQLException {
+		switch (getLastQueryType()) {
+		case ALBUMSEARCH:
+			model.setBank(getAlbumsByAny(getLastQuery()).toArray());
+			System.out.println("ALBUMSEARCH = " + getLastQuery());
+			break;
+		case MOVIESEARCH:
+			model.setBank(getMoviesByAny(getLastQuery()).toArray());
+			System.out.println("MOVIESEARCH = " + getLastQuery());
+			break;
+		default:
+			break;
+		}
+	}
 
 	@Override
 	public void disconnect() {
@@ -164,8 +181,11 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByAny(String title) throws SQLException {
-		System.out.println("Query For Albums");
+	public ArrayList<Album> getAlbumsByAny(String query) throws SQLException {
+		query = query.replace("%", "");
+		System.out.println("Query For Albums LIKE " + query);	
+		Set<Album> album = new HashSet<Album>();
+		setLastQuery(query, QueryType.ALBUMSEARCH);
 		
 		// TODO set last query to title
 		// TODO set last query type to Album = 1
@@ -174,8 +194,12 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		// TODO call every getXByX methods and add result to set.
 		// TODO call model.setBank(arraylist<movie>.toArray())
+		
+		album.addAll(getAlbumsByYear(query));
+		//album.addAll(getAlbumsByUser(query));
 
-		return null; // return set.toArrayList ? :o
+		model.setBank(album.toArray());
+		return new ArrayList<Album>(album);
 	}
 
 	@Override
