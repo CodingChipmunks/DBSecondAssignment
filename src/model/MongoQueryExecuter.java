@@ -297,6 +297,5 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		oneDocument.put("Creator", creators);
 
 		coll.insert(oneDocument);
-		Cursor fetchAll = coll.find();
 	}
 }
