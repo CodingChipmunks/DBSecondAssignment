@@ -29,7 +29,7 @@ public final class Objectifier {
 		// get sub document of ratings and users
 		BasicDBList ratings = (BasicDBList) dbo.get("Rating");
 		// put sub document of ratings in array
-		Object[] arrayOfRatings = ratings.toArray();
+		Object[] arrayOfRatings = ratings.toArray();	// nullPtrExc if no rating in fetched obj
 		
 		System.out.println("iterating");
 		// collect ratings to calc. avg.

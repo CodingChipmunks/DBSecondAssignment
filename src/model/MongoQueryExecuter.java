@@ -110,6 +110,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			// tst search
 			ArrayList<Album> a = getAlbumsByYear("2009");
 			System.out.println("Found some: " + a.toString());
+			ArrayList<Album> u = getAlbumsByUser("Foo");
+			System.out.println("Found some usr's: " + u.toString());
 			
 		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
@@ -184,15 +186,17 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByRating(String rating)
-			throws SQLException {
+	public ArrayList<Album> getAlbumsByRating(String rating) throws SQLException {
 		// TODO Auto-generated method stub
+		
+		
+		
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByYear(String year) throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO ADD TRYCATCH FOR CORRECT EXCEPTION researching API
 		ArrayList<Album> result = new ArrayList<Album>();
 		
 		DBCollection collection =  db.getCollection("Media");
@@ -219,7 +223,29 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByUser(String user) throws SQLException {
-		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			ArrayList<Album> result = new ArrayList<Album>();
+			
+			DBCollection collection =  db.getCollection("Media");
+			DBObject query = new BasicDBObject("AddedBy", user);
+			Cursor cursor = collection.find(query);
+			System.out.println("Entering search ...");
+			while(cursor.hasNext()) {
+				System.out.println("Searching by user: " + user + " ...");
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				// Make Album from result of query
+				Album a = Objectifier.cursorToAlbum(dbo);
+				//System.out.println(a.toString());
+				
+				// put in list
+				result.add(a);
+				return result;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		return null;
 	}
 
