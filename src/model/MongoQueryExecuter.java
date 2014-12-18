@@ -1,6 +1,5 @@
 package model;
 
-import java.util.List;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,57 +61,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	public MongoQueryExecuter(Model model) {
 		this.model = model;
-		try {
-			cr = MongoCredential.createMongoCRCredential(user, database,
-					pass.toCharArray());
-			mc = new MongoClient(new ServerAddress(), Arrays.asList(cr));
-
-			db = mc.getDB("mediacollection");
-			// Set<String> colls = db.getCollectionNames();
-			// System.out.println(colls.toString());
-			coll = db.getCollection("Media");
-
-			mc.setWriteConcern(WriteConcern.JOURNALED);
-
-			/*
-			 * BasicDBObject oneAlbum = new BasicDBObject("Title", "Imagine")
-			 * .append("Creator", "John Lennon") .append("Genre",
-			 * "Lennstyle").append("Year", "2006") .append("Duration", "120");
-			 * 
-			 * List<BasicDBObject> reviews = new ArrayList<BasicDBObject>();
-			 * reviews.add(new BasicDBObject("User", "Bar").append("Its good",
-			 * "Excellent!").append("Review", "I liked this album."));
-			 * oneAlbum.put("Review", reviews);
-			 * 
-			 * List<BasicDBObject> rating = new ArrayList<BasicDBObject>();
-			 * rating.add(new BasicDBObject("User", "Foo").append("Rating",
-			 * "5")); rating.add(new BasicDBObject("User",
-			 * "Bar").append("Rating", "5")); oneAlbum.put("Rating", rating);
-			 * 
-			 * oneAlbum.put("AddedBy", "Bar"); oneAlbum.put("Mediatype",
-			 * "Album");
-			 * 
-			 * coll.insert(oneAlbum);
-			 */
-
-			// Cursor fetchAll = coll.find();
-
-			// rough peek
-			// while (fetchAll.hasNext()) {
-			// System.out.println(fetchAll.next());
-			// }
-
-			// specified peek
-
-			// tst search
-			// ArrayList<Album> a = getAlbumsByYear("2009");
-			// System.out.println("Found some: " + a.toString());
-			// ArrayList<Album> u = getAlbumsByUser("Foo");
-			// System.out.println("Found some usr's: " + u.toString());
-
-		} catch (Exception e) {
-			System.out.println("catch: " + e.toString());
-		}
+		this.open();
 	}
 
 	// run this after rating/review/add
@@ -133,12 +82,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void disconnect() {
-		// called after creation; after queries are executed.
+		mc.close();
 	}
 
 	@Override
 	public void open() {
-		// called after creation; before queries are executed.
+		try {
+			cr = MongoCredential.createMongoCRCredential(user, database,
+					pass.toCharArray());
+			mc = new MongoClient(new ServerAddress(), Arrays.asList(cr));
+			db = mc.getDB("mediacollection");
+			coll = db.getCollection("Media");
+			mc.setWriteConcern(WriteConcern.JOURNALED);
+
+		} catch (Exception e) {
+			System.out.println("catch: " + e.toString());
+		}
 	}
 
 	private synchronized void setLastQuery(String lastQuery, QueryType queryType) {
@@ -464,15 +423,26 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public void reviewMedia(Review review, String pk) throws SQLException {
 		// TODO Auto-generated method stub
 
+		BasicDBObject updateQuery = new BasicDBObject();
+		updateQuery.append("$set", 
+			new BasicDBObject().append("Review", "888"));
+	 
+		BasicDBObject searchQuery = new BasicDBObject();
+		searchQuery.append("type", "vps");
+	 
+		coll.updateMulti(searchQuery, updateQuery);			
+	 
+		//below statement set multi to true.
+		//collection.update(searchQuery, updateQuery, false, true);
 		// call last.
 		rebootDataSet();
 	}
 
 	@Override
-	public void rateAlbum(int rating, int media) throws SQLException {
+	public void rateAlbum(int rating, String pk) throws SQLException {
 		// TODO Auto-generated method stub
 
-		// call last.
+		// call last. 
 		rebootDataSet();
 	}
 

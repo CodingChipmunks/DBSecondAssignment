@@ -31,7 +31,7 @@ public class Controller implements ActionListener {
 	private Book book = null;
 	private Review review = null;
 	private int rating;
-	private int media;
+	private String media;
 	private QueryInterpreter qx = null;
 
 	public Controller(Model m, WBView wbv, QueryInterpreter queryExecuter) {
@@ -363,7 +363,7 @@ public class Controller implements ActionListener {
 		button.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				rating = dialog.getValues();
-				media = dialog.getSelectedId();
+				media = wbview.getSelectedId();
 				dialog.setVisible(false);
 				executeQuery(QueryType.RATE, "");
 			}

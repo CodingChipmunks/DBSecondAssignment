@@ -11,8 +11,6 @@ import model.Model;
 
 @SuppressWarnings("serial")
 public class RateMediaDialog extends JDialog {
-
-	private int selectedRow;
 	
 	private JComboBox<String> comboMedia;
 	private JPanel contentPane, buttonPane, inputPane;
@@ -97,12 +95,12 @@ public class RateMediaDialog extends JDialog {
 		contentPane.updateUI();
 	}
 	
-	public int getSelectedId()
+	/*public int getSelectedId()
 	{
 		return this.selectedRow;
 	}
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
-	}
+	}*/
 }

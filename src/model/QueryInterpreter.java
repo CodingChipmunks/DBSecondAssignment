@@ -29,7 +29,7 @@ public interface QueryInterpreter {
 
 	void getReviewsByAny(String queryText) throws SQLException;
 	void reviewMedia(Review review, String queryText) throws SQLException;
-	void rateAlbum(int rating, int media) throws SQLException;
+	void rateAlbum(int rating, String pk) throws SQLException;
 	void verifyAccount(String user, String pass) throws SQLException;
 	void addMedia(String name, String year, String genre, Object[] objects,
 			int duration, int mediaType) throws SQLException;

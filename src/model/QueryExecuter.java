@@ -362,14 +362,14 @@ public final class QueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public void rateAlbum(int rating, int media) throws SQLException {
+	public void rateAlbum(int rating, String media) throws SQLException {
 		CallableStatement callableStatement = null;
 		try {
 			String statement = "{call Rate(?, ?, ?, ?)}";
 			callableStatement = connection.prepareCall(statement);
 
 			// hard Data
-			callableStatement.setInt(1, media);
+			callableStatement.setInt(1, new Integer(media));
 			callableStatement.setString(2, model.getUser());
 			callableStatement.setString(3, model.getPass());
 			callableStatement.setInt(4, rating);

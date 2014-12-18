@@ -257,7 +257,6 @@ public class WBView extends JFrame {
 	}
 
 	public void invokeRateMediaDialog() {
-		rateMediaDialog.setSelectedRow(table.getSelectedRow());
 		rateMediaDialog.setVisible(true);
 		//this.setVisible(false);
 	}
