@@ -39,16 +39,16 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	public static void main(String args[]) throws UnknownHostException,
 			SQLException {
-		
+
 		Model model = new Model("User42", "");
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
-		
+
 		mqe.getAlbumsByTitle("Rosenrot");
 		mqe.getAlbumsByGenre("Lennst");
 		mqe.getAlbumsByRating("3");
 		mqe.getAlbumsByArtist("Rammstein");
 
-		//mqe.peek();
+		// mqe.peek();
 	}
 
 	// TODO remove
@@ -63,8 +63,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public MongoQueryExecuter(Model model) {
 		this.model = model;
 		try {
-			cr = MongoCredential.createMongoCRCredential(user,
-					database, pass.toCharArray());
+			cr = MongoCredential.createMongoCRCredential(user, database,
+					pass.toCharArray());
 			mc = new MongoClient(new ServerAddress(), Arrays.asList(cr));
 
 			db = mc.getDB("mediacollection");
@@ -105,10 +105,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			// specified peek
 
 			// tst search
-			//ArrayList<Album> a = getAlbumsByYear("2009");
-			//System.out.println("Found some: " + a.toString());
-			//ArrayList<Album> u = getAlbumsByUser("Foo");
-			//System.out.println("Found some usr's: " + u.toString());
+			// ArrayList<Album> a = getAlbumsByYear("2009");
+			// System.out.println("Found some: " + a.toString());
+			// ArrayList<Album> u = getAlbumsByUser("Foo");
+			// System.out.println("Found some usr's: " + u.toString());
 
 		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
@@ -140,7 +140,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public void open() {
 		// called after creation; before queries are executed.
 	}
-	
+
 	private synchronized void setLastQuery(String lastQuery, QueryType queryType) {
 		MongoQueryExecuter.lastQuery = lastQuery;
 		MongoQueryExecuter.lastQueryType = queryType;
@@ -166,7 +166,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		while (cursor.hasNext()) {
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			Album a = Objectifier.cursorToAlbum(dbo);
-			result.add(a); 
+			result.add(a);
 		}
 		return result;
 	}
@@ -223,41 +223,42 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByArtist(String artist) throws SQLException {
+	public ArrayList<Album> getAlbumsByArtist(String artist)
+			throws SQLException {
 		// TODO: fixit
 		ArrayList<Album> result = new ArrayList<Album>();
-		
-		DBCollection collection =  db.getCollection("Media");
+
+		DBCollection collection = db.getCollection("Media");
 		DBObject query = new BasicDBObject("Creator", "...");
-		System.out.println("QUERY"  + query);
-		
+		System.out.println("QUERY" + query);
+
 		Pattern regex = Pattern.compile(artist);
 		query.put("Creator", regex);
-		
+
 		// TODO: let db decide how big rating is
 		Cursor cursor = collection.find();
 		System.out.println("Entering search ...");
-		
+
 		// TODO: more effective searches
-		
-		try {	
-			while(cursor.hasNext()) {
-				
+
+		try {
+			while (cursor.hasNext()) {
+
 				System.out.println("Searching by artist " + artist + " ...");
-				
+
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
-				
+
 				// dbo.get("Score");
-				
+
 				// Make Album from result of query
 				Album a = Objectifier.cursorToAlbum(dbo);
-				
+
 				// TODO: aid by research
 				ArrayList<Artist> tmp = a.getArtist();
-				
+
 				// mm aj lajk de speed of this database
 				for (Artist artists : tmp) {
-					if(artists.getName().contains(artist)) {
+					if (artists.getName().contains(artist)) {
 						// put in list, if rating is greater than desired
 						result.add(a);
 					}
@@ -271,42 +272,48 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByRating(String rating) throws SQLException {
+	public ArrayList<Album> getAlbumsByRating(String rating)
+			throws SQLException {
 		// TODO: fixit
 		ArrayList<Album> result = new ArrayList<Album>();
-		
-		DBCollection collection =  db.getCollection("Media");
-		DBObject query = new BasicDBObject("Rating", new BasicDBObject("Score", rating));
-		System.out.println("QUERY"  + query);
-		
+
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Rating", new BasicDBObject("Score",
+				rating));
+		System.out.println("QUERY" + query);
+
 		Pattern regex = Pattern.compile(rating);
 		query.put("Rating", regex);
-		
+
 		// TODO: let db decide how big rating is
 		Cursor cursor = collection.find();
 		System.out.println("Entering search ...");
-		
+
 		// TODO: 2 searches.
 		// one to reach rating
 		// one for right rating
-		
-		try {	
-			while(cursor.hasNext()) {
-				
+
+		try {
+			while (cursor.hasNext()) {
+
 				System.out.println("Searching by rating " + rating + " ...");
-				
+
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
-				
+
 				// dbo.get("Score");
-				
+
 				// Make Album from result of query
 				Album a = Objectifier.cursorToAlbum(dbo);
-				
-				// TODO: aid by research
-				if(a.getRating() >= (float) Integer.parseInt(rating)) {
-					// put in list, if rating is greater than desired
-					result.add(a);
+
+				try {
+					// TODO: aid by research
+					if (a.getRating() >= (float) Integer.parseInt(rating)) {
+						// put in list, if rating is greater than desired
+						result.add(a);
+					}
+				} catch (NumberFormatException e) {
 				}
+				
 			}
 			System.out.println(result);
 			return result;
@@ -428,18 +435,19 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void getReviewsByAny(String queryText) throws SQLException {
+		queryText = queryText.replace("%", "");
 		ArrayList<Review> reviews = new ArrayList<Review>();
 		DBCollection collection = db.getCollection("Media");
 		Pattern regex = Pattern.compile(queryText);
-		
+
 		// tis codess
-		DBObject clause1 = new BasicDBObject("Review.Title", regex);  
-		DBObject clause2 = new BasicDBObject("Review.Text", regex);    
+		DBObject clause1 = new BasicDBObject("Review.Title", regex);
+		DBObject clause2 = new BasicDBObject("Review.Text", regex);
 		BasicDBList or = new BasicDBList();
 		or.add(clause1);
 		or.add(clause2);
 		DBObject query = new BasicDBObject("$or", or);
-		
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by Review " + queryText + " ...");
 		while (cursor.hasNext()) {
@@ -447,14 +455,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			Review r = Objectifier.cursorToReview(dbo);
 			reviews.add(r);
 		}
-		
+
+		System.out.println("Searching by review...");
 		model.setBank(reviews.toArray());
 	}
 
 	@Override
 	public void reviewMedia(Review review, String pk) throws SQLException {
 		// TODO Auto-generated method stub
-		
+
 		// call last.
 		rebootDataSet();
 	}
@@ -462,7 +471,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public void rateAlbum(int rating, int media) throws SQLException {
 		// TODO Auto-generated method stub
-		
+
 		// call last.
 		rebootDataSet();
 	}
