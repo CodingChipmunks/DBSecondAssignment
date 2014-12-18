@@ -43,7 +43,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
 		
 		mqe.getAlbumsByTitle("Rosenrot");
-		mqe.getAlbumsByGenre("Lennstyle");
+		mqe.getAlbumsByGenre("Lennst");
 
 		//mqe.peek();
 	}
@@ -159,12 +159,11 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		Pattern regex = Pattern.compile(title);
 		query.put("Title", regex);
 		Cursor cursor = collection.find(query);
-		System.out.println("Entering search ...");
+		System.out.println("Searching by title " + title + " ...");
 		while (cursor.hasNext()) {
-			System.out.println("Searching by title " + title + " ...");
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			Album a = Objectifier.cursorToAlbum(dbo);
-			result.add(a);
+			result.add(a); 
 		}
 		System.out.println(result);
 		return result;
@@ -178,9 +177,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		Pattern regex = Pattern.compile(genre);
 		query.put("Genre", regex);
 		Cursor cursor = collection.find(query);
-		System.out.println("Entering search ...");
+		System.out.println("Searching by genre " + genre + " ...");
 		while (cursor.hasNext()) {
-			System.out.println("Searching by genre " + genre + " ...");
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			Album a = Objectifier.cursorToAlbum(dbo);
 			result.add(a);
@@ -220,7 +218,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		album.addAll(getAlbumsByTitle(query));
 		album.addAll(getAlbumsByYear(query));
-		// album.addAll(getAlbumsByUser(query));
+		album.addAll(getAlbumsByUser(query));
+		album.addAll(getAlbumsByGenre(query));
 
 		model.setBank(album.toArray());
 		return new ArrayList<Album>(album);
@@ -271,16 +270,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByUser(String user) throws SQLException {
+		ArrayList<Album> result = new ArrayList<Album>();
 		try {
-			// TODO Auto-generated method stub
-			ArrayList<Album> result = new ArrayList<Album>();
-
 			DBCollection collection = db.getCollection("Media");
 			DBObject query = new BasicDBObject("AddedBy", user);
+			Pattern regex = Pattern.compile(user);
+			query.put("AddedBy", regex);
 			Cursor cursor = collection.find(query);
-			System.out.println("Entering search ...");
+			System.out.println("Searching by user: " + user + " ...");
 			while (cursor.hasNext()) {
-				System.out.println("Searching by user: " + user + " ...");
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 				// Make Album from result of query
 				Album a = Objectifier.cursorToAlbum(dbo);
@@ -288,13 +286,12 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				// put in list
 				result.add(a);
-				return result;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return null;
+		return result;
 	}
 
 	@Override
