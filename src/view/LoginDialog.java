@@ -5,6 +5,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -21,7 +22,7 @@ import model.Model;
  */
 
 @SuppressWarnings("serial")
-public class LoginDialog extends JFrame{
+public class LoginDialog extends JDialog{
 		private JPanel inputPane, buttonPane, contentPane;
 		private JButton login;
 		private JButton cancel;
@@ -65,7 +66,8 @@ public class LoginDialog extends JFrame{
 			JRootPane rootPane = SwingUtilities.getRootPane(login); 
 			rootPane.setDefaultButton(login);
 			
-			Style.setUITheme(this);
+			Style.setUITheme(this.getRootPane());
+			
 			setVisible(true);
 			setLocationRelativeTo(null);
 			this.setTitle("Login!");

@@ -149,12 +149,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public ArrayList<Album> getAllAlbums(ResultSet rsetAlbum)
 			throws SQLException {
+		ArrayList<Album> albums = new ArrayList<Album>();
+		
+		Cursor cr = coll.find();
+		
+		while (cr.hasNext())
+		{
+			cr.next();
+		}
 
-		return null;
+		return albums;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByAny(String title) throws SQLException {
+		System.out.println("Query For Albums");
+		
 		// TODO set last query to title
 		// TODO set last query type to Album = 1
 		// TODO Create a set of album = no copies can be added (override

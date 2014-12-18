@@ -22,7 +22,7 @@ import model.Model;
  * 
  */
 @SuppressWarnings("serial")
-public class AddMediaDialog extends JFrame {	
+public class AddMediaDialog extends JDialog {	
 	private JPanel contentPane, buttonPane, inputPane, comboPane;
 	private JComboBox<String> comboMedia; // on change update forms.
 	private JButton add;
@@ -78,7 +78,7 @@ public class AddMediaDialog extends JFrame {
 		buttonPane.add(cancel);
 		setCancel(cancel);
 
-		Style.setUITheme(this);
+		Style.setUITheme(this.getRootPane());
 
 		JRootPane rootPane = SwingUtilities.getRootPane(add);
 		rootPane.setDefaultButton(add);
@@ -86,7 +86,7 @@ public class AddMediaDialog extends JFrame {
 		// listener for show/hide events.
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentHidden(ComponentEvent e) {
-				view.setVisible(true);
+				//view.setVisible(true);
 			}
 
 			public void componentShown(ComponentEvent e) {

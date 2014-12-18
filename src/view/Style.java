@@ -10,11 +10,12 @@ import javax.swing.*;
  */
 @SuppressWarnings("serial")
 public class Style extends JPanel {
-	public static void setUITheme(JFrame frame) {
+	public static void setUITheme(JComponent frame) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 		}
 		SwingUtilities.updateComponentTreeUI(frame);
 	}
+
 }
