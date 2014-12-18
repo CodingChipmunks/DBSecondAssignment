@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 import com.mongodb.BasicDBObject;
@@ -84,6 +85,11 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 			// specified peek
 
+			
+			// tst search
+			ArrayList<Album> a = getAlbumsByYear("2009");
+			System.out.println("Found some: " + a.toString());
+			
 		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
 		}
@@ -150,7 +156,28 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public ArrayList<Album> getAlbumsByYear(String year) throws SQLException {
 		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Album> result = new ArrayList<Album>();
+		
+		DBCollection collection =  db.getCollection("Media");
+		DBObject query = new BasicDBObject("Year", year);
+		Cursor cursor = collection.find(query);
+		System.out.println("Entering search ...");
+		while(cursor.hasNext()) {
+			System.out.println("Searching by year " + year + " ...");
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			// Make Album from result of query
+			Album a = Objectifier.cursorToAlbum(dbo);
+			//System.out.println(a.toString());
+			
+			// put in list
+			result.add(a);
+		}
+		System.out.println("Done searching ...");
+		
+		// DEBUG: print them out
+		
+		
+		return result;
 	}
 
 	@Override
