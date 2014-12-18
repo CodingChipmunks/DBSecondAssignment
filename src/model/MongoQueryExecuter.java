@@ -19,6 +19,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
+import com.mongodb.WriteResult;
 
 import controller.Controller.QueryType;
 
@@ -413,7 +414,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		while (cursor.hasNext()) {
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			reviews.addAll(Objectifier.cursorToReview(dbo, queryText));
-		} 
+		}
 
 		System.out.println("Searching by review...");
 		model.setBank(reviews.toArray());
@@ -421,19 +422,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void reviewMedia(Review review, String pk) throws SQLException {
-		// TODO Auto-generated method stub
+		System.out.println("Reviewing " + pk);
+		/*
+		 * DBObject query = new BasicDBObject("_id", pk); DBObject update = new
+		 * BasicDBObject(); update.put("$addToSet", new
+		 * BasicDBObject("Review.Title","Ze Tezt!")); coll.update(query, update,
+		 * true, true);
+		 */
 
-		BasicDBObject updateQuery = new BasicDBObject();
-		updateQuery.append("$set", 
-			new BasicDBObject().append("Review", "888"));
-	 
-		BasicDBObject searchQuery = new BasicDBObject();
-		searchQuery.append("type", "vps");
-	 
-		coll.updateMulti(searchQuery, updateQuery);			
-	 
-		//below statement set multi to true.
-		//collection.update(searchQuery, updateQuery, false, true);
+		BasicDBList dbl = new BasicDBList();
+		 dbl.add(new BasicDBObject("Title", review.getTitle()));
+		 dbl.add(new BasicDBObject("Text", review.getText()));
+		 dbl.add(new BasicDBObject("User", model.getUser()));
+		BasicDBObject outer = new BasicDBObject("_id", pk)
+				.append("Review", dbl);
+
+		coll.update(dbl, outer, true, false);
 		// call last.
 		rebootDataSet();
 	}
@@ -442,7 +446,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public void rateAlbum(int rating, String pk) throws SQLException {
 		// TODO Auto-generated method stub
 
-		// call last. 
+		// call last.
 		rebootDataSet();
 	}
 
@@ -480,9 +484,9 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			break;
 		}
 
-		//List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
+		// List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
 		for (int i = 0; i < objects.length; i++) {
-			//creators.add(new BasicDBObject("Name", objects[i].toString()));
+			// creators.add(new BasicDBObject("Name", objects[i].toString()));
 			oneDocument.put("Creator", objects[i].toString());
 		}
 
