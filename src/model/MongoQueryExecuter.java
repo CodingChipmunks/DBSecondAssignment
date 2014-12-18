@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
@@ -422,23 +424,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void reviewMedia(Review review, String pk) throws SQLException {
-		System.out.println("Reviewing " + pk);
-		/*
-		 * DBObject query = new BasicDBObject("_id", pk); DBObject update = new
-		 * BasicDBObject(); update.put("$addToSet", new
-		 * BasicDBObject("Review.Title","Ze Tezt!")); coll.update(query, update,
-		 * true, true);
-		 */
-
-		DBObject findQuery = new BasicDBObject("_id", pk);
+		DBObject findQuery = new BasicDBObject();
+		findQuery.put("_id", new ObjectId(pk));
+		
 		DBObject listItem = new BasicDBObject("Review", new BasicDBObject(
 				"Title", review.getTitle()).append("Text", review.getText())
-				.append("User", review.getUser()));
+				.append("User", model.getUser()));
 		DBObject updateQuery = new BasicDBObject("$push", listItem);
 		coll.update(findQuery, updateQuery, true, false);
-
-		// coll.update(dbl, outer, true, false);
-		// call last.
 		rebootDataSet();
 	}
 
