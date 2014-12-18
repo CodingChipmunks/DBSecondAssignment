@@ -165,7 +165,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			Album a = Objectifier.cursorToAlbum(dbo);
 			result.add(a); 
 		}
-		System.out.println(result);
 		return result;
 	}
 
@@ -250,9 +249,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		Pattern regex = Pattern.compile(year);
 		query.put("Year", regex);
 		Cursor cursor = collection.find(query);
-		System.out.println("Entering search ...");
+		System.out.println("Searching by year " + year + " ...");
 		while (cursor.hasNext()) {
-			System.out.println("Searching by year " + year + " ...");
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
 			// Make Album from result of query
 			Album a = Objectifier.cursorToAlbum(dbo);
@@ -277,7 +275,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			Pattern regex = Pattern.compile(user);
 			query.put("AddedBy", regex);
 			Cursor cursor = collection.find(query);
-			System.out.println("Searching by user: " + user + " ...");
+			System.out.println("Searching by user " + user + " ...");
 			while (cursor.hasNext()) {
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 				// Make Album from result of query
