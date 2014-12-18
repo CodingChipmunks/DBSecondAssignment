@@ -303,9 +303,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 				Album a = Objectifier.cursorToAlbum(dbo);
 				
 				// TODO: aid by research
+				try {
 				if(a.getRating() >= (float) Integer.parseInt(rating)) {
 					// put in list, if rating is greater than desired
 					result.add(a);
+				}
+				}
+				catch(Exception e) {
+					//ojoj
 				}
 			}
 			System.out.println(result);

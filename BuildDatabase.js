@@ -38,25 +38,102 @@ db.Media.insert({
 		{
 			User : "Bar", 
 			Title : "Excellent!", 
-			Text : "With deep flavor and class..." 
+			Text : "With deep flavor and class..." ,
+			Mediatype : "Album"
 		},
 		{
 			User : "Foo", 
 			Title : "Supberb.", 
-			Text : "Very Good. Such Wack."
+			Text : "Very Good. Such Wack.",
+			Mediatype : "Album"
 		}
 	],
 	Rating : [
 		{User: "Foo", Score : "1"}, 
 		{User: "Bar", Score : "5"}
-	],	// calc. avg. in app, prevent wrong values!
+	],	// calc. avg. in app, prevent entering wrong values and duplicated users!
 	AddedBy : "Foo",
 	Mediatype : "Album"
 })
-// Ref 2 who added it!
+
 
 db.Media.ensureIndex( { Title: 1 } )
 db.Media.ensureIndex( { Mediatype_Id: 1 } )
+
+// Ref 2 who added it!
+
+db.Media.insert({ 
+	Title : "Reise, Reise", 
+	Creator : "Rammstein",	// will become list []
+	Genre : "Rammstyle",
+	Year : "2006",
+	Duration : "120",
+	Review : [
+		{
+			User : "Bar", 
+			Title : "Extraordinary!", 
+			Text : "This album.. !!!",
+			Mediatype : "Album"
+		},
+		{
+			User : "Foo", 
+			Title : "Awesome.", 
+			Text : "Can NOT have enough.",
+			Mediatype : "Album"
+		}
+	],
+	Rating : [
+		{User: "Foo", Score : "5"}, 
+		{User: "Bar", Score : "5"}
+	],
+	AddedBy : "Bar",
+	Mediatype : "Album"
+})
+
+db.Media.insert({ 
+	Title : "Imagine", 
+	Creator : "Rammstein",	// will become list []
+	Genre : "Lennstyle",
+	Year : "2006",
+	Duration : "120",
+	Review : [
+		{
+			User : "Bar", 
+			Title : "Its good.", 
+			Text : "I liked this album.",
+			Mediatype : "Album"
+		},
+		{
+			User : "Foo", 
+			Title : "Eeeh.", 
+			Text : "I dunn get it.",
+			Mediatype : "Album"
+		}
+	],
+	Rating : [
+		{User: "Foo", Score : "3"}, 
+		{User: "Bar", Score : "4"}
+	],
+	AddedBy : "Bar",
+	Mediatype : "Album"
+})
+
+db.Media.insert({ 
+	Title : "Chipmunks", 
+	Creator : "Alvin",	// will become list []
+	Genre : "Chipcore",
+	Year : "2014",
+	Duration : "120",
+	Review : [
+
+	],
+	Rating : [
+
+	],
+	AddedBy : "Bar",
+	Mediatype : "Album"
+})
+
 
 
 // show what has been made
