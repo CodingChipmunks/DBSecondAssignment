@@ -264,12 +264,14 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public void verifyAccount(String user, String pass) throws SQLException {
 		// TODO check that user is longer than 4 chars, do not attempt to
 		// verify the account, it cannot be done securely.
-
+		
+		if (user.length() > 3)
+			throw new SQLException("Name too Short!");
 	}
 
 	/***
 	 * @param objects
-	 *            an array of creators.
+	 *            an array of creators. 
 	 ***/
 	@Override
 	public void addMedia(String name, String year, String genre,
