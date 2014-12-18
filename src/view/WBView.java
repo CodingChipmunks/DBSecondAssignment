@@ -110,7 +110,7 @@ public class WBView extends JFrame {
 		mediaIndex = 0;
 		searchPanel.add(comboBox, BorderLayout.WEST);
 		
-		Style.setUITheme(this);
+		Style.setUITheme(this.getRootPane());
 		loginDialog.setVisible(true);
 		setLocationRelativeTo(null);
 	}

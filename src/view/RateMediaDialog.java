@@ -2,15 +2,15 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
-
 import model.Model;
 
 @SuppressWarnings("serial")
-public class RateMediaDialog extends JFrame {
+public class RateMediaDialog extends JDialog {
 
 	private int selectedRow;
 	
@@ -54,7 +54,7 @@ public class RateMediaDialog extends JFrame {
 		buttonPane.add(cancel);
 		setCancel(cancel);
 
-		Style.setUITheme(this);
+		Style.setUITheme(this.getRootPane());
 		
 		JRootPane rootPane = SwingUtilities.getRootPane(rate); 
 		rootPane.setDefaultButton(rate);
