@@ -300,4 +300,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		coll.insert(oneDocument);
 	}
+
+	@Override
+	public void open() {
+		// TODO Auto-generated method stub
+		
+	}
 }

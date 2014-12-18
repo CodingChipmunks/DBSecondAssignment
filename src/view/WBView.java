@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 
 import controller.Controller;
 import model.Model;
+import model.QueryInterpreter;
 
 /**
  * WindowBuilder class, compatible with git? Better than Start?
@@ -45,9 +46,10 @@ public class WBView extends JFrame {
 
 	/**
 	 * Create the frame.
-	 */
-	public WBView(Model m) {
-		controller = new Controller(m, this);
+	 * @param QueryInterpreter 
+	 */ 
+	public WBView(Model m, QueryInterpreter queryExecuter) {
+		controller = new Controller(m, this, queryExecuter);
 
 		loginDialog = new LoginDialog(m, this, controller);
 		addMediaDialog = new AddMediaDialog(m, this, controller);

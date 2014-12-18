@@ -724,4 +724,15 @@ public final class QueryExecuter implements QueryInterpreter {
 		}
 		rebootDataSet();
 	}
+
+	@Override
+	public void open() {
+		try {
+			Class.forName(driver);
+			connection = DriverManager.getConnection(host + database + config,
+					user, pass);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
 }
