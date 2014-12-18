@@ -89,7 +89,7 @@ public final class Objectifier {
 
 	public static Review cursorToReview(BasicDBObject dbo) {
 		//Review review = new Review(String title, String text, String user, String media, String mediaTitle);
-		Review review = null;
+		Review review = new Review(dbo.getString("title") , dbo.getString("Text"), dbo.getString("User"), "", "");
 		return review;
 	}
 	

@@ -156,10 +156,10 @@ public class Controller implements ActionListener {
 		case 1:
 			qt = QueryType.MOVIESEARCH;
 			break;
+		//case 2:
+		//	qt = QueryType.BOOKSEARCH;
+		//	break;
 		case 2:
-			qt = QueryType.BOOKSEARCH;
-			break;
-		case 3:
 			qt = QueryType.REVIEWSEARCH;
 			break;
 		}
