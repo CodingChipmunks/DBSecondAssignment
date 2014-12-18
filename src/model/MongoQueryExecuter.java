@@ -154,6 +154,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// TODO Create a set of album = no copies can be added (override hashCode & Compare % eqiaös)
 		
 		// TODO call every getXByX methods and add result to set.
+		// TODO call model.setBank(arraylist<movie>.toArray())
 		
 		return null; // return set.toArrayList ? :o
 	}
@@ -188,10 +189,11 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMoviesByAny(String queryText)
 			throws SQLException {
 		// TODO set last query to title
-		// TODO set last query type to Album = 1
+		// TODO set last query type to Movie = 2
 		// TODO Create a set of album = no copies can be added (override hashCode & Compare % eqiaös)
 		
 		// TODO call every getXByX methods and add result to set.
+		// TODO call model.setBank(arraylist<movie>.toArray())
 		
 		return null; // return set.toArrayList ? :o
 	}
