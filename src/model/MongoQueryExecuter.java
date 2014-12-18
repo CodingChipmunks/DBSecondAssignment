@@ -39,20 +39,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	private DB db = null;
 	private DBCollection coll = null;
 
-	public static void main(String args[]) throws UnknownHostException,
-			SQLException {
-
-		Model model = new Model("User42", "");
-		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
-
-		mqe.getAlbumsByTitle("Rosenrot");
-		mqe.getAlbumsByGenre("Lennst");
-		mqe.getAlbumsByRating("3");
-		mqe.getAlbumsByArtist("Rammstein");
-
-		// mqe.peek();
-	}
-
 	// TODO remove
 	public void peek() {
 		Cursor fetchAll = coll.find();
@@ -430,7 +416,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public void reviewMedia(Review review, String pk) throws SQLException {
 		DBObject findQuery = new BasicDBObject();
 		findQuery.put("_id", new ObjectId(pk));
-		
+
 		DBObject listItem = new BasicDBObject("Review", new BasicDBObject(
 				"Title", review.getTitle()).append("Text", review.getText())
 				.append("User", model.getUser()));
@@ -481,11 +467,12 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			break;
 		}
 
-		// List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
-		for (int i = 0; i < objects.length; i++) {
-			// creators.add(new BasicDBObject("Name", objects[i].toString()));
-			oneDocument.put("Creator", objects[i].toString());
-		}
+		BasicDBList listItem = new BasicDBList();
+
+		for (int i = 0; i < objects.length; i++)
+			listItem.add(new BasicDBObject("Name", objects[i].toString()));
+
+		oneDocument.put("Creator", listItem);
 
 		coll.insert(oneDocument);
 		rebootDataSet();
