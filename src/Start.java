@@ -26,7 +26,7 @@ public class Start {
 			public void run() {
 				try {
 					Model model = new Model(user, pass);
-					new WBView(model, new QueryExecuter(model));
+					new WBView(model, new MongoQueryExecuter(model));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
