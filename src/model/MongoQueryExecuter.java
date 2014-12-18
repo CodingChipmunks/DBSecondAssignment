@@ -10,10 +10,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
@@ -44,6 +46,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		
 		mqe.getAlbumsByTitle("Rosenrot");
 		mqe.getAlbumsByGenre("Lennst");
+		mqe.getAlbumsByRating("3");
 
 		//mqe.peek();
 	}
@@ -232,11 +235,48 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Album> getAlbumsByRating(String rating)
-			throws SQLException {
-		// TODO Auto-generated method stub
-
-		return null;
+	public ArrayList<Album> getAlbumsByRating(String rating) throws SQLException {
+		// TODO: fixit
+		ArrayList<Album> result = new ArrayList<Album>();
+		
+		DBCollection collection =  db.getCollection("Media");
+		DBObject query = new BasicDBObject("Rating", new BasicDBObject("Score", rating));
+		System.out.println("QUERY"  + query);
+		
+		Pattern regex = Pattern.compile(rating);
+		query.put("Rating", regex);
+		
+		// TODO: let db decide how big rating is
+		Cursor cursor = collection.find();
+		System.out.println("Entering search ...");
+		
+		// TODO: 2 searches.
+		// one to reach rating
+		// one for right rating
+		
+		try {	
+			while(cursor.hasNext()) {
+				
+				System.out.println("Searching by rating " + rating + " ...");
+				
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				
+				// dbo.get("Score");
+				
+				// Make Album from result of query
+				Album a = Objectifier.cursorToAlbum(dbo);
+				
+				// TODO: aid by research
+				if(a.getRating() >= (float) Integer.parseInt(rating)) {
+					// put in list, if rating is greater than desired
+					result.add(a);
+				}
+			}
+			System.out.println(result);
+			return result;
+		} finally {
+			cursor.close();
+		}
 	}
 
 	@Override
