@@ -112,6 +112,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			System.out.println("Found some: " + a.toString());
 			ArrayList<Album> u = getAlbumsByUser("Foo");
 			System.out.println("Found some usr's: " + u.toString());
+			ArrayList<Album> r = getAlbumsByRating("2");
+			System.out.println("Found some ratings: " + r.toString());
 			
 		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
@@ -187,11 +189,38 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByRating(String rating) throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO: MAKE WOOOOOOOOORK
+		ArrayList<Album> result = new ArrayList<Album>();
 		
+		DBCollection collection =  db.getCollection("Media");
+		DBObject query = new BasicDBObject("Rating", new BasicDBObject("Score", rating));
+		System.out.println("QUERY"  + query);
 		
+		// TODO: let db decide how big rating is
+		Cursor cursor = collection.find(query);	// $gr dan rating
+		System.out.println("Entering search ...");
 		
-		return null;
+		try {	
+			while(cursor.hasNext()) {
+				
+				System.out.println("Searching by rating " + rating + " ...");
+				
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				
+				// Make Album from result of query
+				Album a = Objectifier.cursorToAlbum(dbo);
+				System.out.println("hej");
+				// TODO: aid by research
+				if(a.getRating() >= (float) Integer.parseInt(rating)) {
+					// put in list, if rating is greater than desired
+					result.add(a);
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+		
+		return result;
 	}
 
 	@Override

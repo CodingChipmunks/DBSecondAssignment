@@ -9,9 +9,13 @@ import com.mongodb.DBCursor;
 
 public final class Objectifier {
 	
+	private static int avgRating = 0;
+	
 	// convert mDB equivalence of Result set to object
 	public static Album cursorToAlbum(BasicDBObject dbo) {
-
+		// TODO: Decide which is nicer
+		//int avgRating = 0;
+		
 		String mediaTitle = dbo.getString("Title");
 		String year = dbo.getString("Year");
 		String genre = dbo.getString("Genre");
@@ -28,22 +32,24 @@ public final class Objectifier {
 		
 		// get sub document of ratings and users
 		BasicDBList ratings = (BasicDBList) dbo.get("Rating");
-		// put sub document of ratings in array
-		Object[] arrayOfRatings = ratings.toArray();	// nullPtrExc if no rating in fetched obj
-		
-		System.out.println("iterating");
-		// collect ratings to calc. avg.
-		int totalScore = 0;
-		// pick out every rating separately
-		for (int i = 0; i < arrayOfRatings.length; i++) {
-			BasicDBObject eachRating = (BasicDBObject) arrayOfRatings[i];
-			String score = eachRating.getString("Score");
-			totalScore += Integer.parseInt(score);
+		// make sure media is rated
+		if(!ratings.isEmpty()) {
+			// put sub document of ratings in array
+			Object[] arrayOfRatings = ratings.toArray();	// nullPtrExc if no rating in fetched obj
+			
+			System.out.println("iterating");
+			// collect ratings to calc. avg.
+			int totalScore = 0;
+			// pick out every rating separately
+			for (int i = 0; i < arrayOfRatings.length; i++) {
+				BasicDBObject eachRating = (BasicDBObject) arrayOfRatings[i];
+				String score = eachRating.getString("Score");
+				totalScore += Integer.parseInt(score);
+			}
+			
+			// calculate avg. and assign it later to the Album.
+			avgRating = totalScore / arrayOfRatings.length;
 		}
-		
-		// calculate avg. and assign it later to the Album.
-		int avgRating = totalScore / arrayOfRatings.length;
-		
 		
 		// get mediatype
 		String media = dbo.getString("Mediatype");
@@ -53,20 +59,22 @@ public final class Objectifier {
 		
 		// get reviews
 		BasicDBList reviewInDB = (BasicDBList) dbo.get("Review");
-		// make array of sub documents, each review
-		Object[] arrayOfReveiws = reviewInDB.toArray();
 		
-		for (int i = 0; i < arrayOfReveiws.length; i++) {
-			BasicDBObject eachReview = (BasicDBObject) arrayOfReveiws[i];
-			String reviewTitle = eachReview.getString("Title");
-			String reviewText = eachReview.getString("Text");
-			String reviewAuthor = eachReview.getString("User");
+		if(!reviewInDB.isEmpty()) {
+			// make array of sub documents, each review
+			Object[] arrayOfReveiws = reviewInDB.toArray();
 			
-			// create obj. repr. of each review
-			Review review = new Review(reviewTitle, reviewText, reviewAuthor, media, mediaTitle);
-			reviews.add(review);
+			for (int i = 0; i < arrayOfReveiws.length; i++) {
+				BasicDBObject eachReview = (BasicDBObject) arrayOfReveiws[i];
+				String reviewTitle = eachReview.getString("Title");
+				String reviewText = eachReview.getString("Text");
+				String reviewAuthor = eachReview.getString("User");
+				
+				// create obj. repr. of each review
+				Review review = new Review(reviewTitle, reviewText, reviewAuthor, media, mediaTitle);
+				reviews.add(review);
+			}
 		}
-		
 		
 		
 		// generate album
