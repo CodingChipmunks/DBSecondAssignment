@@ -32,56 +32,77 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	private final static String host = "mongodb://";
 	private final static String connection = "localhost:27017/";
 
+	private MongoCredential cr = null;
+	private MongoClient mc = null;
+	private DB db = null;
+	private DBCollection coll = null;
+
 	// URI styled
 	// host + user + ":" + pass + "@" + connection + database
 
-	public static void main(String args[]) throws UnknownHostException {
+	public static void main(String args[]) throws UnknownHostException,
+			SQLException {
 		Model model = new Model("User42", "");
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
+		mqe.addMedia("Lenny Hits", "1998", "Lennstyle", new Object[] {
+				"Lenny P", "Lenny K" }, 360, 1);
+
+		mqe.addMedia("Rosenrot", "2005", "Rammstyle",
+				new Object[] { "Rammstein" }, 360, 1);
+
+		mqe.peek();
+	}
+
+	// TODO remove
+	public void peek() {
+		Cursor fetchAll = coll.find();
+		// rough peek
+		while (fetchAll.hasNext()) {
+			System.out.println(fetchAll.next());
+		}
 	}
 
 	public MongoQueryExecuter(Model model) {
 		this.model = model;
 		try {
-			MongoCredential credential = MongoCredential
-					.createMongoCRCredential("clientapp", "mediacollection",
-							"qwerty".toCharArray());
-			MongoClient mongoClient = new MongoClient(new ServerAddress(),
-					Arrays.asList(credential));
+			cr = MongoCredential.createMongoCRCredential("clientapp",
+					"mediacollection", "qwerty".toCharArray());
+			mc = new MongoClient(new ServerAddress(), Arrays.asList(cr));
 
-			DB db = mongoClient.getDB("mediacollection");
-			Set<String> colls = db.getCollectionNames();
-			System.out.println(colls.toString());
-			DBCollection coll = db.getCollection("Media");
+			db = mc.getDB("mediacollection");
+			// Set<String> colls = db.getCollectionNames();
+			// System.out.println(colls.toString());
+			coll = db.getCollection("Media");
 
-			mongoClient.setWriteConcern(WriteConcern.JOURNALED);
+			mc.setWriteConcern(WriteConcern.JOURNALED);
 
-			BasicDBObject oneAlbum = new BasicDBObject("Title", "Imagine")
-					.append("Creator", "John Lennon")
-					.append("Genre", "Lennstyle").append("Year", "2006")
-					.append("Duration", "120");
+			/*
+			 * BasicDBObject oneAlbum = new BasicDBObject("Title", "Imagine")
+			 * .append("Creator", "John Lennon") .append("Genre",
+			 * "Lennstyle").append("Year", "2006") .append("Duration", "120");
+			 * 
+			 * List<BasicDBObject> reviews = new ArrayList<BasicDBObject>();
+			 * reviews.add(new BasicDBObject("User", "Bar").append("Its good",
+			 * "Excellent!").append("Review", "I liked this album."));
+			 * oneAlbum.put("Review", reviews);
+			 * 
+			 * List<BasicDBObject> rating = new ArrayList<BasicDBObject>();
+			 * rating.add(new BasicDBObject("User", "Foo").append("Rating",
+			 * "5")); rating.add(new BasicDBObject("User",
+			 * "Bar").append("Rating", "5")); oneAlbum.put("Rating", rating);
+			 * 
+			 * oneAlbum.put("AddedBy", "Bar"); oneAlbum.put("Mediatype",
+			 * "Album");
+			 * 
+			 * coll.insert(oneAlbum);
+			 */
 
-			List<BasicDBObject> reviews = new ArrayList<BasicDBObject>();
-			reviews.add(new BasicDBObject("User", "Bar").append("Its good",
-					"Excellent!").append("Review", "I liked this album."));
-			oneAlbum.put("Review", reviews);
-
-			List<BasicDBObject> rating = new ArrayList<BasicDBObject>();
-			rating.add(new BasicDBObject("User", "Foo").append("Rating", "5"));
-			rating.add(new BasicDBObject("User", "Bar").append("Rating", "5"));
-			oneAlbum.put("Rating", rating);
-
-			oneAlbum.put("AddedBy", "Bar");
-			oneAlbum.put("Mediatype", "Album");
-
-			coll.insert(oneAlbum);
-
-			Cursor fetchAll = coll.find();
+			// Cursor fetchAll = coll.find();
 
 			// rough peek
-			while (fetchAll.hasNext()) {
-				System.out.println(fetchAll.next());
-			}
+			// while (fetchAll.hasNext()) {
+			// System.out.println(fetchAll.next());
+			// }
 
 			// specified peek
 
@@ -97,7 +118,6 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -116,27 +136,34 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByGenre(String genre) throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAllAlbums(ResultSet rsetAlbum)
 			throws SQLException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<Album> getAlbumsByAny(String title) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO set last query to title
+		// TODO set last query type to Album = 1
+		// TODO Create a set of album = no copies can be added (override
+		// hashCode & Compare % eqiaös)
+
+		// TODO call every getXByX methods and add result to set.
+		// TODO call model.setBank(arraylist<movie>.toArray())
+
+		return null; // return set.toArrayList ? :o
 	}
 
 	@Override
@@ -189,8 +216,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public ArrayList<Movie> getMoviesByAny(String queryText)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO set last query to title
+		// TODO set last query type to Movie = 2
+		// TODO Create a set of album = no copies can be added (override
+		// hashCode & Compare % eqiaös)
+
+		// TODO call every getXByX methods and add result to set.
+		// TODO call model.setBank(arraylist<movie>.toArray())
+
+		return null; // return set.toArrayList ? :o
 	}
 
 	@Override
@@ -260,13 +294,47 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// TODO check that user is longer than 4 chars, do not attempt to
 		// verify the account, it cannot be done securely.
 
+		if (user.length() > 3)
+			model.setValidAccount(true);
+		else
+			model.setValidAccount(false);
 	}
 
+	/***
+	 * @param objects
+	 *            an array of creators.
+	 ***/
 	@Override
 	public void addMedia(String name, String year, String genre,
 			Object[] objects, int duration, int mediaType) throws SQLException {
+
+		BasicDBObject oneDocument = new BasicDBObject("Title", name)
+				.append("Genre", genre).append("Year", year)
+				.append("Duration", duration);
+
+		oneDocument.put("AddedBy", model.getUser());
+
+		switch (mediaType) {
+		case 1:
+			oneDocument.put("Mediatype", "Album");
+			break;
+		case 2:
+			oneDocument.put("Mediatype", "Movie");
+			break;
+		}
+
+		List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
+		for (int i = 0; i < objects.length; i++) {
+			creators.add(new BasicDBObject("Name", objects[i].toString()));
+		}
+		oneDocument.put("Creator", creators);
+
+		coll.insert(oneDocument);
+	}
+
+	@Override
+	public void open() {
 		// TODO Auto-generated method stub
 
 	}
-
 }

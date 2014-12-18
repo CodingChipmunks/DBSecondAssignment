@@ -32,10 +32,12 @@ public class Controller implements ActionListener {
 	private Review review = null;
 	private int rating;
 	private int media;
+	private QueryInterpreter qx = null;
 
-	public Controller(Model m, WBView wbv) {
+	public Controller(Model m, WBView wbv, QueryInterpreter queryExecuter) {
 		this.model = m;
 		this.wbview = wbv;
+		this.qx = queryExecuter;
 		executeQuery(QueryType.ALBUMSEARCH, "%");
 	}
 
@@ -50,9 +52,8 @@ public class Controller implements ActionListener {
 			String errormsg = "";
 
 			public void run() {
-				QueryExecuter qx = null;
+				qx.open();
 				try {
-					qx = new QueryExecuter(model);
 					wbview.setColumnFilter(new String[] { "review" });
 					switch (queryType) {
 					case MEDIAADD:

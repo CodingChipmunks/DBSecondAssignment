@@ -34,4 +34,6 @@ public interface QueryInterpreter {
 	void addMedia(String name, String year, String genre, Object[] objects,
 			int duration, int mediaType) throws SQLException;
 
+	void open();
+
 }
