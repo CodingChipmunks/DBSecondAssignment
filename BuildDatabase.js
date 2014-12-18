@@ -25,6 +25,8 @@ db.Account.insert({Name : 'MrsBar', User : 'Bar')
 // Use this account to log in during development, it has no preset reviews/ratings.
 db.Account.insert({Name : 'User42', User : 'User'})
 
+
+db.createCollection("Media")
 // Create Movie/Album
 db.Media.insert({ 
 	Title : "Rosenrot", 
