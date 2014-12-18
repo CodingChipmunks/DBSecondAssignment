@@ -38,17 +38,17 @@ db.Media.insert({
 		{
 			User : "Bar", 
 			Title : "Excellent!", 
-			Review : "With deep flavor and class..." 
+			Text : "With deep flavor and class..." 
 		},
 		{
 			User : "Foo", 
 			Title : "Supberb.", 
-			Review : "Very Good. Such Wack."
+			Text : "Very Good. Such Wack."
 		}
 	],
 	Rating : [
-		{User: "Foo", Rating : "1"}, 
-		{User: "Bar", Rating : "5"}
+		{User: "Foo", Score : "1"}, 
+		{User: "Bar", Score : "5"}
 	],	// calc. avg. in app, prevent wrong values!
 	AddedBy : "Foo",
 	Mediatype : "Album"

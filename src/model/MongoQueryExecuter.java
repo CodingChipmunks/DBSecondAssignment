@@ -158,7 +158,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// TODO set last query to title
 		// TODO set last query type to Album = 1
 		// TODO Create a set of album = no copies can be added (override
-		// hashCode & Compare % eqiaös)
+		// hashCode & Compare % eqiaï¿½s)
 
 		// TODO call every getXByX methods and add result to set.
 		// TODO call model.setBank(arraylist<movie>.toArray())
@@ -219,7 +219,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		// TODO set last query to title
 		// TODO set last query type to Movie = 2
 		// TODO Create a set of album = no copies can be added (override
-		// hashCode & Compare % eqiaös)
+		// hashCode & Compare % eqiaï¿½s)
 
 		// TODO call every getXByX methods and add result to set.
 		// TODO call model.setBank(arraylist<movie>.toArray())
@@ -302,6 +302,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	/***
 	 * @param objects
+	private DB db;
 	 *            an array of creators.
 	 ***/
 	@Override
