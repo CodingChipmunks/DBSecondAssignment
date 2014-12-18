@@ -329,7 +329,7 @@ public class Controller implements ActionListener {
 				Hashtable table = dialog.getValues();
 				dialog.setVisible(false);
 
-				album = new Album("", "", "", 0);
+				album = new Album("", "", "", "");
 				movie = new Movie("", "", "", "", 0, 0);
 				book = new Book("", "", 0);
 

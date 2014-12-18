@@ -13,6 +13,7 @@ public final class Objectifier {
 		// TODO: Decide which is nicer
 		//int avgRating = 0;
 		
+		String mediaId = dbo.getString("_id");
 		String mediaTitle = dbo.getString("Title");
 		String year = dbo.getString("Year");
 		String genre = dbo.getString("Genre");
@@ -75,8 +76,8 @@ public final class Objectifier {
 		
 		
 		// generate album
-		Album album = new Album(mediaTitle, year, user, 0);	// RM id == 0!
-		album.setArtist(artists);
+		Album album = new Album(mediaTitle, year, user, mediaId);	// RM id == 0!
+		album.setArtist(artists); 
 		album.setGenre(genre);
 		album.setRating(avgRating);
 		album.setReview(reviews);

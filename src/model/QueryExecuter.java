@@ -96,21 +96,21 @@ public final class QueryExecuter implements QueryInterpreter {
 				rsetGenre.first();
 				album.setGenre(rsetGenre.getString("Name"));
 
-				stArtist.setInt(1, album.getId());
+				stArtist.setInt(1, new Integer(album.getId()));
 				rsetArtist = stArtist.executeQuery();
 
 				while (rsetArtist.next())
 					album.AddArtist(rsetArtist.getString("Name"));
 
 				// get the rating.
-				stRating.setInt(1, album.getId());
+				stRating.setInt(1, new Integer(album.getId()));
 				rsetRating = stRating.executeQuery();
 
 				while (rsetRating.next())
 					album.setRating(rsetRating.getFloat(1));
 
 				// finally, get reviews..
-				stReview.setInt(1, album.getId());
+				stReview.setInt(1, new Integer(album.getId()));
 				rsetReview = stReview.executeQuery();
 
 				while (rsetReview.next()) {
