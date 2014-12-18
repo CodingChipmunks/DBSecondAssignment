@@ -217,6 +217,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		album.addAll(getAlbumsByUser(query));
 		album.addAll(getAlbumsByGenre(query));
 		album.addAll(getAlbumsByRating(query));
+		album.addAll(getAlbumsByArtist(query));
 
 		model.setBank(album.toArray());
 		return new ArrayList<Album>(album);
