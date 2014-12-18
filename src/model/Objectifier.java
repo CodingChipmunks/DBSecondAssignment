@@ -87,10 +87,29 @@ public final class Objectifier {
 		return album;
 	}
 
-	public static Review cursorToReview(BasicDBObject dbo) {
+	public static ArrayList<Review> cursorToReview(BasicDBObject dbo, String queryText) {
 		//Review review = new Review(String title, String text, String user, String media, String mediaTitle);
-		Review review = new Review(dbo.getString("title") , dbo.getString("Text"), dbo.getString("User"), "", "");
-		return review;
+		ArrayList<Review> reviews = new ArrayList<Review>();
+		BasicDBList reviewList = (BasicDBList) dbo.get("Review");
+
+		if(null != reviews) {
+			Object[] arrayOfRatings = reviewList.toArray();	
+			
+			for (int i = 0; i < arrayOfRatings.length; i++) {
+				BasicDBObject singleReview = (BasicDBObject) arrayOfRatings[i];
+				
+				Review r = new Review(singleReview.getString("Title") , singleReview.getString("Text"), singleReview.getString("User"), 
+						dbo.getString("Mediatype"), dbo.getString("Title"));
+				
+				if (r.getText().contains(queryText) || 
+						r.getTitle().contains(queryText) || 
+						r.getUser().contains(queryText) || 
+						dbo.getString("Mediatype").contains(queryText) ||
+						dbo.getString("Title").contains(queryText))
+				reviews.add(r);
+			}
+		}
+		return reviews;
 	}
 	
 //	// convert mDB equivalence of Result set to object

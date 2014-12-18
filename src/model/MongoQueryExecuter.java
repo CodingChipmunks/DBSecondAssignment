@@ -440,21 +440,21 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBCollection collection = db.getCollection("Media");
 		Pattern regex = Pattern.compile(queryText);
 
-		// tis codess
-		DBObject clause1 = new BasicDBObject("Review.Title", regex);
-		DBObject clause2 = new BasicDBObject("Review.Text", regex);
+		DBObject st1 = new BasicDBObject("Review.Title", regex);
+		DBObject st2 = new BasicDBObject("Review.Text", regex);
+		DBObject st3 = new BasicDBObject("Review.User", regex);
 		BasicDBList or = new BasicDBList();
-		or.add(clause1);
-		or.add(clause2);
+		or.add(st1);
+		or.add(st2);
+		or.add(st3);
 		DBObject query = new BasicDBObject("$or", or);
 
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by Review " + queryText + " ...");
 		while (cursor.hasNext()) {
 			BasicDBObject dbo = (BasicDBObject) cursor.next();
-			Review r = Objectifier.cursorToReview(dbo);
-			reviews.add(r);
-		}
+			reviews.addAll(Objectifier.cursorToReview(dbo, queryText));
+		} 
 
 		System.out.println("Searching by review...");
 		model.setBank(reviews.toArray());
@@ -510,11 +510,11 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			break;
 		}
 
-		List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
+		//List<BasicDBObject> creators = new ArrayList<BasicDBObject>();
 		for (int i = 0; i < objects.length; i++) {
-			creators.add(new BasicDBObject("Name", objects[i].toString()));
+			//creators.add(new BasicDBObject("Name", objects[i].toString()));
+			oneDocument.put("Creator", objects[i].toString());
 		}
-		oneDocument.put("Creator", creators);
 
 		coll.insert(oneDocument);
 		rebootDataSet();

@@ -30,7 +30,9 @@ db.createCollection("Media")
 // Create Movie/Album
 db.Media.insert({ 
 	Title : "Rosenrot", 
-	Creator : "Rammstein",	// will become list []
+	Creator : [
+		{Name: "Rammstein"}
+	],	
 	Genre : "Rammstyle",
 	Year : "2009",
 	Duration : "120",
