@@ -30,9 +30,10 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	private final static String pass = "qwerty";
 	private final static String host = "mongodb://";
 	private final static String connection = "localhost:27017/";
+
 	// URI styled
 	// host + user + ":" + pass + "@" + connection + database
-	
+
 	public static void main(String args[]) throws UnknownHostException {
 		Model model = new Model("User42", "");
 		MongoQueryExecuter mqe = new MongoQueryExecuter(model);
@@ -40,53 +41,50 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	public MongoQueryExecuter(Model model) {
 		this.model = model;
-		try
-		{
-		MongoCredential credential = MongoCredential.createMongoCRCredential("clientapp", "mediacollection", "qwerty".toCharArray());
-		MongoClient mongoClient = new MongoClient(new ServerAddress(), Arrays.asList(credential));
-		
-		DB db = mongoClient.getDB( "mediacollection" );
-		Set<String> colls = db.getCollectionNames();
-		System.out.println(colls.toString());
-		DBCollection coll = db.getCollection("Media");
-		
-		
-		
-		mongoClient.setWriteConcern(WriteConcern.JOURNALED);
-		
-		BasicDBObject oneAlbum = new BasicDBObject("Title", "Imagine")
-			.append("Creator", "John Lennon")
-			.append("Genre", "Lennstyle")
-			.append("Year", "2006")
-			.append("Duration", "120");
-		
-		List<BasicDBObject> reviews = new ArrayList<BasicDBObject>();
-		reviews.add(new BasicDBObject("User","Bar").append("Its good", "Excellent!").append("Review", "I liked this album."));
-		oneAlbum.put("Review", reviews);
-		
-		List<BasicDBObject> rating = new ArrayList<BasicDBObject>();
-		rating.add(new BasicDBObject("User","Foo").append("Rating", "5"));
-		rating.add(new BasicDBObject("User","Bar").append("Rating", "5"));
-		oneAlbum.put("Rating", rating);
-		
-		oneAlbum.put("AddedBy", "Bar");
-		oneAlbum.put("Mediatype", "Album");
-		
-		coll.insert(oneAlbum);
-		
-		Cursor fetchAll = coll.find();
-		
-		// rough peek
-		while (fetchAll.hasNext())
-		{
-			System.out.println(fetchAll.next());
-		}
-		
-		// specified peek
-		
-		}
-		catch (Exception e)
-		{
+		try {
+			MongoCredential credential = MongoCredential
+					.createMongoCRCredential("clientapp", "mediacollection",
+							"qwerty".toCharArray());
+			MongoClient mongoClient = new MongoClient(new ServerAddress(),
+					Arrays.asList(credential));
+
+			DB db = mongoClient.getDB("mediacollection");
+			Set<String> colls = db.getCollectionNames();
+			System.out.println(colls.toString());
+			DBCollection coll = db.getCollection("Media");
+
+			mongoClient.setWriteConcern(WriteConcern.JOURNALED);
+
+			BasicDBObject oneAlbum = new BasicDBObject("Title", "Imagine")
+					.append("Creator", "John Lennon")
+					.append("Genre", "Lennstyle").append("Year", "2006")
+					.append("Duration", "120");
+
+			List<BasicDBObject> reviews = new ArrayList<BasicDBObject>();
+			reviews.add(new BasicDBObject("User", "Bar").append("Its good",
+					"Excellent!").append("Review", "I liked this album."));
+			oneAlbum.put("Review", reviews);
+
+			List<BasicDBObject> rating = new ArrayList<BasicDBObject>();
+			rating.add(new BasicDBObject("User", "Foo").append("Rating", "5"));
+			rating.add(new BasicDBObject("User", "Bar").append("Rating", "5"));
+			oneAlbum.put("Rating", rating);
+
+			oneAlbum.put("AddedBy", "Bar");
+			oneAlbum.put("Mediatype", "Album");
+
+			coll.insert(oneAlbum);
+
+			Cursor fetchAll = coll.find();
+
+			// rough peek
+			while (fetchAll.hasNext()) {
+				System.out.println(fetchAll.next());
+			}
+
+			// specified peek
+
+		} catch (Exception e) {
 			System.out.println("catch: " + e.toString());
 		}
 	}
