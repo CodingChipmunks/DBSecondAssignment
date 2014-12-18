@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class Album {
-	private int id;
+	private String id;
 	private Genre genre = new Genre("");
 	private String year;
 	private String name;
@@ -21,7 +21,7 @@ public class Album {
 		this.user = user;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -62,7 +62,7 @@ public class Album {
 		this.year = year;
 	}
 
-	public Album(String name, String year, String user, int id) {
+	public Album(String name, String year, String user, String id) {
 		// super();
 		this.name = name;
 		this.year = year;
@@ -101,13 +101,13 @@ public class Album {
 	@Override
 	public int hashCode()
 	{
-		return this.getId();
+		return this.getId().hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
 		Album album = (Album) object;
-		if (album.getId() == this.getId())
+		if (album.getId().equals(this.getId()))
 			return true;
 		else
 			return false;

@@ -38,7 +38,7 @@ public final class RowConverter {
 			throws SQLException {
 
 		Album album = new Album(bigAlbumRow.getString("title"),
-				bigAlbumRow.getString("year"), "", bigAlbumRow.getInt("id"));
+				bigAlbumRow.getString("year"), "", bigAlbumRow.getInt("id") + "");
 
 		return album;
 	}
