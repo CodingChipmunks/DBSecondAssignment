@@ -526,7 +526,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				try {
 					// TODO: aid by research
-					if (a.getRating() >= (float) Integer.parseInt(rating)) {
+					if (a.getRating() >= (float) Integer.parseInt(rating)  && dbo.getString("Mediatype").equals("Movie")) {
 						// put in list, if rating is greater than desired
 						result.add(a);
 					}
@@ -575,7 +575,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				// mm aj lajk de speed of this database
 				for (Director directors : tmp) {
-					if (directors.getName().contains(director)) {
+					if (directors.getName().contains(director) && dbo.getString("Mediatype").equals("Movie")) {
 						// put in list, if rating is greater than desired
 						result.add(d);
 					}
@@ -595,6 +595,16 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBObject query = new BasicDBObject("Genre", genre);
 		Pattern regex = Pattern.compile(genre);
 		query.put("Genre", regex);
+		
+		
+		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+		DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------*/
+		
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by genre " + genre + " ...");
 		while (cursor.hasNext()) {
