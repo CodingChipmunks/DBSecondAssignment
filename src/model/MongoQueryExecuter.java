@@ -366,27 +366,144 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public ArrayList<Movie> getMovieByTitle(String title) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> result = new ArrayList<Movie>();
+		DBCollection collection = db.getCollection("Media");
+	
+		
+		DBObject query = new BasicDBObject("Title", title);
+		Pattern regex = Pattern.compile(title);
+		query.put("Title", regex);
+		
+		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+		DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------*/
+		
+		Cursor cursor = collection.find(query);
+		System.out.println("Searching by title " + title + " ...");
+		while (cursor.hasNext()) {
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			Movie a = Objectifier.cursorToMovie(dbo);
+			result.add(a);
+		}
+		return result;
 	}
 
 	@Override
 	public ArrayList<Movie> getMovieByRating(String rating) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> result = new ArrayList<Movie>();
+
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Rating", new BasicDBObject("Score",
+				rating));
+		System.out.println("QUERY" + query);
+
+		Pattern regex = Pattern.compile(rating);
+		query.put("Rating", regex);
+
+		// TODO: let db decide how big rating is
+		Cursor cursor = collection.find();
+		System.out.println("Entering search ...");
+
+		// TODO: 2 searches.
+		// one to reach rating
+		// one for right rating
+
+		try {
+			while (cursor.hasNext()) {
+
+				System.out.println("Searching by rating " + rating + " ...");
+
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+
+				// dbo.get("Score");
+
+				// Make Album from result of query
+				Movie a = Objectifier.cursorToMovie(dbo);
+
+				try {
+					// TODO: aid by research
+					if (a.getRating() >= (float) Integer.parseInt(rating)) {
+						// put in list, if rating is greater than desired
+						result.add(a);
+					}
+				} catch (NumberFormatException e) {
+				}
+			}
+			System.out.println(result);
+			return result;
+		} finally {
+			cursor.close();
+		}
 	}
 
 	@Override
 	public ArrayList<Movie> getMovieByDirector(String director)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> result = new ArrayList<Movie>();
+
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Creator", "...");
+		System.out.println("QUERY" + query);
+
+		Pattern regex = Pattern.compile(director);
+		query.put("Creator", regex);
+
+		// TODO: let db decide how big rating is
+		Cursor cursor = collection.find();
+		System.out.println("Entering search ...");
+
+		// TODO: more effective searches
+
+		try {
+			while (cursor.hasNext()) {
+
+				System.out.println("Searching by artist " + director + " ...");
+
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+
+				// dbo.get("Score");
+
+				// Make Album from result of query
+				Movie d = Objectifier.cursorToMovie(dbo);
+
+				// TODO: aid by research
+				ArrayList<Director> tmp = d.getDirector();
+
+				// mm aj lajk de speed of this database
+				for (Director directors : tmp) {
+					if (directors.getName().contains(director)) {
+						// put in list, if rating is greater than desired
+						result.add(d);
+					}
+				}
+			}
+			System.out.println(result);
+			return result;
+		} finally {
+			cursor.close();
+		}
 	}
 
 	@Override
 	public ArrayList<Movie> getMovieByGenre(String genre) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> result = new ArrayList<Movie>();
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Genre", genre);
+		Pattern regex = Pattern.compile(genre);
+		query.put("Genre", regex);
+		Cursor cursor = collection.find(query);
+		System.out.println("Searching by genre " + genre + " ...");
+		while (cursor.hasNext()) {
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			Movie a = Objectifier.cursorToMovie(dbo);
+			result.add(a);
+		}
+		System.out.println(result);
+		return result;
 	}
 
 	@Override
