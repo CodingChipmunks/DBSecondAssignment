@@ -57,7 +57,7 @@ public class Controller implements ActionListener {
 					wbview.setColumnFilter(new String[] { "review" });
 					switch (queryType) {
 					case MEDIAADD:
-						switch (queryType()) {
+						switch (addType()) {
 						case ALBUMSEARCH:
 							qx.addMedia(album.getName(), album.getYear(), album
 									.getGenre(), album.getArtist().toArray(),
