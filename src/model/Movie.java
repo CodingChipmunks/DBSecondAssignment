@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class Movie {
-	private int id;
+	private String id;
 	private String genre;
 	private String year;
 	private String title;
@@ -13,7 +13,7 @@ public class Movie {
 	private ArrayList<Director> director = new ArrayList<Director>();
 	private ArrayList<Review> review = new ArrayList<Review>();
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
@@ -60,7 +60,7 @@ public class Movie {
 		this.genre = genre;
 	}
 
-	public Movie(String title, String genre, String year, String user, int duration, int id) {
+	public Movie(String title, String genre, String year, String user, int duration, String id) {
 		this.genre = genre;
 		this.year = year;
 		this.user = user;
@@ -105,7 +105,7 @@ public class Movie {
 	@Override
 	public boolean equals(Object object) {
 		Movie movie = (Movie) object;
-		if (movie.getId() == this.getId())
+		if (movie.getId().equals(this.getId()))
 			return true;
 		else
 			return false;
@@ -114,7 +114,7 @@ public class Movie {
 	@Override
 	public int hashCode()
 	{
-		return this.id;
+		return this.id.hashCode();
 	}
 
 }

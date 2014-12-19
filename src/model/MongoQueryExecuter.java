@@ -1,6 +1,5 @@
 package model;
 
-import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,8 +20,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
-import com.mongodb.WriteResult;
-
 import controller.Controller.QueryType;
 
 public class MongoQueryExecuter implements QueryInterpreter {
@@ -106,9 +103,20 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
 		ArrayList<Album> result = new ArrayList<Album>();
 		DBCollection collection = db.getCollection("Media");
+	
+		
 		DBObject query = new BasicDBObject("Title", title);
 		Pattern regex = Pattern.compile(title);
 		query.put("Title", regex);
+		
+		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------*/
+		
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by title " + title + " ...");
 		while (cursor.hasNext()) {
