@@ -414,15 +414,18 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 	@Override
 	public void reviewMedia(Review review, String pk) throws SQLException {
+		// get reviewer
+		
 		DBObject findQuery = new BasicDBObject();
 		findQuery.put("_id", new ObjectId(pk));
 
 		DBObject listItem = new BasicDBObject("Review", new BasicDBObject(
 				"Title", review.getTitle()).append("Text", review.getText())
 				.append("User", model.getUser()));
-		DBObject updateQuery = new BasicDBObject("$push", listItem);
-		coll.update(findQuery, updateQuery, true, false);
-		rebootDataSet();
+			DBObject updateQuery = new BasicDBObject("$push", listItem);
+			coll.update(findQuery, updateQuery, true, false);
+			rebootDataSet();
+			
 	}
 
 	@Override
