@@ -19,6 +19,7 @@ public final class Objectifier {
 		String year = dbo.getString("Year");
 		String genre = dbo.getString("Genre");
 		String user = dbo.getString("AddedBy");
+		//int duration = dbo.getInt("Duration");
 		// Duration is not used
 		
 		// Artists will be many
@@ -110,7 +111,7 @@ public final class Objectifier {
 			String year = dbo.getString("Year");
 			String genre = dbo.getString("Genre");
 			String user = dbo.getString("AddedBy");
-			int duration = dbo.getInt("duration");
+			int duration = Integer.parseInt(dbo.getString("Duration"));
 			// Duration is not used
 			
 			// Artists will be many

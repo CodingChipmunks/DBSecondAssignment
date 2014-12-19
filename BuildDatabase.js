@@ -35,7 +35,6 @@ db.Media.insert({
 	],	
 	Genre : "Rammstyle",
 	Year : "2009",
-	Duration : "120",
 	Review : [
 		{
 			User : "Bar", 
@@ -71,7 +70,6 @@ db.Media.insert({
 	],
 	Genre : "Rammstyle",
 	Year : "2006",
-	Duration : "120",
 	Review : [
 		{
 			User : "Bar", 
@@ -101,7 +99,6 @@ db.Media.insert({
 	],
 	Genre : "Lennstyle",
 	Year : "2006",
-	Duration : "120",
 	Review : [
 		{
 			User : "Bar", 
@@ -131,7 +128,6 @@ db.Media.insert({
 	],
 	Genre : "Chipcore",
 	Year : "2014",
-	Duration : "120",
 	Review : [
 
 	],
