@@ -213,20 +213,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 
-				// dbo.get("Score");
+				if (dbo.getString("Mediatype").equals("Album")) {
 
-				// Make Album from result of query
-				Album a = Objectifier.cursorToAlbum(dbo);
+					// dbo.get("Score");
 
-				// TODO: aid by research
-				ArrayList<Artist> tmp = a.getArtist();
+					// Make Album from result of query
+					Album a = Objectifier.cursorToAlbum(dbo);
 
-				// mm aj lajk de speed of this database
-				for (Artist artists : tmp) {
-					if (artists.getName().contains(artist)
-							&& dbo.getString("Mediatype").equals("Album")) {
-						// put in list, if rating is greater than desired
-						result.add(a);
+					// TODO: aid by research
+					ArrayList<Artist> tmp = a.getArtist();
+
+					// mm aj lajk de speed of this database
+					for (Artist artists : tmp) {
+						if (artists.getName().contains(artist)) {
+							// put in list, if rating is greater than desired
+							result.add(a);
+						}
 					}
 				}
 			}
@@ -266,19 +268,20 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 
-				// dbo.get("Score");
+				if (dbo.getString("Mediatype").equals("Album")) {
+					// dbo.get("Score");
 
-				// Make Album from result of query
-				Album a = Objectifier.cursorToAlbum(dbo);
+					// Make Album from result of query
+					Album a = Objectifier.cursorToAlbum(dbo);
 
-				try {
-					// TODO: aid by research
-					if (a.getRating() >= (float) Integer.parseInt(rating)
-							&& dbo.getString("Mediatype").equals("Album")) {
-						// put in list, if rating is greater than desired
-						result.add(a);
+					try {
+						// TODO: aid by research
+						if (a.getRating() >= (float) Integer.parseInt(rating)) {
+							// put in list, if rating is greater than desired
+							result.add(a);
+						}
+					} catch (NumberFormatException e) {
 					}
-				} catch (NumberFormatException e) {
 				}
 			}
 			System.out.println(result);
@@ -468,20 +471,19 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Movie> getMovieByTitle(String title) throws SQLException {
 		ArrayList<Movie> result = new ArrayList<Movie>();
 		DBCollection collection = db.getCollection("Media");
-	
-		
+
 		DBObject query = new BasicDBObject("Title", title);
 		Pattern regex = Pattern.compile(title);
 		query.put("Title", regex);
-		
-		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
 		DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
 		BasicDBList and = new BasicDBList();
 		and.add(mediatype);
 		and.add(query);
 		query = new BasicDBObject("$and", and);
-		/* -------------- END MEDIATYPE LIMITER ------------------------*/
-		
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by title " + title + " ...");
 		while (cursor.hasNext()) {
@@ -514,23 +516,24 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		try {
 			while (cursor.hasNext()) {
-
 				System.out.println("Searching by rating " + rating + " ...");
 
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
 
-				// dbo.get("Score");
+				if (dbo.getString("Mediatype").equals("Movie")) {
+					// dbo.get("Score");
 
-				// Make Album from result of query
-				Movie a = Objectifier.cursorToMovie(dbo);
+					// Make Album from result of query
+					Movie a = Objectifier.cursorToMovie(dbo);
 
-				try {
-					// TODO: aid by research
-					if (a.getRating() >= (float) Integer.parseInt(rating)  && dbo.getString("Mediatype").equals("Movie")) {
-						// put in list, if rating is greater than desired
-						result.add(a);
+					try {
+						// TODO: aid by research
+						if (a.getRating() >= (float) Integer.parseInt(rating)) {
+							// put in list, if rating is greater than desired
+							result.add(a);
+						}
+					} catch (NumberFormatException e) {
 					}
-				} catch (NumberFormatException e) {
 				}
 			}
 			System.out.println(result);
@@ -564,20 +567,22 @@ public class MongoQueryExecuter implements QueryInterpreter {
 				System.out.println("Searching by artist " + director + " ...");
 
 				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				if (dbo.getString("Mediatype").equals("Movie")) {
 
-				// dbo.get("Score");
+					// dbo.get("Score");
 
-				// Make Album from result of query
-				Movie d = Objectifier.cursorToMovie(dbo);
+					// Make Album from result of query
+					Movie d = Objectifier.cursorToMovie(dbo);
 
-				// TODO: aid by research
-				ArrayList<Director> tmp = d.getDirector();
+					// TODO: aid by research
+					ArrayList<Director> tmp = d.getDirector();
 
-				// mm aj lajk de speed of this database
-				for (Director directors : tmp) {
-					if (directors.getName().contains(director) && dbo.getString("Mediatype").equals("Movie")) {
-						// put in list, if rating is greater than desired
-						result.add(d);
+					// mm aj lajk de speed of this database
+					for (Director directors : tmp) {
+						if (directors.getName().contains(director)) {
+							// put in list, if rating is greater than desired
+							result.add(d);
+						}
 					}
 				}
 			}
@@ -595,16 +600,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBObject query = new BasicDBObject("Genre", genre);
 		Pattern regex = Pattern.compile(genre);
 		query.put("Genre", regex);
-		
-		
-		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
 		DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
 		BasicDBList and = new BasicDBList();
 		and.add(mediatype);
 		and.add(query);
 		query = new BasicDBObject("$and", and);
-		/* -------------- END MEDIATYPE LIMITER ------------------------*/
-		
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by genre " + genre + " ...");
 		while (cursor.hasNext()) {
@@ -650,17 +654,17 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	@Override
 	public void reviewMedia(Review review, String pk) throws SQLException {
 		// get reviewer
-		
+
 		DBObject findQuery = new BasicDBObject();
 		findQuery.put("_id", new ObjectId(pk));
 
 		DBObject listItem = new BasicDBObject("Review", new BasicDBObject(
 				"Title", review.getTitle()).append("Text", review.getText())
 				.append("User", model.getUser()));
-			DBObject updateQuery = new BasicDBObject("$push", listItem);
-			coll.update(findQuery, updateQuery, true, false);
-			rebootDataSet();
-			
+		DBObject updateQuery = new BasicDBObject("$push", listItem);
+		coll.update(findQuery, updateQuery, true, false);
+		rebootDataSet();
+
 	}
 
 	@Override
