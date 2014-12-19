@@ -367,7 +367,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		query = query.replace("%", "");
 		System.out.println("Query For Albums LIKE " + query);
 		Set<Movie> movie = new HashSet<Movie>();
-		setLastQuery(query, QueryType.ALBUMSEARCH);
+		setLastQuery(query, QueryType.MOVIESEARCH);
 
 		// TODO add AlbumByArtist
 

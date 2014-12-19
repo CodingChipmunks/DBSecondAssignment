@@ -198,7 +198,7 @@ public final class Objectifier {
 		ArrayList<Review> reviews = new ArrayList<Review>();
 		BasicDBList reviewList = (BasicDBList) dbo.get("Review");
 
-		if(null != reviews) {
+		if(null != reviews && reviewList != null) {
 			Object[] arrayOfRatings = reviewList.toArray();	
 			
 			for (int i = 0; i < arrayOfRatings.length; i++) {
