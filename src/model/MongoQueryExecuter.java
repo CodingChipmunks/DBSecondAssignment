@@ -368,12 +368,12 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 		// TODO add AlbumByArtist
 
-		//movie.addAll(getMovieByTitle(query));
+		movie.addAll(getMovieByTitle(query));
 		movie.addAll(getMovieByYear(query));
 		movie.addAll(getMovieByUser(query));
-		//movie.addAll(getMovieByGenre(query));
-		//movie.addAll(getMovieByRating(query));
-		//movie.addAll(getMovieByDirector(query));
+		movie.addAll(getMovieByGenre(query));
+		movie.addAll(getMovieByRating(query));
+		movie.addAll(getMovieByDirector(query));
 
 		model.setBank(movie.toArray());
 		return new ArrayList<Movie>(movie);
