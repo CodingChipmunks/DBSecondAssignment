@@ -7,12 +7,10 @@ import com.mongodb.BasicDBObject;
 
 public final class Objectifier {
 	
-	private static int avgRating = 0;
-	
 	// convert mDB equivalence of Result set to object
 	public static Album cursorToAlbum(BasicDBObject dbo) {
 		// TODO: Decide which is nicer
-		//int avgRating = 0;
+		int avgRating = 0;
 		
 		String mediaId = dbo.getString("_id");
 		String mediaTitle = dbo.getString("Title");
@@ -104,7 +102,7 @@ public final class Objectifier {
 	// convert mDB equivalence of Result set to object
 		public static Movie cursorToMovie(BasicDBObject dbo) {
 			// TODO: Decide which is nicer
-			//int avgRating = 0;
+			int avgRating = 0;
 			
 			String mediaId = dbo.getString("_id");
 			String mediaTitle = dbo.getString("Title");
