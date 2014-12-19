@@ -103,20 +103,19 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	public ArrayList<Album> getAlbumsByTitle(String title) throws SQLException {
 		ArrayList<Album> result = new ArrayList<Album>();
 		DBCollection collection = db.getCollection("Media");
-	
-		
+
 		DBObject query = new BasicDBObject("Title", title);
 		Pattern regex = Pattern.compile(title);
 		query.put("Title", regex);
-		
-		/* --------------- ADDED MEDIATYPE LIMITER ----------------------*/
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
 		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
 		BasicDBList and = new BasicDBList();
 		and.add(mediatype);
 		and.add(query);
 		query = new BasicDBObject("$and", and);
-		/* -------------- END MEDIATYPE LIMITER ------------------------*/
-		
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by title " + title + " ...");
 		while (cursor.hasNext()) {
@@ -134,6 +133,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBObject query = new BasicDBObject("Genre", genre);
 		Pattern regex = Pattern.compile(genre);
 		query.put("Genre", regex);
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
+		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by genre " + genre + " ...");
 		while (cursor.hasNext()) {
@@ -186,7 +194,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		ArrayList<Album> result = new ArrayList<Album>();
 
 		DBCollection collection = db.getCollection("Media");
-		DBObject query = new BasicDBObject("Creator", "...");
+		DBObject query = new BasicDBObject("Creator", artist);
 		System.out.println("QUERY" + query);
 
 		Pattern regex = Pattern.compile(artist);
@@ -215,7 +223,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				// mm aj lajk de speed of this database
 				for (Artist artists : tmp) {
-					if (artists.getName().contains(artist)) {
+					if (artists.getName().contains(artist)
+							&& dbo.getString("Mediatype").equals("Album")) {
 						// put in list, if rating is greater than desired
 						result.add(a);
 					}
@@ -264,7 +273,8 @@ public class MongoQueryExecuter implements QueryInterpreter {
 
 				try {
 					// TODO: aid by research
-					if (a.getRating() >= (float) Integer.parseInt(rating)) {
+					if (a.getRating() >= (float) Integer.parseInt(rating)
+							&& dbo.getString("Mediatype").equals("Album")) {
 						// put in list, if rating is greater than desired
 						result.add(a);
 					}
@@ -287,6 +297,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		DBObject query = new BasicDBObject("Year", year);
 		Pattern regex = Pattern.compile(year);
 		query.put("Year", regex);
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
+		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 		Cursor cursor = collection.find(query);
 		System.out.println("Searching by year " + year + " ...");
 		while (cursor.hasNext()) {
@@ -313,6 +332,15 @@ public class MongoQueryExecuter implements QueryInterpreter {
 			DBObject query = new BasicDBObject("AddedBy", user);
 			Pattern regex = Pattern.compile(user);
 			query.put("AddedBy", regex);
+
+			/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
+			DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+			BasicDBList and = new BasicDBList();
+			and.add(mediatype);
+			and.add(query);
+			query = new BasicDBObject("$and", and);
+			/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
 			Cursor cursor = collection.find(query);
 			System.out.println("Searching by user " + user + " ...");
 			while (cursor.hasNext()) {
@@ -332,36 +360,108 @@ public class MongoQueryExecuter implements QueryInterpreter {
 	}
 
 	@Override
-	public ArrayList<Movie> getMoviesByAny(String queryText)
-			throws SQLException {
-		// TODO set last query to title
-		// TODO set last query type to Movie = 2
-		// TODO Create a set of album = no copies can be added (override
-		// hashCode & Compare % eqia�s)
+	public ArrayList<Movie> getMoviesByAny(String query) throws SQLException {
+		query = query.replace("%", "");
+		System.out.println("Query For Albums LIKE " + query);
+		Set<Movie> movie = new HashSet<Movie>();
+		setLastQuery(query, QueryType.ALBUMSEARCH);
 
-		// TODO call every getXByX methods and add result to set.
-		// TODO call model.setBank(arraylist<movie>.toArray())
+		// TODO add AlbumByArtist
 
-		return null; // return set.toArrayList ? :o
+		//movie.addAll(getMovieByTitle(query));
+		movie.addAll(getMovieByYear(query));
+		movie.addAll(getMovieByUser(query));
+		//movie.addAll(getMovieByGenre(query));
+		//movie.addAll(getMovieByRating(query));
+		//movie.addAll(getMovieByDirector(query));
+
+		model.setBank(movie.toArray());
+		return new ArrayList<Movie>(movie);
 	}
 
 	@Override
 	public ArrayList<Movie> getMovieByUser(String user) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> result = new ArrayList<Movie>();
+		try {
+			DBCollection collection = db.getCollection("Media");
+			DBObject query = new BasicDBObject("AddedBy", user);
+			Pattern regex = Pattern.compile(user);
+			query.put("AddedBy", regex);
+
+			/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
+			DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
+			BasicDBList and = new BasicDBList();
+			and.add(mediatype);
+			and.add(query);
+			query = new BasicDBObject("$and", and);
+			/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
+			Cursor cursor = collection.find(query);
+			System.out.println("Searching by user " + user + " ...");
+			while (cursor.hasNext()) {
+				BasicDBObject dbo = (BasicDBObject) cursor.next();
+				// Make Album from result of query
+				Movie m = Objectifier.cursorToMovie(dbo);
+				// System.out.println(a.toString());
+
+				// put in list
+				result.add(m);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public ArrayList<Movie> getAllMovies(ResultSet rsetMovie)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Movie> movies = new ArrayList<Movie>();
+
+		Cursor cr = coll.find();
+
+		while (cr.hasNext()) {
+			cr.next();
+		}
+
+		return movies;
 	}
 
 	@Override
 	public ArrayList<Movie> getMovieByYear(String year) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO ADD TRYCATCH FOR CORRECT EXCEPTION researching API
+		ArrayList<Movie> result = new ArrayList<Movie>();
+
+		DBCollection collection = db.getCollection("Media");
+		DBObject query = new BasicDBObject("Year", year);
+		Pattern regex = Pattern.compile(year);
+		query.put("Year", regex);
+
+		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
+		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+		BasicDBList and = new BasicDBList();
+		and.add(mediatype);
+		and.add(query);
+		query = new BasicDBObject("$and", and);
+		/* -------------- END MEDIATYPE LIMITER ------------------------ */
+
+		Cursor cursor = collection.find(query);
+		System.out.println("Searching by year " + year + " ...");
+		while (cursor.hasNext()) {
+			BasicDBObject dbo = (BasicDBObject) cursor.next();
+			// Make Album from result of query
+			Movie m = Objectifier.cursorToMovie(dbo);
+			// System.out.println(a.toString());
+
+			// put in list
+			result.add(m);
+		}
+		System.out.println("Done searching ...");
+
+		// DEBUG: print them out
+
+		return result;
 	}
 
 	@Override
@@ -443,8 +543,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		findQuery.put("_id", new ObjectId(pk));
 
 		DBObject listItem = new BasicDBObject("Rating", new BasicDBObject(
-				"Score", rating)
-				.append("User", model.getUser()));
+				"Score", rating).append("User", model.getUser()));
 		DBObject updateQuery = new BasicDBObject("$push", listItem);
 		coll.update(findQuery, updateQuery, true, false);
 		// call last.
