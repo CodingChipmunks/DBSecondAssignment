@@ -439,7 +439,7 @@ public class MongoQueryExecuter implements QueryInterpreter {
 		query.put("Year", regex);
 
 		/* --------------- ADDED MEDIATYPE LIMITER ---------------------- */
-		DBObject mediatype = new BasicDBObject("Mediatype", "Album");
+		DBObject mediatype = new BasicDBObject("Mediatype", "Movie");
 		BasicDBList and = new BasicDBList();
 		and.add(mediatype);
 		and.add(query);
