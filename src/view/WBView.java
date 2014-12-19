@@ -267,8 +267,8 @@ public class WBView extends JFrame {
 	}
 
 	public void invokeAddMediaDialog(int index) {
-		addMediaDialog.setVisible(true);
 		addMediaDialog.setComboIndex(index);
+		addMediaDialog.setVisible(true);
 		//this.setVisible(false);
 	}
 	
